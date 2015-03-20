@@ -3,16 +3,17 @@ README:
 
 Introdução:
 
-	Esse é o README do trabalho 1 de SB, quem sabe de todos os outros também. Os integrantes da equipe que desenvolve,
-são:
+	Esse é o README do trabalho 1 de SB, quem sabe de todos os outros também.
 
 
-Sinayra Moreira
-https://www.facebook.com/nayra.moreira
+running free, wild, brave
+tail streaming high in the wind
+hoof pounding the earth
 
-Leandro Ramalho
-https://www.facebook.com/profile.php?id=100002329083167
+horses turn their haunch
+to show their scorn for the storm 
+and nature’s tantrum
 
-
-Outras informações pertinentes virão nesse documento.
-Aguarde!
+allows man to think
+he can command elegance
+and tame the wild heart
