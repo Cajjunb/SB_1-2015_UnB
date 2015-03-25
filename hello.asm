@@ -13,5 +13,5 @@ _start:
 	int		0x80
 	
 section	.data
-msg	db 'Ola mundo!!', 0xa
+msg	db 'Hellooo!!', 0xa
 len		equ $ - msg
