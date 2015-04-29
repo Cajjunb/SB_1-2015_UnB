@@ -61,3 +61,46 @@ void criaInstrucao(ifstream& arq, vector<tipoInstrucao>& instrucao){
 
     arq.seekg(0); //rewind
 }
+
+tipoGramatica pegaGramatica(vector<tipoGramatica>& gramatica, string token){
+    tipoGramatica nulo;
+
+    for(int i = 0; i < gramatica.size(); i++){
+        if(strcasecmp(gramatica[i].nome.c_str(), token.c_str()) == 0)
+            return gramatica[i]; //achou
+    }
+
+    nulo.nome = "";
+    nulo.formato = "";
+    nulo.qtdOperandos = -1;
+    return nulo; //não achou
+}
+
+tipoDiretiva pegaDiretiva(vector<tipoDiretiva>& diretiva, string token){
+    tipoDiretiva nulo;
+
+    for(int i = 0; i < diretiva.size(); i++){
+        if(strcasecmp(diretiva[i].nome.c_str(), token.c_str()) == 0)
+            return diretiva[i]; //achou
+    }
+
+    nulo.nome = "";
+    nulo.formato = (char)0;
+    nulo.qtdOperandos = -1;
+    nulo.tamanho = -1;
+    return nulo; //não achou
+}
+
+tipoInstrucao pegaInstrucao(vector<tipoInstrucao>& instrucao, string token){
+    tipoInstrucao nulo;
+
+    for(int i = 0; i < instrucao.size(); i++){
+        if(strcasecmp(instrucao[i].nome.c_str(), token.c_str()) == 0)
+            return instrucao[i]; //achou
+    }
+
+    nulo.nome = "";
+    nulo.op = -1;
+    nulo.tamanho = -1;
+    return nulo; //não achou
+}

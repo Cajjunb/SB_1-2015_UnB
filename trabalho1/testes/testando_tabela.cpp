@@ -9,6 +9,9 @@ int main(){
     vector<tipoInstrucao> instrucao;
     vector<tipoGramatica> gramatica;
     vector<tipoDiretiva> diretiva;
+    tipoGramatica g;
+    tipoDiretiva d;
+    tipoInstrucao i;
 
     arq1.open("tabelas/instrucoes.txt");
     criaInstrucao(arq1, instrucao);
@@ -33,6 +36,24 @@ int main(){
         cout << "Diretiva: " << diretiva[i].nome << endl;
         cout << "\tTamanho: " << diretiva[i].tamanho << "\tFormato: " << diretiva[i].formato << endl;
     }
+
+    g = pegaGramatica(gramatica, "aDd");
+    if(!g.nome.empty())
+        cout << "Achou instrucao aDd" << endl;
+    else
+        cout << "ops :(" << endl;
+
+    i = pegaInstrucao(instrucao, "Adicionar");
+    if(!i.nome.empty())
+        cout << "Achou instrucao Adicionar" << endl;
+    else
+        cout << "ops :(" << endl;
+
+    d = pegaDiretiva(diretiva, "BEGIN");
+    if(!d.nome.empty())
+        cout << "Achou diretiva BEGIN" << endl;
+    else
+        cout << "ops :(" << endl;
 
     return 0;
 }
