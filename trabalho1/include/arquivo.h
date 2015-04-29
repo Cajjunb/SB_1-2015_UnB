@@ -10,4 +10,4 @@
 using namespace std;
 
 //Retorna se acha token no arquivo
-bool buscaTokenArq(ifstream& arq, string token); //Busca sequencial
+bool buscaTokenArq(ifstream& arq, string token); //Busca sequencial até encontrar token

@@ -9,8 +9,10 @@ bool buscaTokenArq(ifstream& arq, string token){
         do{
             getline(arq, tokenLido, '\t'); //leia até o tab
 
-            if(strcasecmp(token.c_str(), tokenLido.c_str()) == 0)
+            if(strcasecmp(token.c_str(), tokenLido.c_str()) == 0){
+                arq.seekg(0); //rewind
                 return true;
+            }
             else{
                 string aux;
                 getline(arq, aux); //leia até a próxima linha
@@ -21,7 +23,7 @@ bool buscaTokenArq(ifstream& arq, string token){
         cout << "Erro ao buscar no arquivo";
         exit(EXIT_FAILURE);
     }
-
+    arq.seekg(0); //rewind
     return false;
 }
 
