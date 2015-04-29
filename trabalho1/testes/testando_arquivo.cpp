@@ -1,4 +1,4 @@
-#include "../git/trabalho1/include/arquivo.h"
+#include "../include/arquivo.h"
 
 using namespace std;
 
@@ -8,7 +8,7 @@ int main(){
     ofstream arq2;
     string line;
 
-    arq1.open("tabelas/gramatica.txt");
+    arq1.open("../../tabelas/gramatica.txt");
 
     cout << buscaTokenArq(arq1, "load");
     arq1.close();
@@ -16,5 +16,6 @@ int main(){
     arq2.open("output.txt");
     arq2 << "teste";
     arq2.close();
+    getchar();
     return 0;
 }

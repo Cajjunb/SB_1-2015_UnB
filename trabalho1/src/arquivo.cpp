@@ -25,3 +25,16 @@ bool buscaTokenArq(ifstream& arq, string token){
     return false;
 }
 
+bool preProcessaArq(ifstream& arquivo, string titulo_arquivo){
+    string token_atual;
+    if( arquivo.is_open()){
+        do{
+
+        }while(!arquivo.eof());
+    }
+    else{
+        cout << "Erro no Preprocessamento, o Arquivo nao foi encontrado";
+        exit(EXIT_FAILURE);
+    }
+
+}
