@@ -40,7 +40,7 @@ void criaTS(ifstream& arq, vector<tipoInstrucao>& instrucao, vector<tipoDiretiva
                 d = pegaDiretiva(diretiva, vTab[1]);
                 if(d.tamanho == -1){ //se o tamanho dela é -1, então seu tamanho deve estar especificado no próximo tab
                     if(vTab.size() >= 3 && !vTab[2].empty()) //se ele realmente tiver mais que 3 coisas e seu terceiro coisa não for vazio
-                        pc += stoi(vTab[2],nullptr,10); //tem um número indicando seu valor
+                        pc += atoi(vTab[2].c_str()); //tem um número indicando seu valor
                     else
                         pc++; //não tem um número dizendo seu tamanho, então suponhamos que seja 1
                 }
