@@ -65,7 +65,7 @@ void criaInstrucao(ifstream& arq, vector<tipoInstrucao>& instrucao){
 tipoGramatica pegaGramatica(vector<tipoGramatica>& gramatica, string token){
     tipoGramatica nulo;
 
-    for(int i = 0; i < gramatica.size(); i++){
+    for(int i = 0; i < (int)gramatica.size(); i++){
         if(strcasecmp(gramatica[i].nome.c_str(), token.c_str()) == 0)
             return gramatica[i]; //achou
     }
@@ -79,7 +79,7 @@ tipoGramatica pegaGramatica(vector<tipoGramatica>& gramatica, string token){
 tipoDiretiva pegaDiretiva(vector<tipoDiretiva>& diretiva, string token){
     tipoDiretiva nulo;
 
-    for(int i = 0; i < diretiva.size(); i++){
+    for(int i = 0; i < (int)diretiva.size(); i++){
         if(strcasecmp(diretiva[i].nome.c_str(), token.c_str()) == 0)
             return diretiva[i]; //achou
     }
@@ -94,7 +94,7 @@ tipoDiretiva pegaDiretiva(vector<tipoDiretiva>& diretiva, string token){
 tipoInstrucao pegaInstrucao(vector<tipoInstrucao>& instrucao, string token){
     tipoInstrucao nulo;
 
-    for(int i = 0; i < instrucao.size(); i++){
+    for(int i = 0; i < (int)instrucao.size(); i++){
         if(strcasecmp(instrucao[i].nome.c_str(), token.c_str()) == 0)
             return instrucao[i]; //achou
     }
@@ -103,4 +103,32 @@ tipoInstrucao pegaInstrucao(vector<tipoInstrucao>& instrucao, string token){
     nulo.op = -1;
     nulo.tamanho = -1;
     return nulo; //não achou
+}
+
+bool isGramatica(vector<tipoGramatica>& gramatica, string token){
+
+    for(int i = 0; i < (int)gramatica.size(); i++){
+        if(strcasecmp(gramatica[i].nome.c_str(), token.c_str()) == 0)
+            return true; //achou
+    }
+
+    return false; //não achou
+}
+
+bool isDiretiva(vector<tipoDiretiva>& diretiva, string token){
+
+    for(int i = 0; i < (int)diretiva.size(); i++){
+        if(strcasecmp(diretiva[i].nome.c_str(), token.c_str()) == 0)
+            return true; //achou
+    }
+    return false; //não achou
+}
+
+bool isInstrucao(vector<tipoInstrucao>& instrucao, string token){
+
+    for(int i = 0; i < (int)instrucao.size(); i++){
+        if(strcasecmp(instrucao[i].nome.c_str(), token.c_str()) == 0)
+            return true; //achou
+    }
+    return false; //não achou
 }
