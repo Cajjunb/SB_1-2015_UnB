@@ -1,11 +1,17 @@
-CFLAG= -Wall
+CFLAG= -Wall -std=c++11
 PATHMAIN='.\testes\'
 PATHSRC ='.\src\'
 
 all: arquivo.o  main.o ligacao
 
+teste_preprocessa: arquivo.o tabela.o ligacao
+	g++ -c $(CFLAG) .\testes\testando_preprocessamento.cpp -o $(PATHMAIN)teste_preprocessa
+
+tabela.o:
+	g++ $(CFLAG) $(PATHSRC)tabela.cpp -o $(PATHSRC)tabela.o
+
 ligacao:
-	g++ $(PATHMAIN)main.o $(PATHSRC)arquivo.o -o '.\bin\Release\Teste1'
+	g++ $(PATHMAIN)main.o $(PATHSRC)*.o -o '.\bin\Release\Teste1'
 
 arquivo.o:
 	g++ -c  $(CFLAG) $(PATHSRC)arquivo.cpp -o $(PATHSRC)arquivo.o

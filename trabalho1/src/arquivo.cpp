@@ -1,5 +1,5 @@
 #include "../include/arquivo.h"
-
+#include "../include/tabela.h"
 
 bool buscaTokenArq(ifstream& arq, string token){
 
@@ -27,16 +27,28 @@ bool buscaTokenArq(ifstream& arq, string token){
     return false;
 }
 
-bool preProcessaArq(ifstream& arquivo, string titulo_arquivo){
-    string token_atual;
-    if( arquivo.is_open()){
-        do{
-
-        }while(!arquivo.eof());
-    }
-    else{
-        cout << "Erro no Preprocessamento, o Arquivo nao foi encontrado";
+bool preProcessaArq(char* nomeArquivo, vector<tipoInstrucao>& gramatica){
+    FILE *ponteiroLeitura, *ponteiroEscrita ;
+    ponteiroLeitura = fopen(nomeArquivo, "r");
+    tipoInstrucao instrucaoObjeto;                                      // Variavel String
+    char    streamValor[101];                                           // NUMERO MÁXIMO DE CHARS POR IDENTIFICADOR
+    string stringCplusplus ;
+    char aux[101] ;
+    if(ponteiroLeitura == NULL ){
         exit(EXIT_FAILURE);
+    }else{
+        ponteiroEscrita = fopen("pre_precossado.txt","w");
+        int i ;
+        if(ponteiroEscrita == NULL)
+            exit(EXIT_FAILURE);
+        while( fscanf(ponteiroLeitura,"%s",streamValor) != EOF){
+            stringCplusplus = streamValor;                                  // Convertendo C* para Strings CPLUPLUS
+            instrucaoObjeto = pegaInstrucao(gramatica,streamValor);
+            if(instrucaoObjeto.op != -1){
+                cout << "\n\tOLHA! intruc = " << instrucaoObjeto.nome << "\n\t op = " << instrucaoObjeto.op;
+                getchar();
+             }
+        }
     }
 
 }
