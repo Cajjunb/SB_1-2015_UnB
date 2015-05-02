@@ -8,8 +8,8 @@ void criaGramatica(ifstream& arq, vector<tipoGramatica>& gramatica){
 
         getline(arq, aux.nome, '\t'); //leia até o primeiro tab: nome
 
-        getline(arq, auxQtd, '\t'); //leia até o segundo tab tab: quantidade de operandos
-        aux.qtdOperandos = stoi(auxQtd,nullptr,10);
+        arq >> aux.qtdOperandos;
+        arq.get(); //\t que sobrou
 
         getline(arq, aux.formato); //leia até final da linha: formato dos operandos
 
@@ -27,14 +27,14 @@ void criaDiretiva(ifstream& arq, vector<tipoDiretiva>& diretiva){
 
         getline(arq, aux.nome, '\t'); //leia até o primeiro tab: nome
 
-        getline(arq, auxQtd, '\t'); //leia até o segundo tab tab: quantidade de operandos
-        aux.qtdOperandos = stoi(auxQtd,nullptr,10);
+        arq >> aux.qtdOperandos;
+        arq.get(); //\t que sobrou
 
         getline(arq, auxQtd, '\t'); //leia até terceiro tab: formato dos operandos
         aux.formato = auxQtd[0]; //formato 0 significa que não tem formato
 
-        getline(arq, auxQtd); //leia até o final: tamanho (em decimal) do espaço que a chamada da diretiva ocupa
-        aux.tamanho = stoi(auxQtd,nullptr,10); //-1 no tamanho significa que ocupará baseado no formato
+        arq >> aux.tamanho;
+        arq.get(); //\n que sobrou
 
         diretiva.push_back(aux);
     }
@@ -50,11 +50,11 @@ void criaInstrucao(ifstream& arq, vector<tipoInstrucao>& instrucao){
 
         getline(arq, aux.nome, '\t'); //leia até o primeiro tab: nome
 
-        getline(arq, auxQtd, '\t'); //leia até o segundo tab tab: opcode
-        aux.op = stoi(auxQtd,nullptr,10);
+        arq >> aux.op;
+        arq.get(); //\t que sobrou
 
-        getline(arq, auxQtd); //leia até final da linha: tamanho(em decimal) do espaço que a instrução ocupa
-        aux.tamanho = stoi(auxQtd,nullptr,10);
+        arq >> aux.tamanho;
+        arq.get(); //\n que sobrou
 
         instrucao.push_back(aux);
     }
