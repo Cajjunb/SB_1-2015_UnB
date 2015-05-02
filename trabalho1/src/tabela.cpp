@@ -7,6 +7,7 @@ void criaGramatica(ifstream& arq, vector<tipoGramatica>& gramatica){
         string auxQtd;
 
         getline(arq, aux.nome, '\t'); //leia até o primeiro tab: nome
+        printf("CHEGOU AQUI" );
 
         arq >> aux.qtdOperandos;
         arq.get(); //\t que sobrou

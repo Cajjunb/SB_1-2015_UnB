@@ -1,5 +1,5 @@
-#include "include/arquivo.h"
-#include "include/tabela.h"
+#include "../include/arquivo.h"
+#include "../include/tabela.h"
 
 using namespace std;
 
@@ -7,21 +7,25 @@ using namespace std;
 int main(){
     ifstream arq1;
     vector<tipoInstrucao> instrucao;
-    vector<tipoGramatica> gramatica;
+    vector<tipoGramatica> gramatica ;
     vector<tipoDiretiva> diretiva;
     tipoGramatica g;
     tipoDiretiva d;
     tipoInstrucao i;
+    char aux[301] = "../testes_assembly/nao_preprocessado/teste1.asm";
 
-    arq1.open("tabelas/instrucoes.txt");
+    arq1.open("../../tabelas/instrucoes.txt");
     criaInstrucao(arq1, instrucao);
     arq1.close();
+    printf("CHEGOU AQUI" );
 
-    arq1.open("tabelas/gramatica.txt");
+
+    arq1.open("../../tabelas/gramatica.txt");
     criaGramatica(arq1, gramatica);
     arq1.close();
 
-    arq1.open("tabelas/diretiva.txt");
+
+    arq1.open("../../tabelas/diretiva.txt");
     criaDiretiva(arq1, diretiva);
     arq1.close();
 
@@ -36,7 +40,8 @@ int main(){
         cout << "Diretiva: " << diretiva[i].nome << endl;
         cout << "\tTamanho: " << diretiva[i].tamanho << "\tFormato: " << diretiva[i].formato << endl;
     }
-    preProcessaArq("../testes_assembly/nao_preprocessado/teste1.asm", gramatica);
+
+    preProcessaArq(aux, instrucao);
 
     return 0;
 }

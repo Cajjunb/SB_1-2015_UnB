@@ -27,7 +27,7 @@ bool buscaTokenArq(ifstream& arq, string token){
     return false;
 }
 
-bool preProcessaArq(char* nomeArquivo, vector<tipoInstrucao>& gramatica){
+bool preProcessaArq(char nomeArquivo[] , vector<tipoInstrucao>& gramatica){
     FILE *ponteiroLeitura, *ponteiroEscrita ;
     ponteiroLeitura = fopen(nomeArquivo, "r");
     tipoInstrucao instrucaoObjeto;                                      // Variavel String
