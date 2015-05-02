@@ -5,6 +5,7 @@
 #include <map>
 #include <iostream>
 #include "tabela.h"
+#include <stdlib.h>
 
 using namespace std;
 
