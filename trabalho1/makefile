@@ -1,4 +1,4 @@
-CFLAG= -Wall
+CFLAG= -Wall -std=c++11
 PATHMAIN='.\testes\'
 PATHSRC ='.\src\'
 PATHBIN ='.\bin\Release\'

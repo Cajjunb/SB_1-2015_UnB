@@ -5,15 +5,18 @@ void criaGramatica(ifstream& arq, vector<tipoGramatica>& gramatica){
     while(!arq.eof()){
         tipoGramatica aux;
         string auxQtd;
+        printf("CHEGOU AQUI AAAAAGH" );
 
         getline(arq, aux.nome, '\t'); //leia até o primeiro tab: nome
-        printf("CHEGOU AQUI" );
+        cout << "Nome: " << aux.nome << endl;
 
         arq >> aux.qtdOperandos;
+        cout << "Qtd: " << aux.qtdOperandos << endl;
         arq.get(); //\t que sobrou
 
         getline(arq, aux.formato); //leia até final da linha: formato dos operandos
-
+        cout << "Formato: " << aux.formato << endl;
+        cin.get();
         gramatica.push_back(aux);
     }
 
