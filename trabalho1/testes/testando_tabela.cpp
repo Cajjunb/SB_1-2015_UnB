@@ -1,5 +1,5 @@
-#include "include/arquivo.h"
-#include "include/tabela.h"
+#include "../include/arquivo.h"
+#include "../include/tabela.h"
 
 using namespace std;
 

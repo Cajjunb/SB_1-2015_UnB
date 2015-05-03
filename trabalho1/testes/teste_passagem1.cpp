@@ -1,6 +1,6 @@
-#include "include/arquivo.h"
-#include "include/tabela.h"
-#include "include/passagem1.h"
+#include "../include/arquivo.h"
+#include "../include/tabela.h"
+#include "../include/passagem1.h"
 
 using namespace std;
 

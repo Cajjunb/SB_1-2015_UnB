@@ -1,24 +1,36 @@
-CFLAG= -Wall
-PATHMAIN='.\testes\'
-PATHSRC ='.\src\'
-PATHBIN ='.\bin\Release\'
+MAIN = montador
 
-all: arquivo.o  main.o ligacao
+all:	montador clean
 
-teste_preprocessa: arquivo.o tabela.o preprecessa.o 
-	g++   $(PATHSRC)arquivo.o $(PATHSRC)tabela.o $(PATHMAIN)main.o  -o $(PATHBIN)teste_preprocessa1.exe
+clean:
+	rm *.o
 
-tabela.o:
-	g++ -c $(CFLAG) $(PATHSRC)tabela.cpp -o $(PATHSRC)tabela.o
+montador:	$(MAIN).o arquivo.o passagem1.o tabela.o
+	g++ $(MAIN).o arquivo.o passagem1.o tabela.o -std=c++11  -o montador
 
-preprecessa.o:
-	g++ -c $(CFLAG) $(PATHMAIN)testando_preprocessamento.cpp -o $(PATHMAIN)main.o
+arquivo.o:	src/arquivo.cpp
+	g++ -c src/arquivo.cpp
 
-ligacao:
-	g++ $(PATHMAIN)main.o $(PATHSRC)*.o -o '.\bin\Release\Teste1'
+passagem1.o: src/passagem1.cpp
+	g++ -c src/passagem1.cpp
 
-arquivo.o:
-	g++ -c  $(CFLAG) $(PATHSRC)arquivo.cpp -o $(PATHSRC)arquivo.o
+tabela.o: src/tabela.cpp
+	g++ -c src/tabela.cpp
 
-main.o:
-	g++ -c $(CFLAG) .\testes\testando_arquivo.cpp -o $(PATHMAIN)main.o
+montador.o: montador.cpp
+	g++ -c montador.cpp
+
+################
+# Arquivos de testes
+################
+testando_tabela.o: testes/testando_tabela.cpp
+	g++ -c testes/testando_tabela.cpp
+
+testando_arquivo.o: testes/testando_arquivo.cpp
+	g++ -c testes/testando_arquivo.cpp
+
+teste_passagem1.o: testes/teste_passagem1.cpp
+	g++ -c testes/teste_passagem1.cpp
+
+testando_preprocessamento.o: testes/testando_preprocessamento.cpp
+	g++ -c testes/testando_preprocessamento.cpp
