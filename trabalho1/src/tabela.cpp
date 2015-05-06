@@ -2,28 +2,33 @@
 
 void criaGramatica(ifstream& arq, vector<tipoGramatica>& gramatica){
 
-    if(arq.is_open()){
-        while(!arq.eof()){
-            tipoGramatica aux;
-            string auxQtd;
+    if(!arq.is_open()){
+        cout << "ERRO: O arquivo nao foi encontrado. Encerrando" << endl;
+        exit(EXIT_FAILURE);
+    }
+    while(!arq.eof()){
+        tipoGramatica aux;
+        string auxQtd;
 
-            getline(arq, aux.nome, '\t'); //leia até o primeiro tab: nome
+        getline(arq, aux.nome, '\t'); //leia até o primeiro tab: nome
 
-            arq >> aux.qtdOperandos;
-            arq.get(); //\t que sobrou
+        arq >> aux.qtdOperandos;
+        arq.get(); //\t que sobrou
 
-            getline(arq, aux.formato); //leia até final da linha: formato dos operandos
-            gramatica.push_back(aux);
-        }
+        getline(arq, aux.formato); //leia até final da linha: formato dos operandos
+        gramatica.push_back(aux);
+    }
 
-        arq.seekg(0); //rewind
-    }else{
-        cout << "O arquivo nao foi encontrado";
+    arq.seekg(0); //rewind
     }
 }
 
 void criaDiretiva(ifstream& arq, vector<tipoDiretiva>& diretiva){
 
+    if(!arq.is_open()){
+        cout << "ERRO: O arquivo nao foi encontrado. Encerrando" << endl;
+        exit(EXIT_FAILURE);
+    }
     while(!arq.eof()){
         tipoDiretiva aux;
         string auxQtd;
@@ -46,6 +51,11 @@ void criaDiretiva(ifstream& arq, vector<tipoDiretiva>& diretiva){
 }
 
 void criaInstrucao(ifstream& arq, vector<tipoInstrucao>& instrucao){
+
+    if(!arq.is_open()){
+        cout << "ERRO: O arquivo nao foi encontrado. Encerrando" << endl;
+        exit(EXIT_FAILURE);
+    }
 
     while(!arq.eof()){
         tipoInstrucao aux;
