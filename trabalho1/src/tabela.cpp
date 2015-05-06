@@ -8,14 +8,11 @@ void criaGramatica(ifstream& arq, vector<tipoGramatica>& gramatica){
             string auxQtd;
 
             getline(arq, aux.nome, '\t'); //leia até o primeiro tab: nome
-            cout << "Nome: " << aux.nome << endl;
 
             arq >> aux.qtdOperandos;
-            cout << "Qtd: " << aux.qtdOperandos << endl;
             arq.get(); //\t que sobrou
 
             getline(arq, aux.formato); //leia até final da linha: formato dos operandos
-            cout << "Formato: " << aux.formato << endl;
             gramatica.push_back(aux);
         }
 

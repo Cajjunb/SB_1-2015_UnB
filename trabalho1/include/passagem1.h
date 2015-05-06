@@ -6,6 +6,8 @@
 #include <iostream>
 #include "tabela.h"
 #include <stdlib.h>
+#include <string.h>
+#include "erro.h"
 
 using namespace std;
 
@@ -16,4 +18,13 @@ typedef struct{
     bool externo;
 }tipoTS; //tabela de símbolos
 
-void criaTS(ifstream& arq, vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, map<string, tipoTS>& simbolo); //"Retorna" tabela de símbolos
+void editaDefinicao(map<string, int>& definicao, string token, int endereco, int linha); //Edita endereço na tabela de definição baseado no token
+void editaUso(map<string, vector<int>>& uso, string token, int endereco, int linha); //Adiciona na tabela de uso o valor do endereço baseado no token
+
+void insereDefinicao(map<string, int>& definicao, string& token, int endereco, int linha); //insere na tabela de definição
+void insereUso(map<string, vector<int>>& uso, string& token, int linha); //Insere na tabela de uso
+void insereSimbolo(map<string, tipoTS>& simbolo, string& token, int linha); //Insere na tabela de símbolos
+
+int calculaPC(vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, string token, int linha, vector<string> vTab); //Baseado na intrução ou diretiva, calcula pc
+
+void criaTabelas(ifstream& arq, vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, map<string, tipoTS>& simbolo, map<string, vector<int>>& uso, map<string, int>& definicao); //Cria tabelas de símbolos, de definição e de uso
