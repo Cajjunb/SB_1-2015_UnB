@@ -2,25 +2,27 @@
 
 void criaGramatica(ifstream& arq, vector<tipoGramatica>& gramatica){
 
-    while(!arq.eof()){
-        tipoGramatica aux;
-        string auxQtd;
-        printf("CHEGOU AQUI AAAAAGH" );
+    if(arq.is_open()){
+        while(!arq.eof()){
+            tipoGramatica aux;
+            string auxQtd;
 
-        getline(arq, aux.nome, '\t'); //leia até o primeiro tab: nome
-        cout << "Nome: " << aux.nome << endl;
+            getline(arq, aux.nome, '\t'); //leia até o primeiro tab: nome
+            cout << "Nome: " << aux.nome << endl;
 
-        arq >> aux.qtdOperandos;
-        cout << "Qtd: " << aux.qtdOperandos << endl;
-        arq.get(); //\t que sobrou
+            arq >> aux.qtdOperandos;
+            cout << "Qtd: " << aux.qtdOperandos << endl;
+            arq.get(); //\t que sobrou
 
-        getline(arq, aux.formato); //leia até final da linha: formato dos operandos
-        cout << "Formato: " << aux.formato << endl;
-        cin.get();
-        gramatica.push_back(aux);
+            getline(arq, aux.formato); //leia até final da linha: formato dos operandos
+            cout << "Formato: " << aux.formato << endl;
+            gramatica.push_back(aux);
+        }
+
+        arq.seekg(0); //rewind
+    }else{
+        cout << "O arquivo nao foi encontrado";
     }
-
-    arq.seekg(0); //rewind
 }
 
 void criaDiretiva(ifstream& arq, vector<tipoDiretiva>& diretiva){

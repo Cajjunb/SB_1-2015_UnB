@@ -12,7 +12,7 @@ int main(){
     tipoGramatica g;
     tipoDiretiva d;
     tipoInstrucao i;
-    char aux[301] = "nao_preprocessado/teste1.asm";
+    char aux[301] = "srcassembly/teste_1.asm";
 
     arq1.open("tabelas/instrucoes.txt");
     criaInstrucao(arq1, instrucao);
@@ -40,7 +40,7 @@ int main(){
         cout << "\tTamanho: " << diretiva[i].tamanho << "\tFormato: " << diretiva[i].formato << endl;
     }
 
-    preProcessaArq(aux, instrucao);
+    preProcessaArq(aux, gramatica);
 
     return 0;
 }

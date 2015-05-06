@@ -16,7 +16,7 @@ int main(){
     arq1.open("tabelas/gramatica.txt");
     criaGramatica(arq1, gramatica);
     arq1.close();
-    /*
+    
     arq1.open("tabelas/instrucoes.txt");
     criaInstrucao(arq1, instrucao);
     arq1.close();
@@ -56,5 +56,5 @@ int main(){
         cout << "ops :(" << endl;
 
     return 0;
-    */
+    
 }

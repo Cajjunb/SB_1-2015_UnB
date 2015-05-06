@@ -45,16 +45,52 @@ void criaVetorTab(ifstream& arq, vector<vector<string>>& mTab){
     arq.seekg(0);
 }
 
-bool preProcessaArq(ifstream& arquivo, string titulo_arquivo){
-    string token_atual;
-    if( arquivo.is_open()){
-        do{
+bool preProcessaArq(char nomeArquivo[] , vector<tipoGramatica>& gramatica){
+    FILE *ponteiroLeitura, *ponteiroEscrita ;
+    ponteiroLeitura = fopen(nomeArquivo, "r");
+    tipoGramatica instrucaoBuffer, instrucaoAux;                                      // Variavel String
+    char    streamValor[301];                                           // NUMERO MÁXIMO DE CHARS POR IDENTIFICADOR
+    std::size_t zero = 0;
+    string stringCplusplus ;
+    int linha = 1;
 
-        }while(!arquivo.eof());
-    }
-    else{
-        cout << "Erro no Preprocessamento, o Arquivo nao foi encontrado";
+    instrucaoBuffer.qtdOperandos = 0;                                           // INICIALIZA O BUFFER
+    if(ponteiroLeitura == NULL ){
+        printf("ERRO NA leitura do teste");
         exit(EXIT_FAILURE);
+    }else{
+        ponteiroEscrita = fopen("pre_processado.txt","w");
+        int i ;
+        if(ponteiroEscrita == NULL)
+            exit(EXIT_FAILURE);
+        while( feof(ponteiroLeitura) == false){
+            fscanf(ponteiroLeitura,"%s",streamValor);
+            stringCplusplus = streamValor;                                  // Convertendo C* para Strings CPLUPLUS
+            instrucaoAux = pegaGramatica(gramatica,streamValor);
+            if(instrucaoAux.qtdOperandos <  0 ){                                 // NAO ACHOU UMA COM O BUFFER STRING ATUAL INSTRUCAO NA GRAMATICA?
+                if(instrucaoBuffer.qtdOperandos > 0){
+                    fprintf(ponteiroEscrita, "%s\t",streamValor);
+                    instrucaoBuffer.qtdOperandos-- ;
+                }else{
+                    if( stringCplusplus.find(';') == zero ){                         // CASO COMECE UM COMENTARIO LE ATE O FINAL DA LINHA
+                        cout << "\n\tCOMECOU O COMENTARIO!!";
+                        fscanf(ponteiroLeitura,"%*[^\n]");                          // PULA ATE O \n!
+                    }else{
+                    cout << "\n\tErro SINTATICO 2 esperado argumentos da instrucao = " << instrucaoBuffer.nome << "Linha = " << linha;
+                    }
+                }
+            }else{                                                              // ACHOU  COM O BUFFER STRING ATUAL INSTRUCAO NA GRAMATICA!
+                if(instrucaoBuffer.qtdOperandos > 0){
+                    cout << "\n\tErro SINTATICO 2 esperado argumentos da instrucao = " << instrucaoBuffer.nome << "Linha = " << linha;
+                }else{
+                    instrucaoBuffer = instrucaoAux;                         // GUARDA NO BUFFER A MEMORIA
+                    fprintf(ponteiroEscrita, "\n%s\t",streamValor);
+                    linha++;
+                }
+            }
+        }
+        fclose(ponteiroEscrita);
+        fclose(ponteiroLeitura);
     }
 
 }

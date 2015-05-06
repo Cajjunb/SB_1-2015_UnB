@@ -3,7 +3,7 @@ CFLAG= -Wall -std=c++11
 PATHMAIN='.\testes\'
 PATHSRC ='.\src\'
 PATHBIN ='.\bin\Release\'
-MAIN = testando_tabela
+MAIN = testando_preprocessamento
 
 all:	montador clean
 
