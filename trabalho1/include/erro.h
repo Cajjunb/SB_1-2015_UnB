@@ -13,4 +13,4 @@ typedef enum{
 
 using namespace std;
 
-void imprimeErro(tipoErro e, int endereco = -1, int linha = -1); //imprime mensagem de erro. Mostra endereço de PC e linha caso seja passado
+void imprimeErro(tipoErro e, int linha = -1); //imprime mensagem de erro. Mostra endereço de PC e linha caso seja passado

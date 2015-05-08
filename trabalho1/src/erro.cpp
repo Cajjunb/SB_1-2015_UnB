@@ -1,6 +1,6 @@
 #include "../include/erro.h"
 
-void imprimeErro(tipoErro e, int endereco, int linha){
+void imprimeErro(tipoErro e, int linha){
     cout << "------ERRO------ " << endl;
     switch(e){
         case ERRO_REDEFINICAO:
@@ -16,7 +16,5 @@ void imprimeErro(tipoErro e, int endereco, int linha){
 
     if(linha > -1)
         cout << "\t linha: " << linha;
-    if(endereco > -1)
-        cout << "\t endereco: " << endereco;
     cout << endl;
 }

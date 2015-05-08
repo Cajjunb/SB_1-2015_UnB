@@ -19,9 +19,8 @@ void criaGramatica(ifstream& arq, vector<tipoGramatica>& gramatica){
         gramatica.push_back(aux);
     }
 
-    arq.seekg(0); //rewind
+    arq.seekg(0, arq.beg); //rewind
     }
-}
 
 void criaDiretiva(ifstream& arq, vector<tipoDiretiva>& diretiva){
 
@@ -47,7 +46,7 @@ void criaDiretiva(ifstream& arq, vector<tipoDiretiva>& diretiva){
         diretiva.push_back(aux);
     }
 
-    arq.seekg(0); //rewind
+    arq.seekg(0, arq.beg); //rewind
 }
 
 void criaInstrucao(ifstream& arq, vector<tipoInstrucao>& instrucao){
@@ -72,7 +71,7 @@ void criaInstrucao(ifstream& arq, vector<tipoInstrucao>& instrucao){
         instrucao.push_back(aux);
     }
 
-    arq.seekg(0); //rewind
+    arq.seekg(0, arq.beg); //rewind
 }
 
 tipoGramatica pegaGramatica(vector<tipoGramatica>& gramatica, string token){
