@@ -81,7 +81,6 @@ int calculaPC(vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, 
             aux.append(vTab[2]);
         }
 
-        cout << aux << endl;
         found = aux.find(", "); //verifica se acha, no argumento, a string ", "
         if(found != string::npos){ //Achou um Copy. Aux está na forma "LABEL, LABEL"
             string::size_type pos = 0;

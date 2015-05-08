@@ -1,6 +1,7 @@
 #include "include/arquivo.h"
 #include "include/tabela.h"
 #include "include/passagem1.h"
+#include "include/passagem2.h"
 
 using namespace std;
 
@@ -8,6 +9,7 @@ using namespace std;
 
 int main(){
     ifstream arq1;
+    ofstream arq2;
     vector<tipoInstrucao> instrucao;
     vector<tipoGramatica> gramatica;
     vector<tipoDiretiva> diretiva;
@@ -43,6 +45,16 @@ int main(){
     cout << "Rotulo\t Posicao" << endl;
     for (map<string, int>::iterator it = definicao.begin(); it != definicao.end(); ++it)
         cout << it->first << "\t " << it->second << endl;
+
+    cout << "---------- Tabela de Uso ----------" << endl;
+    cout << "Rotulo\t Posicao" << endl;
+    for (map<string, vector<int>>::iterator it = uso.begin(); it != uso.end(); ++it){
+        cout << it->first << "\t " << "\t";
+        for(vector<int>::iterator it2 = it->second.begin(); it2 != it->second.end(); ++ it2)
+            cout << *it2 << "<-";
+        cout << endl;
+    }
+
 
     return 0;
 }
