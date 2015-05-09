@@ -8,6 +8,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "erro.h"
+#include "base.h"
 
 using namespace std;
 

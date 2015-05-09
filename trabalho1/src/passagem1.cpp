@@ -68,7 +68,6 @@ int calculaPC(vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, 
     }
     else if(isInstrucao(instrucao, token)){
         tipoInstrucao i;
-        size_t found; //verifica se string/char é encontrada
         string aux; //string auxiliar que contém argumentos
         int endAux = endereco; //endereço auxiliar (o tamanho de uma instrução leva em consideração seus argumentos, então cada argumento +1 no endereço)
         vector<string> copyArg; //vetor de string para conter argumentos que estão separados por vírgula ou por +
@@ -81,20 +80,8 @@ int calculaPC(vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, 
             aux.append(vTab[2]);
         }
 
-        found = aux.find(", "); //verifica se acha, no argumento, a string ", "
-        if(found != string::npos){ //Achou um Copy. Aux está na forma "LABEL, LABEL"
-            string::size_type pos = 0;
-            string::size_type prev = 0;
-            while ((pos = aux.find(", ", prev)) != string::npos){ //enquanto cada ", " encontrando não for uma posição inválida da string
-                copyArg.push_back(aux.substr(prev, pos - prev)); //adicione no vetor de tabs a substring de onde este tab foi encontrado até o começo
-                prev = pos + 2; //pula duas posições
-            }
-            copyArg.push_back(aux.substr(prev)); //coloque a última subdivisão
-            for (vector<string>::iterator it = copyArg.begin() ; it != copyArg.end(); ++it){ //retirandos strings vazias
-                if((*it).empty())
-                    vTab.erase(it);
-            }
-        }
+        explode(copyArg, aux, ", "); //procura se na string aux tem copy
+
 
         do{
             endAux++;
@@ -140,19 +127,10 @@ void criaTabelas(ifstream& arq, vector<tipoInstrucao>& instrucao, vector<tipoDir
         string aux;
         int tamanho;
 
-        string::size_type pos = 0;
-        string::size_type prev = 0;
-        while ((pos = linha.find('\t', prev)) != string::npos){ //enquanto cada \t encontrando não for uma posição inválida da string
-            vTab.push_back(linha.substr(prev, pos - prev)); //adicione no vetor de tabs a substring de onde este tab foi encontrado até o começo
-            prev = pos + 1;
-        }
-        vTab.push_back(linha.substr(prev)); //coloque a última subdivisão de tab
-        for (vector<string>::iterator it = vTab.begin() ; it != vTab.end(); ++it){ //retirandos strings vazias
-            if((*it).empty())
-                vTab.erase(it);
-        }
+        explode(vTab, linha, "\t");
         //Se a primeira string tiver :, é definição de rótulo
         tamanho = vTab[0].size();
+
         if(vTab[0][tamanho - 1] == ':'){
             tipoTS s;
             vTab[0] = vTab[0].substr(0, tamanho - 1); //eliminando :

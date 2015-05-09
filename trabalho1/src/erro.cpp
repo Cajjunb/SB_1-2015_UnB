@@ -1,7 +1,7 @@
 #include "../include/erro.h"
 
 void imprimeErro(tipoErro e, int linha){
-    cout << "------ERRO------ " << endl;
+    cout << ">>>>>ERRO: ";
     switch(e){
         case ERRO_REDEFINICAO:
             cout << "Redefinicao de simbolos";
@@ -16,5 +16,5 @@ void imprimeErro(tipoErro e, int linha){
 
     if(linha > -1)
         cout << "\t linha: " << linha;
-    cout << endl;
+    cout << "<<<<<" << endl;
 }
