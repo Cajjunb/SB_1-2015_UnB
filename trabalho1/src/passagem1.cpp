@@ -12,7 +12,7 @@ void insereSimbolo(map<string, tipoTS>& simbolo, string& token, tipoTS s, int li
 void insereUso(map<string, vector<int>>& uso, string& token, int linha){
     vector<int> fim;
 
-    fim.push_back(-1);
+    fim.clear();
     if(uso.find(token) == uso.end()){
         uso.insert(pair<string, vector<int>>(token, fim)); //se endereco  = -1, então chegou a última chamada deste rótulo
     }
@@ -103,8 +103,8 @@ int calculaPC(vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, 
                         explode(somaEndereco, aux, "+");
 
                         it = uso.find(somaEndereco[0]);
-                        cout << somaEndereco[0];
-                        cin.get();
+                        //cout << somaEndereco[0];
+                        //cin.get();
 
                         if(it != uso.end())
                             editaUso(uso, somaEndereco[0], endAux);

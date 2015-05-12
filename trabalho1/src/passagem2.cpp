@@ -5,35 +5,44 @@ void escreveOp(ofstream& out, vector<tipoInstrucao>& instrucao, vector<tipoDiret
         case 0: {
             tipoInstrucao i;
             string aux; //string auxiliar que contém argumentos
-            vector<string> copyArg; //vetor de string para conter argumentos que estão separados por vírgula ou por +
+            vector<string> copyArg; //vetor de string para conter argumentos que estão separados por vírgula
+            vector<string> maisAux; //vetor de string para conter argumentos que estão separados por +
+            int mais;
 
             i = pegaInstrucao(instrucao, token);
 
             out << i.op << " ";
-            cout << i.op << " ";
+            //cout << i.op << " ";
 
             if(i.tamanho > 1){ //se tamanho for maior que 1, então no mínimo tem argumentos
                 aux.append(arg); //Supõe formato INSTR   ARG
                 explode(copyArg, aux, ", "); //procura se na string aux tem copy
 
                 do{
+                    mais = 0;
                     if(!copyArg.empty()){ //enquanto copyArg tiver argumentos
                         aux.clear();
                         aux.append(copyArg.front());
                         copyArg.erase(copyArg.begin());
                     }
+                    if(aux.find("+") != string::npos){ //se tiver +
+                        explode(maisAux, aux, "+");
+                        aux.clear();
+                        aux.append(maisAux[0]);
+                        if(maisAux[1].find("x") != string::npos) //Número está em hexadecimal
+                            mais = (int)strtol(maisAux[1].c_str(), NULL, 16);
+                        else //Número está em decimal
+                            mais = (int)strtol(maisAux[1].c_str(), NULL, 10);
+                    }
 
                     map<string, tipoTS>::iterator it = simbolo.find(aux);
                     tipoTS s = it->second;
-                    if(!s.externo){
-                        out << s.posicao << " ";
-                        cout << s.posicao << endl;
-                    }
-                    else{
-                        out << "00 ";
-                        cout << s.posicao;
-                    }
-                    cout << endl;
+                    mais += s.posicao;
+
+                    out << mais;
+                    //cout << mais;
+
+                    //cout << endl;
                     out << " ";
 
                 }while(copyArg.size() > 0);
@@ -46,14 +55,34 @@ void escreveOp(ofstream& out, vector<tipoInstrucao>& instrucao, vector<tipoDiret
 
             if(d.formato == 'N'){
                 if(arg.find("x") != string::npos){ //Número está em hexadecimal
-                    cout << strtol(arg.c_str(), NULL, 16);
-                    out << strtol(arg.c_str(), NULL, 16);
+                    if(d.nome.compare("SPACE") == 0){
+                        long int space = strtol(arg.c_str(), NULL, 16);
+                        do{
+                            //cout << "00 ";
+                            out << "00 ";
+                            space--;
+                        }while(space > 0);
+                    }
+                    else{
+                        //cout << strtol(arg.c_str(), NULL, 16);
+                        out << strtol(arg.c_str(), NULL, 16);
+                    }
                 }
                 else{ //É um número em decimal
-                    cout << arg;
-                    out << arg;
+                    if(d.nome.compare("SPACE") == 0){
+                        long int space = strtol(arg.c_str(), NULL, 10);
+                        do{
+                            //cout << "00 ";
+                            out << "00 ";
+                            space--;
+                        }while(space > 0);
+                    }
+                    else{
+                        //cout << arg;
+                        out << arg;
+                    }
                 }
-                cout << endl;
+                //cout << endl;
                 out << " ";
             }
             break;
@@ -78,7 +107,7 @@ void separaOp(ofstream& out, vector<tipoInstrucao>& instrucao, vector<tipoDireti
             if(vTab.size() > 2)
                 escreveOp(out, instrucao, diretiva, simbolo, vTab[1], vTab[2], 0);
             else
-                escreveOp(out, instrucao, diretiva, simbolo, vTab[1], vTab[0], 0); //LABEL: STOP
+                escreveOp(out, instrucao, diretiva, simbolo, vTab[1], vTab[1], 0); //LABEL: STOP
 
         }
         else if(isDiretiva(diretiva, vTab[1])){
@@ -93,27 +122,30 @@ void separaOp(ofstream& out, vector<tipoInstrucao>& instrucao, vector<tipoDireti
 void criaArqObj(ifstream& in, ofstream& out, vector<tipoGramatica>& gramatica, vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, map<string, tipoTS>& simbolo, map<string, vector<int>>& uso, map<string, int>& definicao){
     string linha;
     int i = 0;
-    if(!uso.empty()){
+
+    if(!definicao.empty() || !uso.empty()){
         out << "TABLE USE" << endl;
-        cout << "TABLE USE" << endl;
+        //cout << "TABLE USE" << endl;
         for (map<string, vector<int>>::iterator it = uso.begin(); it != uso.end(); ++it){
             for(vector<int>::iterator it2 = it->second.begin(); it2 != it->second.end(); ++ it2){
                 out << it->first << " " << *it2 << endl;
                 cout << it->first << " " << *it2 << endl;
             }
         }
-    }
-    if(!definicao.empty()){
+        out << endl;
+        cout << endl;
+
         out << "TABLE DEFINITION" << endl;
-        cout << "TABLE DEFINITION" << endl;
-        for (map<string, int>::iterator it = definicao.begin(); it != definicao.end(); ++it)
+        //cout << "TABLE DEFINITION" << endl;
+        for (map<string, int>::iterator it = definicao.begin(); it != definicao.end(); ++it){
             out << it->first << " " << it->second << endl;
             cout << it->first << " " << it->second << endl;
-    }
+        }
+        out << endl;
+        //cout << endl;
 
-    if(!definicao.empty() || !uso.empty()){
         out << "CODE" << endl;
-        cout << "CODE" << endl;
+        //cout << "CODE" << endl;
     }
 
     while(getline(in, linha)){
@@ -121,7 +153,7 @@ void criaArqObj(ifstream& in, ofstream& out, vector<tipoGramatica>& gramatica, v
         int tamanho;
 
         i++;
-        //cout << linha << endl;
+        cout << linha << endl;
 
         explode(vTab, linha, "\t");
 
@@ -134,9 +166,6 @@ void criaArqObj(ifstream& in, ofstream& out, vector<tipoGramatica>& gramatica, v
                 imprimeErro(ERRO_NAO_ENCONTRADO, i);
         }
         separaOp(out, instrucao, diretiva, simbolo, vTab);
-       /* else{
-            pc += calculaPC(instrucao, diretiva, vTab[0], i, vTab);
-        }*/
     }
     in.seekg(0, in.beg); //rewind
 }
