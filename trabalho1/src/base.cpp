@@ -20,9 +20,13 @@ void explode(vector<string>& destino, string& fonte, const char* delimitador){
 
     }
     destino.push_back(fonte.substr(prev)); //coloque a última subdivisão
-    for (vector<string>::iterator it = destino.begin() ; it != destino.end(); ++it){ //retirandos strings vazias
-        if((*it).empty())
+    vector<string>::iterator it = destino.begin();
+    while(it != destino.end()){ //retirandos strings vazias
+        if((*it).empty()){
             destino.erase(it);
+        }
+        else
+            ++it;
     }
 }
 

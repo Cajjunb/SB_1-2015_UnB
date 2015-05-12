@@ -74,40 +74,50 @@ int calculaPC(vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, 
 
         i = pegaInstrucao(instrucao, token);
 
-        aux.append(vTab[1]); //Supõe formato INSTR   ARG
-        if(vTab.size() == 3){ //está no formato: LABEL:  INSTR   ARG
-            aux.clear();
-            aux.append(vTab[2]);
-        }
+        if(vTab.size() > 1){
 
-        explode(copyArg, aux, ", "); //procura se na string aux tem copy
-
-
-        do{
-            endAux++;
-            if(!copyArg.empty()){ //enquanto copyArg tiver argumentos
+            aux.append(vTab[1]); //Supõe formato INSTR   ARG
+            if(vTab.size() == 3){ //está no formato: LABEL:  INSTR   ARG
                 aux.clear();
-                aux.append(copyArg.front());
-                copyArg.erase(copyArg.begin());
+                aux.append(vTab[2]);
             }
-            map<string, vector<int>>::iterator it = uso.find(aux);
 
-            if(it == uso.end()){
-                //NAO DESISTE, AINDA PODE ESTAR: INSTR LABEL + NÚMERO
-                size_t found = aux.find("+");
-
-                if(found != string::npos){
-                    //subdivide a string de alguma forma
-
+            //cout << aux << endl();
+            explode(copyArg, aux, ", "); //procura se na string aux tem copy
+            do{
+                endAux++;
+                if(!copyArg.empty()){ //enquanto copyArg tiver argumentos
+                    aux.clear();
+                    aux.append(copyArg.front());
+                    copyArg.erase(copyArg.begin());
                 }
-                 //se não tiver achado, então não tem mesmo
-            }
-            else{
+                map<string, vector<int>>::iterator it = uso.find(aux);
 
-                editaUso(uso, aux, endAux);
-            }
-        }while(copyArg.size() > 0);
+                if(it == uso.end()){
+                    //NAO DESISTE, AINDA PODE ESTAR: INSTR LABEL + NÚMERO
+                    size_t found = aux.find("+");
 
+                    if(found != string::npos){
+                        //subdivide a string de alguma forma
+                        vector<string> somaEndereco;
+                        explode(somaEndereco, aux, "+");
+
+                        it = uso.find(somaEndereco[0]);
+                        cout << somaEndereco[0];
+                        cin.get();
+
+                        if(it != uso.end())
+                            editaUso(uso, somaEndereco[0], endAux);
+
+                    }
+                     //se não tiver achado, então não tem mesmo
+                }
+                else{
+
+                    editaUso(uso, aux, endAux);
+                }
+            }while(copyArg.size() > 0);
+        }
 
         return i.tamanho;
     }
