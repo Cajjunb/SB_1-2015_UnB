@@ -50,8 +50,28 @@ void editaUso(map<string, vector<int>>& uso, string token, int endereco){
 
 }
 
+void separaSectionArgs(vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, vector<string>& vTab, int linha){
+    if(!isDiretiva(diretiva, vTab[0]) && !isInstrucao(instrucao, vTab[0])){ //se o primeiro troço da linha não for diretiva nem instrução, então é rótulo
+        //Se é rótulo e o token é SECTION, então está na forma
+        //LABEL:    SECTION ARG
+        //vTab[0]   vTab[1] vTab[2]
+        if(vTab.size() == 3)
+            atualizaSection(vTab[2], linha);
+        else
+            imprimeErro(ERRO_USO_INCORRETO, linha);
+    }
+    else{
+    //está na forma
+    //SECTION   ARG
+        if(vTab.size() == 2)
+            atualizaSection(vTab[1], linha);
+        else
+            imprimeErro(ERRO_USO_INCORRETO, linha);
 
-int calculaPC(vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, map<string, vector<int>>& uso, string token, int linha, vector<string> vTab, int endereco){
+    }
+}
+
+int calculaPC(vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, map<string, vector<int>>& uso, string token, int linha, vector<string>& vTab, int endereco){
 
     if(isDiretiva(diretiva, token)){
         tipoDiretiva d;
@@ -64,6 +84,10 @@ int calculaPC(vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, 
             else
                 return 1; //Não tem argumentos
         }
+
+        if(d.nome.compare("SECTION") == 0)
+            separaSectionArgs(instrucao, diretiva, vTab, linha);
+
         return d.tamanho;
     }
     else if(isInstrucao(instrucao, token)){
@@ -71,6 +95,9 @@ int calculaPC(vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, 
         string aux; //string auxiliar que contém argumentos
         int endAux = endereco; //endereço auxiliar (o tamanho de uma instrução leva em consideração seus argumentos, então cada argumento +1 no endereço)
         vector<string> copyArg; //vetor de string para conter argumentos que estão separados por vírgula ou por +
+
+        if(getSectionAtual() == 'd')
+            imprimeErro(ERRO_USO_INCORRETO, linha);
 
         i = pegaInstrucao(instrucao, token);
 
@@ -169,6 +196,8 @@ void criaTabelas(ifstream& arq, vector<tipoInstrucao>& instrucao, vector<tipoDir
         pc += calculaPC(instrucao, diretiva, uso, aux, i, vTab, pc);
 
     }
+
+    verificaSectionText(); //verifica se o arquivo terminou declarando uma seção text
 
     arq.seekg(0, arq.beg); //rewind
 }

@@ -129,17 +129,17 @@ void criaArqObj(ifstream& in, ofstream& out, vector<tipoGramatica>& gramatica, v
         for (map<string, vector<int>>::iterator it = uso.begin(); it != uso.end(); ++it){
             for(vector<int>::iterator it2 = it->second.begin(); it2 != it->second.end(); ++ it2){
                 out << it->first << " " << *it2 << endl;
-                cout << it->first << " " << *it2 << endl;
+                //cout << it->first << " " << *it2 << endl;
             }
         }
         out << endl;
-        cout << endl;
+        //cout << endl;
 
         out << "TABLE DEFINITION" << endl;
         //cout << "TABLE DEFINITION" << endl;
         for (map<string, int>::iterator it = definicao.begin(); it != definicao.end(); ++it){
             out << it->first << " " << it->second << endl;
-            cout << it->first << " " << it->second << endl;
+            //cout << it->first << " " << it->second << endl;
         }
         out << endl;
         //cout << endl;

@@ -26,6 +26,8 @@ void insereDefinicao(map<string, int>& definicao, string& token, int linha); //i
 void insereUso(map<string, vector<int>>& uso, string& token, int linha); //Insere na tabela de uso
 void insereSimbolo(map<string, tipoTS>& simbolo, string& token, int linha); //Insere na tabela de símbolos
 
-int calculaPC(vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, map<string, vector<int>>& uso, string token, int linha, vector<string> vTab, int endereco); //Baseado na intrução ou diretiva, calcula pc
+int calculaPC(vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, map<string, vector<int>>& uso, string token, int linha, vector<string>& vTab, int endereco); //Baseado na intrução ou diretiva, calcula pc
 
 void criaTabelas(ifstream& arq, vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, map<string, tipoTS>& simbolo, map<string, vector<int>>& uso, map<string, int>& definicao); //Cria tabelas de símbolos, de definição e de uso
+
+void separaSectionArgs(vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, vector<string>& vTab, int linha); //Prepara argumentos de section para atualizar section atual
