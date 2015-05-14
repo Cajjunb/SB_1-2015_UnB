@@ -76,6 +76,10 @@ int calculaPC(vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, 
     if(isDiretiva(diretiva, token)){
         tipoDiretiva d;
         d = pegaDiretiva(diretiva, token);
+
+        if(getEnd())
+            imprimeErro(ERRO_LOCAL_INCORRETO, linha);
+
         if(d.tamanho == -1){ //se tamanho == -1, então deve ter argumento dizendo o tamanho
             //LABEL:    SPACE   N
             //vTab[0]   vTab[1] vTab[2]
@@ -87,14 +91,19 @@ int calculaPC(vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, 
 
         if(d.nome.compare("SECTION") == 0)
             separaSectionArgs(instrucao, diretiva, vTab, linha);
-
-        if(d.nome.compare("BEGIN") == 0){ //se for diretiva BEGIN
+        else if(d.nome.compare("BEGIN") == 0){ //se for diretiva BEGIN
             if(getSectionAtual() == 'd') //e estiver na seção dados
                 imprimeErro(ERRO_LOCAL_INCORRETO, linha); //ERRO
             setBegin(true);
+            setEnd(false);
         }
-        if(d.nome.compare("END") == 0) //se for diretiva END
-            setBegin(false);
+        else if(d.nome.compare("END") == 0){ //se for diretiva END
+            if(getBegin())
+                setBegin(false);
+            else
+                imprimeErro(ERRO_BEGIN_AUSENTE, linha);
+            setEnd(true);
+        }
 
         return d.tamanho;
     }
@@ -104,7 +113,7 @@ int calculaPC(vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, 
         int endAux = endereco; //endereço auxiliar (o tamanho de uma instrução leva em consideração seus argumentos, então cada argumento +1 no endereço)
         vector<string> copyArg; //vetor de string para conter argumentos que estão separados por vírgula ou por +
 
-        if(getSectionAtual() == 'd')
+        if(getSectionAtual() == 'd' || getEnd())
             imprimeErro(ERRO_LOCAL_INCORRETO, linha);
 
         i = pegaInstrucao(instrucao, token);
@@ -172,6 +181,7 @@ void criaTabelas(ifstream& arq, vector<tipoInstrucao>& instrucao, vector<tipoDir
         string aux;
         int tamanho;
 
+        //cout << linha << endl;
         explode(vTab, linha, "\t");
         //Se a primeira string tiver :, é definição de rótulo
         tamanho = vTab[0].size();
@@ -181,7 +191,7 @@ void criaTabelas(ifstream& arq, vector<tipoInstrucao>& instrucao, vector<tipoDir
             vTab[0] = vTab[0].substr(0, tamanho - 1); //eliminando :
 
             if(strcasecmp(vTab[1].c_str(), "EXTERN") == 0){ //Se a próxima string for extern, então insere na tabela de uso
-                if(!getBegin()) //se begin não tiver sido definido
+                if(!getBegin() || getEnd()) //se begin não tiver sido definido
                     imprimeErro(ERRO_LOCAL_INCORRETO, i);
                 insereUso(uso, vTab[0], i);
                 s.posicao = 0;
@@ -200,7 +210,7 @@ void criaTabelas(ifstream& arq, vector<tipoInstrucao>& instrucao, vector<tipoDir
         else{ //somente calcula o pc
             if(strcasecmp(vTab[0].c_str(), "PUBLIC") == 0){ //Se diretiva for PUBLIC, insere na tabela de definição
                 insereDefinicao(definicao, vTab[1], pc, i);
-                if(!getBegin()) //se begin não tiver sido definido
+                if(!getBegin() || getEnd()) //se begin não tiver sido definido
                     imprimeErro(ERRO_LOCAL_INCORRETO, i);
             }
             if(strcasecmp(vTab[0].c_str(), "BEGIN") == 0) //Begin DEVE ter um rótulo

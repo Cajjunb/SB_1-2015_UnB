@@ -65,7 +65,7 @@ void escreveOp(ofstream& out, vector<tipoInstrucao>& instrucao, vector<tipoDiret
                     }
                     else{
                         //cout << strtol(arg.c_str(), NULL, 16);
-                        out << strtol(arg.c_str(), NULL, 16);
+                        out << strtol(arg.c_str(), NULL, 16) << " ";
                     }
                 }
                 else{ //É um número em decimal
@@ -73,17 +73,15 @@ void escreveOp(ofstream& out, vector<tipoInstrucao>& instrucao, vector<tipoDiret
                         long int space = strtol(arg.c_str(), NULL, 10);
                         do{
                             //cout << "00 ";
-                            out << "00";
+                            out << "00 ";
                             space--;
                         }while(space > 0);
                     }
                     else{
                         //cout << arg;
-                        out << arg;
+                        out << arg << " ";
                     }
                 }
-                //cout << endl;
-                out << " ";
             }
             break;
         }
