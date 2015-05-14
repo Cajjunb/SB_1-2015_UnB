@@ -214,5 +214,6 @@ void criaTabelas(ifstream& arq, vector<tipoInstrucao>& instrucao, vector<tipoDir
 
     verificaSectionText(); //verifica se o arquivo terminou declarando uma seção text
 
+    arq.clear();
     arq.seekg(0, arq.beg); //rewind
 }

@@ -23,6 +23,7 @@ bool buscaTokenArq(ifstream& arq, string token){
         cout << "Erro ao buscar no arquivo";
         exit(EXIT_FAILURE);
     }
+    arq.clear();
     arq.seekg(0, arq.beg); //rewind
     return false;
 }
@@ -42,6 +43,7 @@ void criaVetorTab(ifstream& arq, vector<vector<string>>& mTab){
         vTab.push_back(linha.substr(prev)); //coloque a última subdivisão de tab
         mTab.push_back(vTab);
     }
+    arq.clear();
     arq.seekg(0, arq.beg); //rewind
 }
 

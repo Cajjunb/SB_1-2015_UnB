@@ -18,9 +18,9 @@ void criaGramatica(ifstream& arq, vector<tipoGramatica>& gramatica){
         getline(arq, aux.formato); //leia até final da linha: formato dos operandos
         gramatica.push_back(aux);
     }
-
+    arq.clear();
     arq.seekg(0, arq.beg); //rewind
-    }
+}
 
 void criaDiretiva(ifstream& arq, vector<tipoDiretiva>& diretiva){
 
@@ -45,7 +45,7 @@ void criaDiretiva(ifstream& arq, vector<tipoDiretiva>& diretiva){
 
         diretiva.push_back(aux);
     }
-
+    arq.clear();
     arq.seekg(0, arq.beg); //rewind
 }
 
@@ -70,7 +70,7 @@ void criaInstrucao(ifstream& arq, vector<tipoInstrucao>& instrucao){
 
         instrucao.push_back(aux);
     }
-
+    arq.clear();
     arq.seekg(0, arq.beg); //rewind
 }
 

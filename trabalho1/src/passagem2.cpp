@@ -73,7 +73,7 @@ void escreveOp(ofstream& out, vector<tipoInstrucao>& instrucao, vector<tipoDiret
                         long int space = strtol(arg.c_str(), NULL, 10);
                         do{
                             //cout << "00 ";
-                            out << "00 ";
+                            out << "00";
                             space--;
                         }while(space > 0);
                     }
@@ -153,7 +153,7 @@ void criaArqObj(ifstream& in, ofstream& out, vector<tipoGramatica>& gramatica, v
         int tamanho;
 
         i++;
-        cout << linha << endl;
+        //cout << linha << endl;
 
         explode(vTab, linha, "\t");
 
@@ -167,5 +167,6 @@ void criaArqObj(ifstream& in, ofstream& out, vector<tipoGramatica>& gramatica, v
         }
         separaOp(out, instrucao, diretiva, simbolo, vTab);
     }
+    in.clear();
     in.seekg(0, in.beg); //rewind
 }
