@@ -88,6 +88,14 @@ int calculaPC(vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, 
         if(d.nome.compare("SECTION") == 0)
             separaSectionArgs(instrucao, diretiva, vTab, linha);
 
+        if(d.nome.compare("BEGIN") == 0){ //se for diretiva BEGIN
+            if(getSectionAtual() == 'd') //e estiver na seção dados
+                imprimeErro(ERRO_LOCAL_INCORRETO, linha); //ERRO
+            setBegin(true);
+        }
+        if(d.nome.compare("END") == 0) //se for diretiva END
+            setBegin(false);
+
         return d.tamanho;
     }
     else if(isInstrucao(instrucao, token)){
@@ -97,7 +105,7 @@ int calculaPC(vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, 
         vector<string> copyArg; //vetor de string para conter argumentos que estão separados por vírgula ou por +
 
         if(getSectionAtual() == 'd')
-            imprimeErro(ERRO_USO_INCORRETO, linha);
+            imprimeErro(ERRO_LOCAL_INCORRETO, linha);
 
         i = pegaInstrucao(instrucao, token);
 
@@ -173,6 +181,8 @@ void criaTabelas(ifstream& arq, vector<tipoInstrucao>& instrucao, vector<tipoDir
             vTab[0] = vTab[0].substr(0, tamanho - 1); //eliminando :
 
             if(strcasecmp(vTab[1].c_str(), "EXTERN") == 0){ //Se a próxima string for extern, então insere na tabela de uso
+                if(!getBegin()) //se begin não tiver sido definido
+                    imprimeErro(ERRO_LOCAL_INCORRETO, i);
                 insereUso(uso, vTab[0], i);
                 s.posicao = 0;
                 s.externo = true;
@@ -188,8 +198,13 @@ void criaTabelas(ifstream& arq, vector<tipoInstrucao>& instrucao, vector<tipoDir
             aux.append(vTab[1]);
         }
         else{ //somente calcula o pc
-            if(strcasecmp(vTab[0].c_str(), "PUBLIC") == 0) //Se diretiva for PUBLIC, insere na tabela de definição
+            if(strcasecmp(vTab[0].c_str(), "PUBLIC") == 0){ //Se diretiva for PUBLIC, insere na tabela de definição
                 insereDefinicao(definicao, vTab[1], pc, i);
+                if(!getBegin()) //se begin não tiver sido definido
+                    imprimeErro(ERRO_LOCAL_INCORRETO, i);
+            }
+            if(strcasecmp(vTab[0].c_str(), "BEGIN") == 0) //Begin DEVE ter um rótulo
+                imprimeErro(ERRO_USO_INCORRETO, i);
             aux.append(vTab[0]);
         }
 
