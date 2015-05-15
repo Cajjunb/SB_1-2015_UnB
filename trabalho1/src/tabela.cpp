@@ -2,31 +2,32 @@
 
 void criaGramatica(ifstream& arq, vector<tipoGramatica>& gramatica){
 
-    if(arq.is_open()){
-        while(!arq.eof()){
-            tipoGramatica aux;
-            string auxQtd;
-
-            getline(arq, aux.nome, '\t'); //leia até o primeiro tab: nome
-            cout << "Nome: " << aux.nome << endl;
-
-            arq >> aux.qtdOperandos;
-            cout << "Qtd: " << aux.qtdOperandos << endl;
-            arq.get(); //\t que sobrou
-
-            getline(arq, aux.formato); //leia até final da linha: formato dos operandos
-            cout << "Formato: " << aux.formato << endl;
-            gramatica.push_back(aux);
-        }
-
-        arq.seekg(0); //rewind
-    }else{
-        cout << "O arquivo nao foi encontrado";
+    if(!arq.is_open()){
+        cout << "ERRO: O arquivo nao foi encontrado. Encerrando" << endl;
+        exit(EXIT_FAILURE);
     }
+    while(!arq.eof()){
+        tipoGramatica aux;
+        string auxQtd;
+
+        getline(arq, aux.nome, '\t'); //leia até o primeiro tab: nome
+
+        arq >> aux.qtdOperandos;
+        arq.get(); //\t que sobrou
+
+        getline(arq, aux.formato); //leia até final da linha: formato dos operandos
+        gramatica.push_back(aux);
+    }
+    arq.clear();
+    arq.seekg(0, arq.beg); //rewind
 }
 
 void criaDiretiva(ifstream& arq, vector<tipoDiretiva>& diretiva){
 
+    if(!arq.is_open()){
+        cout << "ERRO: O arquivo nao foi encontrado. Encerrando" << endl;
+        exit(EXIT_FAILURE);
+    }
     while(!arq.eof()){
         tipoDiretiva aux;
         string auxQtd;
@@ -44,11 +45,16 @@ void criaDiretiva(ifstream& arq, vector<tipoDiretiva>& diretiva){
 
         diretiva.push_back(aux);
     }
-
-    arq.seekg(0); //rewind
+    arq.clear();
+    arq.seekg(0, arq.beg); //rewind
 }
 
 void criaInstrucao(ifstream& arq, vector<tipoInstrucao>& instrucao){
+
+    if(!arq.is_open()){
+        cout << "ERRO: O arquivo nao foi encontrado. Encerrando" << endl;
+        exit(EXIT_FAILURE);
+    }
 
     while(!arq.eof()){
         tipoInstrucao aux;
@@ -64,8 +70,8 @@ void criaInstrucao(ifstream& arq, vector<tipoInstrucao>& instrucao){
 
         instrucao.push_back(aux);
     }
-
-    arq.seekg(0); //rewind
+    arq.clear();
+    arq.seekg(0, arq.beg); //rewind
 }
 
 tipoGramatica pegaGramatica(vector<tipoGramatica>& gramatica, string token){
