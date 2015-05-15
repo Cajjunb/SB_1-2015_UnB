@@ -40,7 +40,7 @@ int main(){
         cout << "\tTamanho: " << diretiva[i].tamanho << "\tFormato: " << diretiva[i].formato << endl;
     }
 
-    preProcessaArq(aux, gramatica);
+    preProcessaArq2(aux);
 
     return 0;
 }

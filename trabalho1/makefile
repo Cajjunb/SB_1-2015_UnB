@@ -8,7 +8,7 @@ MAIN = testando_preprocessamento
 all:	montador clean
 
 clean:
-	rm *.o
+	rm $(PATHSRC)*.o
 
 montador:	$(MAIN).o arquivo.o passagem1.o tabela.o
 	g++ $(CFLAG) $(MAIN).o arquivo.o passagem1.o tabela.o  -o montador.exe
