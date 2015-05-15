@@ -1,5 +1,7 @@
 #include "include/arquivo.h"
 #include "include/tabela.h"
+#include "include/passagem1.h"
+#include "include/passagem2.h"
 #include <iostream>
 
 using namespace std;
@@ -19,7 +21,11 @@ int main(int argc, char *argv[]){
     vector<tipoInstrucao> instrucao;
     vector<tipoGramatica> gramatica;
     vector<tipoDiretiva> diretiva;
-    ifstream arq;
+    map<string, tipoTS> simbolo; //Tabela de símbolos
+    map<string, int> definicao; //Tabela de definição <nome, endereço>
+    map<string, vector<int>> uso; //Tabela de uso <nome, endereços>
+    ifstream arq1;
+    ofstream arq2;
 
     //Verifica passagem de argumentos
     if(argc != 3){
@@ -37,17 +43,26 @@ int main(int argc, char *argv[]){
         output.append(".o");
 
     //Cria vetores com informações das instruções, da gramática e das diretivas
-    arq.open("tabelas/instrucoes.txt");
-    criaInstrucao(arq, instrucao);
-    arq.close();
+    arq1.open("tabelas/instrucoes.txt");
+    criaInstrucao(arq1, instrucao);
+    arq1.close();
 
-    arq.open("tabelas/gramatica.txt");
-    criaGramatica(arq, gramatica);
-    arq.close();
+    arq1.open("tabelas/gramatica.txt");
+    criaGramatica(arq1, gramatica);
+    arq1.close();
 
-    arq.open("tabelas/diretiva.txt");
-    criaDiretiva(arq, diretiva);
-    arq.close();
+    arq1.open("tabelas/diretiva.txt");
+    criaDiretiva(arq1, diretiva);
+    arq1.close();
+
+    preProcessaArq2(input);
+
+    arq1.open("pre_processado.txt");
+    arq2.open(output);
+        criaTabelas(arq1, instrucao, diretiva, simbolo, uso, definicao); //primeira passagem
+        criaArqObj(arq1, arq2, gramatica, instrucao, diretiva, simbolo, uso, definicao); //segunda passagem
+    arq1.close();
+    arq2.close();
 
     return 0;
 }

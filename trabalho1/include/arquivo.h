@@ -20,12 +20,11 @@ void criaVetorTab(ifstream& arq, vector<vector<string>>& mTab); //Mapeia o arqui
 // Recebe um arquivo, preprocessa ele para ser lido pelo compilador e salva o arquivo preprocessado
 // com o nome "titulo_arquivo" e retorna o objeto ofstream do arquivo preprocessado.
 // caso dar erro retorna nulo
-<<<<<<< HEAD
-bool preProcessaArq(char nomeArquivo[] , vector<tipoGramatica>& gramatica, vector<tipoDiretiva>& diretiva);
+bool preProcessaArq(ifstream& arquivo, string titulo_arquivo);
 
 // Recebe um arquivo presumidamente com codigo assembly inventado e cria um arquivo chamado pre_processado.txt
 // Parametros o endereco do arquivo a ser preprocessado, eh necessario que os comandos e os argumentos nao estejam separados por \n
-bool preProcessaArq2(char nomeArquivo[]);
+bool preProcessaArq2(string nomeArquivo);
 
 //	Funcao auxiliar retira tabs duplos desnecessarios
 //	Retorna a string formatada ja
