@@ -47,6 +47,7 @@ void criaVetorTab(ifstream& arq, vector<vector<string>>& mTab){
     arq.seekg(0, arq.beg); //rewind
 }
 
+/*
 bool preProcessaArq(char nomeArquivo[] , vector<tipoGramatica>& gramatica, vector<tipoDiretiva>& diretiva){
     FILE *ponteiroLeitura, *ponteiroEscrita ;
     ponteiroLeitura = fopen(nomeArquivo, "r");
@@ -141,13 +142,13 @@ bool preProcessaArq(char nomeArquivo[] , vector<tipoGramatica>& gramatica, vecto
 
 }
 
-
+*/
 
 bool preProcessaArq2(char nomeArquivo[]){
     std::ifstream  ponteiroLeitura(nomeArquivo) ;
     FILE *ponteiroEscrita ;
     string stringCplusplus ;
-    unsigned int i = 0;
+    unsigned int linha = 1;
 //    int linha = 1;
     ;                                                   // INICIALIZA O BUFFER
     if(!ponteiroLeitura.is_open() ){
@@ -164,13 +165,14 @@ bool preProcessaArq2(char nomeArquivo[]){
                 stringCplusplus = retiraComentarios(stringCplusplus);
                 stringCplusplus = formataTabs(stringCplusplus);
                 stringCplusplus = retiraNL(stringCplusplus);
-                for( i = 0; i < stringCplusplus.size(); i++)
-                    printf("\n\tDEBUG2 CODIFICAO = %d ", stringCplusplus[i]);
                 if(!stringCplusplus.empty() && stringCplusplus.size() > 1 ){
                     cout << "\n\tDEBUG3 Printei no arquivo" ;
+                    stringCplusplus =  stringCplusplus +"\t" +std::to_string(linha);
+                    stringCplusplus = formataTabs(stringCplusplus);
                     fprintf(ponteiroEscrita,"%s\n",stringCplusplus.c_str());
                 }
             }
+            linha++;
         }
     }
     fclose(ponteiroEscrita);

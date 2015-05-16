@@ -10,8 +10,8 @@ all:	montador clean
 clean:
 	rm $(PATHSRC)*.o
 
-montador:	$(MAIN).o arquivo.o passagem1.o tabela.o
-	g++ $(CFLAG) $(MAIN).o arquivo.o passagem1.o tabela.o  -o montador.exe
+montador:	$(MAIN).o arquivo.o  
+	g++ $(CFLAG) $(MAIN).o arquivo.o   -o montador.exe
 
 arquivo.o:	src/arquivo.cpp
 	g++ -c $(CFLAG) src/arquivo.cpp
@@ -39,3 +39,5 @@ testando_passagem1.o: testes/testando_passagem1.cpp
 
 testando_preprocessamento.o: testes/testando_preprocessamento.cpp
 	g++ -c testes/testando_preprocessamento.cpp
+
+
