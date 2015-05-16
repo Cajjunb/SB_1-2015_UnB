@@ -117,6 +117,20 @@ tipoInstrucao pegaInstrucao(vector<tipoInstrucao>& instrucao, string token){
     return nulo; //não achou
 }
 
+tipoInstrucao pegaInstrucaoOpcode(vector<tipoInstrucao>& instrucao, int op){
+    tipoInstrucao nulo;
+
+    for(int i = 0; i < (int)instrucao.size(); i++){
+        if(instrucao[i].op == op)
+            return instrucao[i]; //achou
+    }
+
+    nulo.nome = "";
+    nulo.op = -1;
+    nulo.tamanho = -1;
+    return nulo; //não achou
+}
+
 bool isGramatica(vector<tipoGramatica>& gramatica, string token){
 
     for(int i = 0; i < (int)gramatica.size(); i++){
