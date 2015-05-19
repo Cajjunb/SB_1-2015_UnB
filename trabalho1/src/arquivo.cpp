@@ -105,7 +105,7 @@ bool preProcessaArq2(string nomeArquivo){
     string stringCplusplus ;
     unsigned int linha = 1;
 //    int linha = 1;
-    ;                                                   // INICIALIZA O BUFFER
+                                                       // INICIALIZA O BUFFER
     if(!ponteiroLeitura.is_open() ){
         printf("ERRO NA leitura do teste");
         exit(EXIT_FAILURE);
@@ -121,7 +121,6 @@ bool preProcessaArq2(string nomeArquivo){
                 stringCplusplus = formataTabs(stringCplusplus);
                 stringCplusplus = retiraNL(stringCplusplus);
                 if(!stringCplusplus.empty() && stringCplusplus.size() > 1 ){
-                    cout << "\n\tDEBUG3 Printei no arquivo" ;
                     stringCplusplus =  stringCplusplus +"\t" +std::to_string(linha);
                     stringCplusplus = formataTabs(stringCplusplus);
                     fprintf(ponteiroEscrita,"%s\n",stringCplusplus.c_str());
@@ -156,7 +155,6 @@ std::string formataTabs(std::string formatada){
             formatada = "\n";
     }
     achado  = formatada.find("\t\t");
-    cout << "\n\t Resultado  DEBUG 0 = \"" << formatada << "\" size =" << formatada.size();
     while(achado != std::string::npos){
         formatada.erase(achado,1);
         achado  = formatada.find("\t\t");

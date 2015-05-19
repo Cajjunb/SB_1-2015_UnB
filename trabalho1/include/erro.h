@@ -10,7 +10,8 @@ typedef enum{
     ERRO_SEMANTICO,
     ERRO_REDEFINICAO,
     ERRO_DEFINIDO_ANTES,
-    ERRO_INVALIDO,
+    ERRO_INVALIDO = 5,
+    ERRO_SIMBOLO_NAO_DEFINIDO ,
     ERRO_TEXT_AUSENTE,
     ERRO_BEGIN_AUSENTE,
     ERRO_USO_INCORRETO,
@@ -36,3 +37,8 @@ void imprimeErro(tipoErro e, int linha = -1); //imprime mensagem de erro. Mostra
 void verificaSectionText(); //Verifica se seção text foi declarada
 void atualizaSection(string arg, int linha); //atualiza sectionAtual e verifica se é uma section válida
 
+// Funcao que verifica dado um token se ele é valido lexicamente
+bool isTokenValido(string token);
+// Funcao que analissa lexicamente uma linha completa e retorna qual dos tokens é invalido, caso contrario retorna
+// CORRETO_LEXICO
+int analisaLexico(std::vector<string> tokens); 

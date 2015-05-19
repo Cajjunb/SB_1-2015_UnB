@@ -15,6 +15,7 @@ using namespace std;
 //posicoa: posição na memória que se encontra
 //externo: diz se rótulo é externo ou não
 typedef struct{
+	std::string simbolo;
     int posicao;
     bool externo;
 }tipoTS; //tabela de símbolos
@@ -25,6 +26,10 @@ void editaUso(map<string, vector<int>>& uso, string token, int endereco); //Adic
 void insereDefinicao(map<string, int>& definicao, string& token, int linha); //insere na tabela de definição
 void insereUso(map<string, vector<int>>& uso, string& token, int linha); //Insere na tabela de uso
 void insereSimbolo(map<string, tipoTS>& simbolo, string& token, int linha); //Insere na tabela de símbolos
+
+//	Verifica se o simbolo está na tabela de simbolos
+//	Retorna bool
+bool isSimbolo(map<string, tipoTS>& simbolo, string& token);
 
 int calculaPC(vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, map<string, vector<int>>& uso, string token, int linha, vector<string>& vTab, int endereco); //Baseado na intrução ou diretiva, calcula pc
 
