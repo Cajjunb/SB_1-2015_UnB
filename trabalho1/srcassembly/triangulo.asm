@@ -1,4 +1,4 @@
-; coment·rio
+; coment√°rio
 SECTION TEXT
 		INPUT		B
 		INPUT		H
