@@ -166,7 +166,7 @@ int calculaPC(vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, 
         return i.tamanho;
     }
 
-    imprimeErro(ERRO_NAO_ENCONTRADO, linha);
+    imprimeErro(ERRO_COMANDO_NAO_ENCONTRADO, linha);
     return 0;
 }
 

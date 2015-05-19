@@ -13,7 +13,10 @@ void imprimeErro(tipoErro e, int linha){
             cout << "Semantico: Redefinicao de simbolos";
         break;
         case ERRO_NAO_ENCONTRADO:
-            cout << "Semantico: Simbolo nao encontrado";
+            cout << "Semantico: Label nao encontrado";
+        break;
+        case ERRO_COMANDO_NAO_ENCONTRADO:
+            cout << "Lexico: Instrucao ou diretiva nao encontrada";
         break;
         case ERRO_INVALIDO:
             cout << "Lexico: token invalido";

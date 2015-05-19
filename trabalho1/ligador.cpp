@@ -90,10 +90,10 @@ void escreveExe(ifstream& in, ofstream& out, vector<tipoInstrucao>& instrucao, m
         explode(vTab, linha, " ");
         uso.insert(pair<int, string>(strtol(vTab[1].c_str(), NULL, 10), vTab[0]));
     }
-
     while(linha.compare("CODE") != 0){
         getline(in, linha);
     } //achou CODE
+
 
     getline(in, linha); //pega toda a linha do código objeto
     vector<string> obj;
@@ -102,13 +102,14 @@ void escreveExe(ifstream& in, ofstream& out, vector<tipoInstrucao>& instrucao, m
     //obj[0]    obj[1]  obj[2]  obj[3]
     //op        arg     op      arg
     for(vector<string>::iterator codigo = obj.begin(); codigo != obj.end(); ++codigo){
-        int arg;
-        tipoInstrucao i = pegaInstrucaoOpcode(instrucao, strtol((*codigo).c_str(), NULL, 10));
 
-        out << *codigo << " "; //escreve opcode (fixo)
-        endereco++; //contador de endereços
+        if((*codigo).compare("d") != 0){ //d de diretiva
+            int arg;
+            tipoInstrucao i = pegaInstrucaoOpcode(instrucao, strtol((*codigo).c_str(), NULL, 10));
 
-        if(!uso.empty()){ //se há pendências pra resolver com a tabela de uso
+            out << *codigo << " "; //escreve opcode (fixo)
+            endereco++; //contador de endereços
+
             arg = i.tamanho - 1; //retira um pois ignora o código da instrução
             while(arg > 0){
                 codigo++; //pega próximo código, que é argumento
@@ -132,6 +133,11 @@ void escreveExe(ifstream& in, ofstream& out, vector<tipoInstrucao>& instrucao, m
                 arg--; //decrementa um argumento
             }
         }
+        else{
+            codigo++;
+            out << *codigo << " ";
+        }
+
     }
 }
 
@@ -198,13 +204,19 @@ int main(int argc, char *argv[]){
             out.open(output, std::ofstream::out | std::ofstream::trunc);
             criaTabelaGlobalDefinicao(in, definicao, 0);
             in.close();
+
             in.open(input2);
+             if(!in.is_open()){
+                cout << "Erro ao abrir o arquivo " << input2 << ". Encerrando";
+                exit(EXIT_FAILURE);
+            }
             criaTabelaGlobalDefinicao(in, definicao, fatorCorrecao);
             in.close();
 
             in.open(input1);
             escreveExe(in, out, instrucao, definicao, 0);
             in.close();
+
             in.open(input2);
             escreveExe(in, out, instrucao, definicao, fatorCorrecao);
             in.close();

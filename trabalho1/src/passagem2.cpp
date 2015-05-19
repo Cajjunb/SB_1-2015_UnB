@@ -52,19 +52,20 @@ void escreveOp(ofstream& out, vector<tipoInstrucao>& instrucao, vector<tipoDiret
         case 1:{
             tipoDiretiva d;
             d = pegaDiretiva(diretiva, token);
-
             if(d.formato == 'N'){
                 if(arg.find("x") != string::npos){ //Número está em hexadecimal
                     if(d.nome.compare("SPACE") == 0){
                         long int space = strtol(arg.c_str(), NULL, 16);
                         do{
                             //cout << "00 ";
+                            out << "d ";
                             out << "00 ";
                             space--;
                         }while(space > 0);
                     }
                     else{
                         //cout << strtol(arg.c_str(), NULL, 16);
+                        out << "d ";
                         out << strtol(arg.c_str(), NULL, 16) << " ";
                     }
                 }
@@ -73,12 +74,14 @@ void escreveOp(ofstream& out, vector<tipoInstrucao>& instrucao, vector<tipoDiret
                         long int space = strtol(arg.c_str(), NULL, 10);
                         do{
                             //cout << "00 ";
+                            out << "d ";
                             out << "00 ";
                             space--;
                         }while(space > 0);
                     }
                     else{
                         //cout << arg;
+                        out << "d ";
                         out << arg << " ";
                     }
                 }
