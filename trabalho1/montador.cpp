@@ -3,6 +3,7 @@
 #include "include/passagem1.h"
 #include "include/passagem2.h"
 #include <iostream>
+#include <cstdio>
 
 using namespace std;
 
@@ -63,6 +64,8 @@ int main(int argc, char *argv[]){
         criaArqObj(arq1, arq2, gramatica, instrucao, diretiva, simbolo, uso, definicao); //segunda passagem
     arq1.close();
     arq2.close();
+
+    remove("pre_processado.txt"); //remoção do arquivo pré-processado temporário
 
     return 0;
 }
