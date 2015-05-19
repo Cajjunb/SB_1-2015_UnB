@@ -119,7 +119,7 @@ void separaOp(ofstream& out, vector<tipoInstrucao>& instrucao, vector<tipoDireti
 
 void criaArqObj(ifstream& in, ofstream& out, vector<tipoGramatica>& gramatica, vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, map<string, tipoTS>& simbolo, map<string, vector<int>>& uso, map<string, int>& definicao){
     string linha;
-    int i = 0;
+    int i;
 
     if(!definicao.empty() || !uso.empty()){
         out << "TABLE USE" << endl;
@@ -150,10 +150,11 @@ void criaArqObj(ifstream& in, ofstream& out, vector<tipoGramatica>& gramatica, v
         vector<string> vTab;
         int tamanho;
 
-        i++;
         //cout << linha << endl;
 
         explode(vTab, linha, "\t");
+        i = (int)strtol(vTab.back().c_str(), NULL, 10); //último elemento desta linha informa a linha no arquivo anterior
+        vTab.pop_back(); //retira esse elemento
 
         tamanho = vTab[0].size();
         if(vTab[0][tamanho - 1] == ':'){

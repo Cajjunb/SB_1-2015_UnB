@@ -172,17 +172,20 @@ int calculaPC(vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, 
 
 void criaTabelas(ifstream& arq, vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, map<string, tipoTS>& simbolo, map<string, vector<int>>& uso, map<string, int>& definicao){
     int pc = 0;
-    int i = 0; //contador de linhas
+    int i; //contador de linhas
     string linha;
 
     while(getline(arq, linha)){
-        i++; //leu uma linha
         vector<string> vTab;
         string aux;
         int tamanho;
 
         //cout << linha << endl;
         explode(vTab, linha, "\t");
+
+        i = (int)strtol(vTab.back().c_str(), NULL, 10); //último elemento desta linha informa a linha no arquivo anterior
+        vTab.pop_back(); //retira esse elemento
+
         //Se a primeira string tiver :, é definição de rótulo
         tamanho = vTab[0].size();
 
