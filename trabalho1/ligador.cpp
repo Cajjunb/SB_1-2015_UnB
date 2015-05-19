@@ -82,14 +82,13 @@ int calculaFatorCorrecao(ifstream& arq){
 void escreveExe(ifstream& in, ofstream& out, vector<tipoInstrucao>& instrucao, map<string, int>& definicao, int fator){
     string linha;
     map<int, string> uso;
+    int endereco = 0;
 
     getline(in, linha); //TABLE USE
-    getline(in, linha); //Primeira linha com definição
-    while(!linha.empty()){ //constrói tabela de uso
+    while(getline(in, linha) && !linha.empty()){ //constrói tabela de uso
         vector<string> vTab;
         explode(vTab, linha, " ");
         uso.insert(pair<int, string>(strtol(vTab[1].c_str(), NULL, 10), vTab[0]));
-
     }
 
     while(linha.compare("CODE") != 0){
@@ -103,30 +102,34 @@ void escreveExe(ifstream& in, ofstream& out, vector<tipoInstrucao>& instrucao, m
     //obj[0]    obj[1]  obj[2]  obj[3]
     //op        arg     op      arg
     for(vector<string>::iterator codigo = obj.begin(); codigo != obj.end(); ++codigo){
-        int arg, endereco = 0;
+        int arg;
         tipoInstrucao i = pegaInstrucaoOpcode(instrucao, strtol((*codigo).c_str(), NULL, 10));
 
-        out << *codigo; //escreve opcode (fixo)
+        out << *codigo << " "; //escreve opcode (fixo)
         endereco++; //contador de endereços
 
-        arg = i.tamanho - 1; //retira um pois ignora o código da instrução
-        while(arg > 0){
-            map<int, string>::iterator it;
-            arg--; //decrementa um argumento
-            codigo++; //pega próximo código, que é argumento
-            endereco++;
+        if(!uso.empty()){ //se há pendências pra resolver com a tabela de uso
+            arg = i.tamanho - 1; //retira um pois ignora o código da instrução
+            while(arg > 0){
+                codigo++; //pega próximo código, que é argumento
+                map<int, string>::iterator it;
 
-            it = uso.find(endereco);
-            if(it != uso.end()){
-                string label;
-                map<string, int>::iterator def;
+                if(!uso.empty()){
+                    it = uso.find(endereco);
+                    if(it != uso.end()){
+                        string label;
+                        map<string, int>::iterator def;
 
-                label.clear();
-                label.append(it->second);
-                def = definicao.find(label);
-                out << (def->second + fator);
+                        label.clear();
+                        label.append(it->second);
+                        def = definicao.find(label);
+                        out << (def->second + fator + strtol((*codigo).c_str(), NULL, 10)) << " ";
 
-                uso.erase(it); //free
+                        uso.erase(it); //free
+                    }
+                }
+                endereco++;
+                arg--; //decrementa um argumento
             }
         }
     }
@@ -142,7 +145,7 @@ int main(int argc, char *argv[]){
 
     //Verifica passagem de argumentos
     if(argc < 3 || argc > 4){
-        cout << "Numero de argumentos incorretos. Encerrando";
+        cout << "Numero de argumentos incorretos. Encerrando" << argc;
         exit(EXIT_FAILURE);
     }
 
@@ -199,15 +202,11 @@ int main(int argc, char *argv[]){
             criaTabelaGlobalDefinicao(in, definicao, fatorCorrecao);
             in.close();
 
-
-            cout << "---------- Tabela de Definicao geral ----------" << endl;
-            cout << "Rotulo\t Valor" << endl;
-            for (map<string, int>::iterator it = definicao.begin(); it != definicao.end(); ++it)
-                cout << it->first << "\t " << it->second << endl;
-            cout << endl;
-
             in.open(input1);
             escreveExe(in, out, instrucao, definicao, 0);
+            in.close();
+            in.open(input2);
+            escreveExe(in, out, instrucao, definicao, fatorCorrecao);
             in.close();
 
             out.close();
