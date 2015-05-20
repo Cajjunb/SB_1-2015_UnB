@@ -16,14 +16,15 @@ using namespace std;
 
 //posicoa: posição na memória que se encontra
 //externo: diz se rótulo é externo ou não
+#ifndef TIPO_TS
+#define TIPO_TS
 typedef struct{
 	std::string simbolo;
     int posicao;
     bool externo;
     int  valorConstante;
 }tipoTS; //tabela de símbolos
-
-
+#endif
 
 void editaDefinicao(map<string, int>& definicao, string token, int endereco); //Edita endereço na tabela de definição baseado no token
 void editaUso(map<string, vector<int>>& uso, string token, int endereco); //Adiciona na tabela de uso o valor do endereço baseado no token

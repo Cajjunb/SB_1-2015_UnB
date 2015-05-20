@@ -62,7 +62,7 @@ void separaSectionArgs(vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& d
         //Se é rótulo e o token é SECTION, então está na forma
         //LABEL:    SECTION ARG
         //vTab[0]   vTab[1] vTab[2]
-        if(vTab.size() == 4)
+        if(vTab.size() == 3)
             atualizaSection(vTab[2], linha);
         else
             imprimeErro(ERRO_USO_INCORRETO, linha);
@@ -70,7 +70,7 @@ void separaSectionArgs(vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& d
     else{
     //está na forma
     //SECTION   ARG
-        if(vTab.size() == 3)
+        if(vTab.size() == 2)
             atualizaSection(vTab[1], linha);
         else
             imprimeErro(ERRO_USO_INCORRETO, linha);
@@ -90,7 +90,7 @@ int calculaPC(vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, 
         if(d.tamanho == -1){ //se tamanho == -1, então deve ter argumento dizendo o tamanho
             //LABEL:    SPACE   N
             //vTab[0]   vTab[1] vTab[2]
-            if(vTab.size() == 4)
+            if(vTab.size() == 3)
                 return atoi(vTab[2].c_str()); //transforma argumento em número
             else
                 return 1; //Não tem argumentos

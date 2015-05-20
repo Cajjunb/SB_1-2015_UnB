@@ -2,6 +2,7 @@
 #include "include/tabela.h"
 #include "include/passagem1.h"
 #include "include/passagem2.h"
+#include "include/erro.h"
 #include <iostream>
 #include <cstdio>
 

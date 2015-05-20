@@ -9,6 +9,18 @@
 #include <locale>         // std::locale, std::isdigit
 
 
+//posicoa: posição na memória que se encontra
+//externo: diz se rótulo é externo ou não
+#ifndef TIPO_TS
+#define TIPO_TS
+typedef struct{
+    std::string simbolo;
+    int posicao;
+    bool externo;
+    int  valorConstante;
+}tipoTS; //tabela de símbolos
+#endif
+
 typedef enum{
     ERRO_LEXICO = 0,
     ERRO_SINTATICO,
