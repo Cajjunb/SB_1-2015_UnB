@@ -14,6 +14,10 @@ void criaGramatica(ifstream& arq, vector<tipoGramatica>& gramatica){
 
         arq >> aux.qtdOperandos;
         arq.get(); //\t que sobrou
+        string auxChar ;
+
+        getline(arq, auxChar, '\t'); //leia até o primeiro tab: comportamentoConstante
+        aux.comportamentoConstante = (tipoComportamento) auxChar[0];               // DA CAST PARA DAR MATCH COM O TIPO DE DADO ENUMERADO
 
         getline(arq, aux.formato); //leia até final da linha: formato dos operandos
         gramatica.push_back(aux);

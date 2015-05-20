@@ -18,6 +18,7 @@ typedef struct{
     int posicao;
     bool externo;
     int  valorConstante;
+    bool tipoConstante = false ;
 }tipoTS; //tabela de símbolos
 #endif
 
@@ -37,7 +38,8 @@ typedef enum{
     ERRO_FALTA_DEFINICAO_EXTERN,
     ERRO_LOCAL_INCORRETO,
     ERRO_FALTA_ARQUIVO,
-    ERRO_DIVISAO_POR_ZERO
+    ERRO_DIVISAO_POR_ZERO,
+    ERRO_ALTERANDO_CONSTANTE
 }tipoErro;
 
 using namespace std;
@@ -65,3 +67,7 @@ int analisaLexico(vector<string> tokens);
 // Funcao que faz a verificacao se uma operacao de divisao sera por zero
 // caso sim retorna true! caso contrario retorna false
 bool isDivisaoPorZero(string& token,map<string, tipoTS>& simbolo);
+
+//  Funcao que verifica se a instrucao passada vai acabar gerando uma mudança de valor de uma constante
+//  Caso sim retorna true, caso não false.
+bool isMudancaDeValorConstante(vector<string> tokens, map<string, tipoTS>& simbolo,  vector<tipoGramatica>& gramatica );

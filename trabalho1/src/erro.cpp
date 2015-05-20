@@ -45,6 +45,9 @@ void imprimeErro(tipoErro e, int linha){
         case ERRO_DIVISAO_POR_ZERO:
             cout << "Semantico: Divisao por Zero! ";
         break;
+        case ERRO_ALTERANDO_CONSTANTE:
+            cout << "Semantico: ALTERANDO VALOR DE CONSTANTE! ";
+        break;
         default:
             cout << "Erro Indefinido";
         break;
@@ -120,6 +123,21 @@ bool isDivisaoPorZero(string& token,map<string, tipoTS>& simbolo){
     cout << "\n\t SIMBOL[TOKEN] =" <<  simbolo[token].valorConstante;
     if(simbolo[token].valorConstante == 0)
         return true;
+    else
+        return false;
+}
+
+
+bool isMudancaDeValorConstante(vector<string> tokens, map<string, tipoTS>& simbolo,  vector<tipoGramatica>& gramatica ){
+    tipoGramatica gramaticaInstrucao = pegaGramatica(gramatica ,tokens[0]);                            // pega gramatica 
+    bool args[3] = {false,false,false};
+    for(unsigned int i = 0;  i < tokens.size(); i++){
+        args[i] = simbolo[tokens[i]].tipoConstante;
+    }
+    if( ((gramaticaInstrucao.comportamentoConstante == NAO_ACEITA) && (args[1] == true) ) ||
+        ( (gramaticaInstrucao.comportamentoConstante == SOMENTE_SRC )&&(args[2] == true)) ){
+        return true;
+    }
     else
         return false;
 }

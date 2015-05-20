@@ -90,11 +90,10 @@ void escreveOp(ofstream& out, vector<tipoInstrucao>& instrucao, vector<tipoDiret
     }
 }
 
-void separaOp(ofstream& out, vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, map<string, tipoTS>& simbolo, vector<string> vTab, int linha){
-    if(isInstrucao(instrucao, vTab[0])){ //INSTRUÇÃO ARG
-        detectarErrosInstrucao(simbolo, vTab,  linha);
+void separaOp(ofstream& out, vector<tipoInstrucao>& instrucao,vector<tipoGramatica>& gramatica, vector<tipoDiretiva>& diretiva, map<string, tipoTS>& simbolo, vector<string> vTab, int linha){
+    if(isInstrucao(instrucao, vTab[0])){ //INSTRUÇÃO A
+        detectarErrosInstrucao(simbolo, vTab, gramatica,  linha);
         if(vTab.size() > 1){
-            cout << "\n\t Cheguei aqui\t" << vTab[0];
             escreveOp(out, instrucao, diretiva, simbolo, vTab[0], vTab[1], 0);
         }else
             escreveOp(out, instrucao, diretiva, simbolo, vTab[0], vTab[0], 0); //STOP
@@ -106,7 +105,7 @@ void separaOp(ofstream& out, vector<tipoInstrucao>& instrucao, vector<tipoDireti
             escreveOp(out, instrucao, diretiva, simbolo, vTab[0], "00", 1); //SPACE SEM ARGUMENTO
     }else{//é rótulo
             if(isInstrucao(instrucao, vTab[1])){
-                detectarErrosInstrucao(simbolo, vTab,  linha);
+                detectarErrosInstrucao(simbolo, vTab, gramatica,  linha);
                 if(vTab.size() > 2)
                     escreveOp(out, instrucao, diretiva, simbolo, vTab[1], vTab[2], 0);
                 else
@@ -161,14 +160,14 @@ void criaArqObj(ifstream& in, ofstream& out, vector<tipoGramatica>& gramatica, v
             if(it == simbolo.end())
                 imprimeErro(ERRO_NAO_ENCONTRADO, i);
         }
-        separaOp(out, instrucao, diretiva, simbolo, vTab,i);
+        separaOp(out, instrucao,gramatica, diretiva, simbolo, vTab,i);
     }
     in.clear();
     in.seekg(0, in.beg); //rewind
 }
 
 
-bool detectarErrosInstrucao(map<string, tipoTS>& simbolo, vector<string> vTab, int linha){
+bool detectarErrosInstrucao(map<string, tipoTS>& simbolo , vector<string> vTab, vector<tipoGramatica>& gramatica, int linha){
     int erro_encontrado = 0;
     if( analisaLexico(vTab) != ERRO_LEXICO ){                        // ANALISE LEXICA DE TODA A LINHA
         imprimeErro(ERRO_INVALIDO,linha);                   // IMPRIME O ERRO 
@@ -179,6 +178,9 @@ bool detectarErrosInstrucao(map<string, tipoTS>& simbolo, vector<string> vTab, i
            (vTab[1] == "DIV" && isDivisaoPorZero(vTab[2], simbolo))){
             imprimeErro(ERRO_DIVISAO_POR_ZERO,linha);
             erro_encontrado = 1;
+        }
+        if(isMudancaDeValorConstante(vTab, simbolo, gramatica )){
+            imprimeErro(ERRO_ALTERANDO_CONSTANTE, linha);
         }
     }
     if(erro_encontrado)

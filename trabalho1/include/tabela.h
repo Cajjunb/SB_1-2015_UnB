@@ -8,6 +8,15 @@
 
 using namespace std;
 
+
+// Enumeracao para comportamento em relacao a constantes na gramatica
+typedef enum{
+	NAO_ACEITA = 'F',
+	SOMENTE_SRC = 'S',
+	ACEITA_TODOS = 'T'
+}tipoComportamento;
+
+
 //nome: nome da instrução
 //op: código da instrução
 //tamanho: quanto que aquela instrução ocupada na memória (decimal)
@@ -37,6 +46,7 @@ typedef struct{
 typedef struct{
     string nome, formato;
     int qtdOperandos;
+    tipoComportamento comportamentoConstante;
 }tipoGramatica;
 
 void criaGramatica(ifstream& arq, vector<tipoGramatica>& gramatica); //"Retorna" vetor com as regras da gramática a partir de um txt
