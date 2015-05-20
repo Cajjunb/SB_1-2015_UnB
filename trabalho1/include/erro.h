@@ -3,6 +3,11 @@
 #include <string>
 #include <iostream>
 #include "string.h"
+#include <vector>
+#include <map>
+#include "passagem1.h"
+#include <locale>         // std::locale, std::isdigit
+
 
 typedef enum{
     ERRO_LEXICO = 0,
@@ -10,15 +15,17 @@ typedef enum{
     ERRO_SEMANTICO,
     ERRO_REDEFINICAO,
     ERRO_DEFINIDO_ANTES,
-    ERRO_INVALIDO = 5,
+    ERRO_INVALIDO ,
     ERRO_SIMBOLO_NAO_DEFINIDO ,
     ERRO_TEXT_AUSENTE,
     ERRO_BEGIN_AUSENTE,
     ERRO_USO_INCORRETO,
     ERRO_NAO_ENCONTRADO,
+    ERRO_COMANDO_NAO_ENCONTRADO,
     ERRO_FALTA_DEFINICAO_EXTERN,
     ERRO_LOCAL_INCORRETO,
-    ERRO_FALTA_ARQUIVO
+    ERRO_FALTA_ARQUIVO,
+    ERRO_DIVISAO_POR_ZERO
 }tipoErro;
 
 using namespace std;
@@ -41,4 +48,8 @@ void atualizaSection(string arg, int linha); //atualiza sectionAtual e verifica 
 bool isTokenValido(string token);
 // Funcao que analissa lexicamente uma linha completa e retorna qual dos tokens é invalido, caso contrario retorna
 // CORRETO_LEXICO
-int analisaLexico(std::vector<string> tokens); 
+int analisaLexico(vector<string> tokens); 
+
+// Funcao que faz a verificacao se uma operacao de divisao sera por zero
+// caso sim retorna true! caso contrario retorna false
+bool isDivisaoPorZero(string& token,map<string, tipoTS>& simbolo);

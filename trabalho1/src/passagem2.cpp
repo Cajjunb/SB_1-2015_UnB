@@ -51,19 +51,20 @@ void escreveOp(ofstream& out, vector<tipoInstrucao>& instrucao, vector<tipoDiret
         case 1:{
             tipoDiretiva d;
             d = pegaDiretiva(diretiva, token);
-
             if(d.formato == 'N'){
                 if(arg.find("x") != string::npos){ //Número está em hexadecimal
                     if(d.nome.compare("SPACE") == 0){
                         long int space = strtol(arg.c_str(), NULL, 16);
                         do{
                             //cout << "00 ";
+                            out << "d ";
                             out << "00 ";
                             space--;
                         }while(space > 0);
                     }
                     else{
                         //cout << strtol(arg.c_str(), NULL, 16);
+                        out << "d ";
                         out << strtol(arg.c_str(), NULL, 16) << " ";
                     }
                 }
@@ -72,12 +73,14 @@ void escreveOp(ofstream& out, vector<tipoInstrucao>& instrucao, vector<tipoDiret
                         long int space = strtol(arg.c_str(), NULL, 10);
                         do{
                             //cout << "00 ";
+                            out << "d ";
                             out << "00 ";
                             space--;
                         }while(space > 0);
                     }
                     else{
                         //cout << arg;
+                        out << "d ";
                         out << arg << " ";
                     }
                 }
@@ -89,10 +92,9 @@ void escreveOp(ofstream& out, vector<tipoInstrucao>& instrucao, vector<tipoDiret
 
 void separaOp(ofstream& out, vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, map<string, tipoTS>& simbolo, vector<string> vTab, int linha){
     if(isInstrucao(instrucao, vTab[0])){ //INSTRUÇÃO ARG
-        if( analisaLexico(vTab) != CORRETO_LEXICO ){                        // ANALISE LEXICA DE TODA A LINHA
-            imprimeErro(ERRO_INVALIDO,linha);                   // IMPRIME O ERRO 
-        }
+        detectarErrosInstrucao(simbolo, vTab,  linha);
         if(vTab.size() > 1){
+            cout << "\n\t Cheguei aqui\t" << vTab[0];
             escreveOp(out, instrucao, diretiva, simbolo, vTab[0], vTab[1], 0);
         }else
             escreveOp(out, instrucao, diretiva, simbolo, vTab[0], vTab[0], 0); //STOP
@@ -104,8 +106,7 @@ void separaOp(ofstream& out, vector<tipoInstrucao>& instrucao, vector<tipoDireti
             escreveOp(out, instrucao, diretiva, simbolo, vTab[0], "00", 1); //SPACE SEM ARGUMENTO
     }else{//é rótulo
             if(isInstrucao(instrucao, vTab[1])){
-                if( analisaLexico(vTab) != CORRETO_LEXICO )                        // ANALISE LEXICA DE TODA A LINHA
-                    imprimeErro(ERRO_INVALIDO,linha);                   // IMPRIME O ERRO 
+                detectarErrosInstrucao(simbolo, vTab,  linha);
                 if(vTab.size() > 2)
                     escreveOp(out, instrucao, diretiva, simbolo, vTab[1], vTab[2], 0);
                 else
@@ -123,7 +124,6 @@ void separaOp(ofstream& out, vector<tipoInstrucao>& instrucao, vector<tipoDireti
 void criaArqObj(ifstream& in, ofstream& out, vector<tipoGramatica>& gramatica, vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, map<string, tipoTS>& simbolo, map<string, vector<int>>& uso, map<string, int>& definicao){
     string linha;
     int i = 0;
-    int tamanho = 0 ;
     if(!definicao.empty() || !uso.empty()){
         out << "TABLE USE" << endl;
         //cout << "TABLE USE" << endl;
@@ -149,10 +149,10 @@ void criaArqObj(ifstream& in, ofstream& out, vector<tipoGramatica>& gramatica, v
     cout << "\n Comeca a segunda passagem";
     while(getline(in, linha)){
         vector<string> vTab;
-        cout << "\n" << linha;
+        int tamanho;
         //cout << linha << endl;
         explode(vTab, linha, "\t");
-         i = (int)strtol(vTab.back().c_str(), NULL, 10); //último elemento desta linha informa a linha no arquivo anterior
+        i = (int)strtol(vTab.back().c_str(), NULL, 10); //último elemento desta linha informa a linha no arquivo anterior
         vTab.pop_back(); //retira esse elemento
         tamanho = vTab[0].size();
         if(vTab[0][tamanho - 1] == ':'){
@@ -168,27 +168,21 @@ void criaArqObj(ifstream& in, ofstream& out, vector<tipoGramatica>& gramatica, v
 }
 
 
-bool isRotulo(string token){
-    if ( (char)token[token.size()-1] == ':')
+bool detectarErrosInstrucao(map<string, tipoTS>& simbolo, vector<string> vTab, int linha){
+    int erro_encontrado = 0;
+    if( analisaLexico(vTab) != ERRO_LEXICO ){                        // ANALISE LEXICA DE TODA A LINHA
+        imprimeErro(ERRO_INVALIDO,linha);                   // IMPRIME O ERRO 
+        erro_encontrado = 1;
+    }
+    if(vTab.size() > 1){
+        if( (vTab[0] == "DIV" && isDivisaoPorZero(vTab[1], simbolo)) ||
+           (vTab[1] == "DIV" && isDivisaoPorZero(vTab[2], simbolo))){
+            imprimeErro(ERRO_DIVISAO_POR_ZERO,linha);
+            erro_encontrado = 1;
+        }
+    }
+    if(erro_encontrado)
         return true;
     else
         return false;
-}
-
-
-bool isTokenValido(string token){
-    if(isdigit(token[0])){
-        return false;
-    }
-    else
-        return true;
-}
-
-int analisaLexico(std::vector<string> tokens){
-    unsigned int tamanho = tokens.size();
-    for ( unsigned int i = 0; i < tamanho; ++i){
-        if(!isTokenValido(tokens[i]) )
-            return i;
-    }
-    return CORRETO_LEXICO;
 }

@@ -173,22 +173,25 @@ int calculaPC(vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, 
         return i.tamanho;
     }
 
-    imprimeErro(ERRO_NAO_ENCONTRADO, linha);
+    imprimeErro(ERRO_COMANDO_NAO_ENCONTRADO, linha);
     return 0;
 }
 
 void criaTabelas(ifstream& arq, vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, map<string, tipoTS>& simbolo, map<string, vector<int>>& uso, map<string, int>& definicao){
     int pc = 0;
-    int i = 0; //contador de linhas
+    int i; //contador de linhas
     string linha;
 
     while(getline(arq, linha)){
-        i++; //leu uma linha
         vector<string> vTab;
         string aux;
         int tamanho;
         //cout << linha << endl;
         explode(vTab, linha, "\t");
+
+        i = (int)strtol(vTab.back().c_str(), NULL, 10); //último elemento desta linha informa a linha no arquivo anterior
+        vTab.pop_back(); //retira esse elemento
+
         //Se a primeira string tiver :, é definição de rótulo
         tamanho = vTab[0].size();
 
@@ -206,6 +209,9 @@ void criaTabelas(ifstream& arq, vector<tipoInstrucao>& instrucao, vector<tipoDir
             else{
                 s.posicao = pc;
                 s.externo = false;
+            }
+            if(strcasecmp(vTab[1].c_str(), "CONST") == 0 ){                 // Insere o valor da constante na tabela de simbolos
+                s.valorConstante = (int) strtol(vTab.back().c_str(),NULL, 10);
             }
             insereSimbolo(simbolo, vTab[0], s, i);
             editaDefinicao(definicao, vTab[0], i); //atualize endereço em TD caso símbolo esteja em TD

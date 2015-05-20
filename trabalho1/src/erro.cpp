@@ -13,7 +13,10 @@ void imprimeErro(tipoErro e, int linha){
             cout << "Semantico: Redefinicao de simbolos";
         break;
         case ERRO_NAO_ENCONTRADO:
-            cout << "Semantico: Simbolo nao encontrado";
+            cout << "Semantico: Label nao encontrado";
+        break;
+        case ERRO_COMANDO_NAO_ENCONTRADO:
+            cout << "Lexico: Instrucao ou diretiva nao encontrada";
         break;
         case ERRO_INVALIDO:
             cout << "Lexico: token invalido";
@@ -38,6 +41,9 @@ void imprimeErro(tipoErro e, int linha){
         break;
         case ERRO_DEFINIDO_ANTES:
             cout << "Semantico: simbolo ja definido em outro modulo";
+        break;
+        case ERRO_DIVISAO_POR_ZERO:
+            cout << "Semantico: Divisao por Zero! ";
         break;
         default:
             cout << "Erro Indefinido";
@@ -91,4 +97,29 @@ bool getBegin(){
 }
 bool getEnd(){
     return modEnd;
+}
+
+bool isTokenValido(string token){
+    if(isdigit(token[0])){
+        return false;
+    }
+    else
+        return true;
+}
+
+int analisaLexico(vector<string> tokens){
+    unsigned int tamanho = tokens.size();
+    for ( unsigned int i = 0; i < tamanho; ++i){
+        if(!isTokenValido(tokens[i]) )
+            return i;
+    }
+    return ERRO_LEXICO;
+}
+
+bool isDivisaoPorZero(string& token,map<string, tipoTS>& simbolo){
+    cout << "\n\t SIMBOL[TOKEN] =" <<  simbolo[token].valorConstante;
+    if(simbolo[token].valorConstante == 0)
+        return true;
+    else
+        return false;
 }

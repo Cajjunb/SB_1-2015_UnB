@@ -1,5 +1,6 @@
 #pragma once
 
+
 #include <fstream>
 #include <string>
 #include <map>
@@ -12,13 +13,17 @@
 
 using namespace std;
 
+
 //posicoa: posição na memória que se encontra
 //externo: diz se rótulo é externo ou não
 typedef struct{
 	std::string simbolo;
     int posicao;
     bool externo;
+    int  valorConstante;
 }tipoTS; //tabela de símbolos
+
+
 
 void editaDefinicao(map<string, int>& definicao, string token, int endereco); //Edita endereço na tabela de definição baseado no token
 void editaUso(map<string, vector<int>>& uso, string token, int endereco); //Adiciona na tabela de uso o valor do endereço baseado no token
