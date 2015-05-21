@@ -48,9 +48,6 @@ void imprimeErro(tipoErro e, int linha){
         case ERRO_FALTA_ARQUIVO:
             cout << "Necessario passar outro arquivo para finalizacao do processo de ligacao";
         break;
-        case ERRO_DEFINIDO_ANTES:
-            cout << "Semantico: simbolo ja definido em outro modulo";
-        break;
         case ERRO_DIVISAO_POR_ZERO:
             cout << "Semantico: nao e permitido divisao por zero";
         break;
@@ -59,6 +56,9 @@ void imprimeErro(tipoErro e, int linha){
         break;
         case ERRO_SIMBOLO_NAO_DEFINIDO:
             cout << "Sintatico: simbolo nao definido";
+        break;
+        case ERRO_SECTION_DATA_ANTES:
+            cout << "Semantico: SECTION DATA definido antes de SECTION TEXT";
         break;
         default:
             cout << "Erro Indefinido";
@@ -94,6 +94,8 @@ void atualizaSection(string arg, int linha){
     }
     else if(strcasecmp("TEXT", arg.c_str()) == 0){
         if(!sectionText){
+            if(sectionData) //se seção data estiver definida antes de texto
+                imprimeErro(ERRO_SECTION_DATA_ANTES);
             sectionText = true;
             sectionAtual = 't';
         }

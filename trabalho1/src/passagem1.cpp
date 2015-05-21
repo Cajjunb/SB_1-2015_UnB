@@ -142,10 +142,10 @@ int calculaPC(vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, 
         if(getSectionAtual() == 'd' || getEnd())
             imprimeErro(ERRO_LOCAL_INCORRETO, linha);
 
+        i = pegaInstrucao(instrucao, token);
+
         if(i.nome.compare("STOP") == 0)
             setStop(true);
-
-        i = pegaInstrucao(instrucao, token);
         bits.push_back(0);
         //cout << endl << "INSTR - bit 0" << endl;
 

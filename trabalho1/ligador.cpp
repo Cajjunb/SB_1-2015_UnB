@@ -8,7 +8,6 @@
 #include "include/erro.h"
 
 using namespace std;
-bool temDefinicao = false;
 
 bool temExtensao(string aux){
 
@@ -27,6 +26,10 @@ void criaTabelaGlobalDefinicao(ifstream& in, map<string, int>& definicao, int fa
         if(linha.compare("TABLE DEFINITION") == 0) //se achar a tabela de definicao
             break; //pare o loop
     }
+    if(in.eof()){
+        cout << "Arquivo no formato incorreto. Encerrando";
+        exit(EXIT_FAILURE);
+    }
 
     do{
         map<string, int>::iterator it;
@@ -43,7 +46,7 @@ void criaTabelaGlobalDefinicao(ifstream& in, map<string, int>& definicao, int fa
                 definicao.insert(pair<string, int>(vTab[0], valor));
             }
             else
-                imprimeErro(ERRO_DEFINIDO_ANTES);
+                imprimeErro(ERRO_REDEFINICAO);
         }
     }while(!linha.empty());
 
@@ -57,15 +60,14 @@ int calculaFatorCorrecao(ifstream& arq){
 
     while(getline(arq,linha)){
         //cout << linha << endl;
-        if(linha.compare("CODE") == 0){
-            temDefinicao = true;
+        if(linha.compare("CODE") == 0)
             break;
-        }
+
     }
     if(arq.eof()){
-        arq.clear();
-        arq.seekg(0, arq.beg); //rewind
-        return -1;
+        arq.close();
+        cout << "Arquivo nao precisa ser ligado. Encerrando";
+        exit(EXIT_SUCCESS);
     }
 
     while(getline(arq,linha, ' ')){
@@ -156,8 +158,8 @@ int main(int argc, char *argv[]){
     map<string, vector<int>> uso;
 
     //Verifica passagem de argumentos
-    if(argc < 3 || argc > 4){
-        cout << "Numero de argumentos incorretos. Encerrando" << argc;
+    if(argc != 4){
+        cout << "Numero de argumentos incorretos. Encerrando";
         exit(EXIT_FAILURE);
     }
 
@@ -165,20 +167,14 @@ int main(int argc, char *argv[]){
     input1.append(argv[1]);
     if(!temExtensao(input1))
         input1.append(".o");
-    if(argc == 4){
-        input2.append(argv[2]);
-        if(!temExtensao(input1))
-            input2.append(".o");
 
-        output.append(argv[3]);
-        if(!temExtensao(output))
-            output.append(".e");
-    }
-    else{
-        output.append(argv[2]);
-        if(!temExtensao(output))
-            output.append(".e");
-    }
+    input2.append(argv[2]);
+    if(!temExtensao(input1))
+        input2.append(".o");
+
+    output.append(argv[3]);
+    if(!temExtensao(output))
+        output.append(".e");
 
 
     in.open(input1);
@@ -188,42 +184,32 @@ int main(int argc, char *argv[]){
     }
 
     fatorCorrecao = calculaFatorCorrecao(in);
-    if(fatorCorrecao < 0){ //Significa que só tem um arquivo e que ele não precisa ser ligado
-        string linha;
-
-        out.open(output, std::ofstream::out | std::ofstream::trunc);
-        while(getline(in, linha)) //Enquanto consegue ler do arquivo de input
-            out << linha; //escreva no arquivo de output
-        out.close();
+    if(input2.empty()){
+        imprimeErro(ERRO_FALTA_ARQUIVO);
     }
     else{
-        if(input2.empty()){
-            imprimeErro(ERRO_FALTA_ARQUIVO);
+
+        out.open(output, std::ofstream::out | std::ofstream::trunc);
+        criaTabelaGlobalDefinicao(in, definicao, 0);
+        in.close();
+
+        in.open(input2);
+         if(!in.is_open()){
+            cout << "Erro ao abrir o arquivo " << input2 << ". Encerrando";
+            exit(EXIT_FAILURE);
         }
-        else{
+        criaTabelaGlobalDefinicao(in, definicao, fatorCorrecao);
+        in.close();
 
-            out.open(output, std::ofstream::out | std::ofstream::trunc);
-            criaTabelaGlobalDefinicao(in, definicao, 0);
-            in.close();
+        in.open(input1);
+        escreveExe(in, out, definicao, 0);
+        in.close();
 
-            in.open(input2);
-             if(!in.is_open()){
-                cout << "Erro ao abrir o arquivo " << input2 << ". Encerrando";
-                exit(EXIT_FAILURE);
-            }
-            criaTabelaGlobalDefinicao(in, definicao, fatorCorrecao);
-            in.close();
+        in.open(input2);
+        escreveExe(in, out, definicao, fatorCorrecao);
+        in.close();
 
-            in.open(input1);
-            escreveExe(in, out, definicao, 0);
-            in.close();
-
-            in.open(input2);
-            escreveExe(in, out, definicao, fatorCorrecao);
-            in.close();
-
-            out.close();
-        }
+        out.close();
     }
 
     in.close();

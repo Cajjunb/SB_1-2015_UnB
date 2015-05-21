@@ -62,7 +62,6 @@ typedef enum{
     ERRO_SINTATICO,
     ERRO_SEMANTICO,
     ERRO_REDEFINICAO,
-    ERRO_DEFINIDO_ANTES,
     ERRO_INVALIDO ,
     ERRO_SIMBOLO_NAO_DEFINIDO ,
     ERRO_TEXT_AUSENTE,
@@ -76,7 +75,8 @@ typedef enum{
     ERRO_LOCAL_INCORRETO,
     ERRO_FALTA_ARQUIVO,
     ERRO_DIVISAO_POR_ZERO,
-    ERRO_ALTERANDO_CONSTANTE
+    ERRO_ALTERANDO_CONSTANTE,
+    ERRO_SECTION_DATA_ANTES
 }tipoErro;
 
 void explode(vector<string>& destino, string& fonte, const char* delimitador);
