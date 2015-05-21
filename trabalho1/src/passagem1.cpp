@@ -1,7 +1,6 @@
 #include "../include/passagem1.h"
 
 void insereSimbolo(map<string, tipoTS>& simbolo, string& token, tipoTS s, int linha){
-
     if(simbolo.find(token) == simbolo.end()){ //se não existe símbolo na tabela
         simbolo.insert(pair<string, tipoTS>(token, s)); //insere no map
     }
@@ -143,6 +142,9 @@ int calculaPC(vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, 
         if(getSectionAtual() == 'd' || getEnd())
             imprimeErro(ERRO_LOCAL_INCORRETO, linha);
 
+        if(i.nome.compare("STOP") == 0)
+            setStop(true);
+
         i = pegaInstrucao(instrucao, token);
         bits.push_back(0);
         //cout << endl << "INSTR - bit 0" << endl;
@@ -236,7 +238,7 @@ void criaTabelas(ifstream& arq, vector<tipoInstrucao>& instrucao, vector<tipoDir
         vector<string> vTab;
         string aux;
         int tamanho;
-        cout << linha << endl;
+        //cout << linha << endl;
         explode(vTab, linha, "\t");
 
         i = (int)strtol(vTab.back().c_str(), NULL, 10); //último elemento desta linha informa a linha no arquivo anterior

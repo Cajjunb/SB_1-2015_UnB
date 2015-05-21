@@ -20,6 +20,9 @@ bool getBegin(); //retorna se módulo foi definido ou não
 void setEnd(bool s); //seta quando módulo termina
 bool getEnd(); //retorna se módulo foi definido ou não
 bool getData(); //retorna se seção data já foi definida ou não
+void setStop(bool s); //seta quando arquivo tem instrução STOP
+bool getStop(); //retorna se arquivo tem instrução stop ou não
+bool teveErro(); //retorna se arquivo gerou erros ou não
 
 void imprimeErro(tipoErro e, int linha = -1); //imprime mensagem de erro. Mostra endereço de PC e linha caso seja passado
 void verificaSectionText(); //Verifica se seção text foi declarada

@@ -136,8 +136,9 @@ void separaOp(ofstream& out, vector<tipoInstrucao>& instrucao,vector<tipoGramati
     }
 }
 
-void criaArqObj(ifstream& in, ofstream& out, vector<tipoGramatica>& gramatica, vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, map<string, tipoTS>& simbolo, map<string, vector<int>>& uso, map<string, int>& definicao, vector<int>& bits){
+bool criaArqObj(ifstream& in, ofstream& out, vector<tipoGramatica>& gramatica, vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, map<string, tipoTS>& simbolo, map<string, vector<int>>& uso, map<string, int>& definicao, vector<int>& bits){
     string linha;
+    bool liga = false;
     int i = 0;
     if(!definicao.empty() || !uso.empty()){
         out << "TABLE USE" << endl;
@@ -168,6 +169,8 @@ void criaArqObj(ifstream& in, ofstream& out, vector<tipoGramatica>& gramatica, v
         //cout << endl;
         out << "CODE" << endl;
         //cout << "CODE" << endl;
+
+        liga = true;
     }
     //cout << "\n Comeca a segunda passagem";
     while(getline(in, linha)){
@@ -179,18 +182,25 @@ void criaArqObj(ifstream& in, ofstream& out, vector<tipoGramatica>& gramatica, v
 
         explode(vTab, linha, "\t");
         i = (int)strtol(vTab.back().c_str(), NULL, 10); //último elemento desta linha informa a linha no arquivo anterior
-        vTab.pop_back(); //retira esse elemento
+        vTab.pop_back(); //retira esse elemento8
         tamanho = vTab[0].size();
         if(vTab[0][tamanho - 1] == ':'){
             vTab[0] = vTab[0].substr(0, tamanho - 1); //eliminando :
-            map<string, tipoTS>::iterator it = simbolo.find(vTab[0]);
-            if(it == simbolo.end())
-                imprimeErro(ERRO_NAO_ENCONTRADO, i);
+            if(!simbolo.empty()){
+                map<string, tipoTS>::iterator it = simbolo.find(vTab[0]);
+                if(it == simbolo.end())
+                    imprimeErro(ERRO_NAO_ENCONTRADO, i);
+            }
         }
         separaOp(out, instrucao,gramatica, diretiva, simbolo, vTab,i);
     }
     in.clear();
     in.seekg(0, in.beg); //rewind
+
+    if((!getBegin() && !getEnd()) && !getStop()) //se não tiver begin/end e não tiver stop
+        imprimeErro(ERRO_STOP_AUSENTE); //imprima erro
+
+    return liga;
 }
 
 
@@ -201,14 +211,18 @@ bool detectarErrosInstrucao(map<string, tipoTS>& simbolo , vector<string> vTab, 
         erro_encontrado = 1;
     }
     if(vTab.size() > 1){
-        if( (vTab[0] == "DIV" && isDivisaoPorZero(vTab[1], simbolo)) ||
-           (vTab[1] == "DIV" && isDivisaoPorZero(vTab[2], simbolo))){
-            imprimeErro(ERRO_DIVISAO_POR_ZERO,linha);
-            erro_encontrado = 1;
+        if(!simbolo.empty()){
+            if( (vTab[0] == "DIV" && isDivisaoPorZero(vTab[1], simbolo)) ||
+               (vTab[1] == "DIV" && isDivisaoPorZero(vTab[2], simbolo))){
+                imprimeErro(ERRO_DIVISAO_POR_ZERO,linha);
+                erro_encontrado = 1;
+            }
+            if(isMudancaDeValorConstante(vTab, simbolo, gramatica )){
+                imprimeErro(ERRO_ALTERANDO_CONSTANTE, linha);
+            }
         }
-        if(isMudancaDeValorConstante(vTab, simbolo, gramatica )){
-            imprimeErro(ERRO_ALTERANDO_CONSTANTE, linha);
-        }
+        else
+            imprimeErro(ERRO_DATA_AUSENTE);
     }
     if(erro_encontrado)
         return true;
