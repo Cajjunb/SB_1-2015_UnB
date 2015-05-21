@@ -93,13 +93,10 @@ void escreveOp(ofstream& out, vector<tipoInstrucao>& instrucao, vector<tipoDiret
 void separaOp(ofstream& out, vector<tipoInstrucao>& instrucao,vector<tipoGramatica>& gramatica, vector<tipoDiretiva>& diretiva, map<string, tipoTS>& simbolo, vector<string> vTab, int linha){
     if(isInstrucao(instrucao, vTab[0])){ //INSTRUÇÃO A
         detectarErrosInstrucao(simbolo, vTab, gramatica,  linha);
+
         if(vTab.size() > 1){
-<<<<<<< HEAD
             if(vTab.size() == 3) //COPY ARG,    ARG
                 vTab[1].append(vTab[2]);
-
-=======
->>>>>>> 288bebb69c4cb31cb31a4ab92048b2691f38424d
             escreveOp(out, instrucao, diretiva, simbolo, vTab[0], vTab[1], 0);
         }else
             escreveOp(out, instrucao, diretiva, simbolo, vTab[0], vTab[0], 0); //STOP
@@ -112,8 +109,11 @@ void separaOp(ofstream& out, vector<tipoInstrucao>& instrucao,vector<tipoGramati
     }else{//é rótulo
             if(isInstrucao(instrucao, vTab[1])){
                 detectarErrosInstrucao(simbolo, vTab, gramatica,  linha);
-                if(vTab.size() > 2)
+                if(vTab.size() > 2){
+                    if(vTab.size() == 4) //LABEL:   COPY ARG,    ARG
+                        vTab[2].append(vTab[3]);
                     escreveOp(out, instrucao, diretiva, simbolo, vTab[1], vTab[2], 0);
+                }
                 else
                     escreveOp(out, instrucao, diretiva, simbolo, vTab[1], vTab[1], 0); //LABEL: STOP
             }

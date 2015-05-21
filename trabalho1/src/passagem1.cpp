@@ -100,8 +100,10 @@ int calculaPC(vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, 
                 else
                     n = strtol(vTab[2].c_str(), NULL, 10);
 
-                for(long int i = 0; i < n; i++) //adiciona bit absoluto para cada space que existe
-                        bits.push_back(0); //endereço absoluto
+                for(long int i = 0; i < n; i++){ //adiciona bit absoluto para cada space que existe
+                    //cout << "SPACE - bit 0" << endl;
+                    bits.push_back(0); //endereço absoluto
+                }
                 return n;
             }
             else{
@@ -126,6 +128,7 @@ int calculaPC(vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, 
             setEnd(true);
         }
         else if(d.nome.compare("CONST") == 0){
+            //cout << "CONST - bit 0" << endl;
             bits.push_back(0); //endereço absoluto
         }
 
@@ -142,8 +145,9 @@ int calculaPC(vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, 
 
         i = pegaInstrucao(instrucao, token);
         bits.push_back(0);
+        //cout << endl << "INSTR - bit 0" << endl;
 
-        if(vTab.size() > 1){
+        if(i.tamanho > 1){
 
             aux.append(vTab[1]); //Supõe formato INSTR   ARG
             //cout << "Aux velho: " << aux << endl;
@@ -188,26 +192,31 @@ int calculaPC(vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, 
                         //cin.get();
 
                         if(it != uso.end()){ //tem na tabela de uso
-                            //cout << ">>>>>>>>>aux: " << aux << " bit 1" << endl;
+                            //cout << "ARG - bit 1 ";
                             bits.push_back(1); //endereço relativo (argumento)
                             editaUso(uso, somaEndereco[0], endAux);
                         }
                         else{ //não tem na tabela de uso
                             //cout << ">>>>>>>>>aux: " << somaEndereco[0] << " bit 1" << endl;
+                            //cout << "ARG - bit 1 ";
                             bits.push_back(1);
                         }
 
                     } //se não tiver achado, então não tem mesmo na tabela de uso
                     else{
                         //cout << ">>>>>>>>>aux: " << aux << " bit 1" << endl;
+                        //cout << "ARG - bit 1 ";
                         bits.push_back(1);
                     }
                 }
                 else{
                     //cout << ">>>>>>>>>aux: " << aux << " bit 1" << endl;
+                    //cout << "ARG - bit 1 ";
                     bits.push_back(1); //endereço relativo (argumento)
                     editaUso(uso, aux, endAux);
                 }
+                //cout << endl;
+                //cin.get();
             }while(copyArg.size() > 0);
         }
 
@@ -240,7 +249,7 @@ void criaTabelas(ifstream& arq, vector<tipoInstrucao>& instrucao, vector<tipoDir
             tipoTS s;
             vTab[0] = vTab[0].substr(0, tamanho - 1); //eliminando :
             s.simbolo = vTab[0];
-            
+
             if(strcasecmp(vTab[1].c_str(), "EXTERN") == 0){ //Se a próxima string for extern, então insere na tabela de uso
                 if(!getBegin() || getEnd()) //se begin não tiver sido definido
                     imprimeErro(ERRO_LOCAL_INCORRETO, i);
@@ -256,10 +265,12 @@ void criaTabelas(ifstream& arq, vector<tipoInstrucao>& instrucao, vector<tipoDir
                 s.valorConstante = (int) strtol(vTab.back().c_str(),NULL, 10);
                 s.tipoConstante = true;
             }
-            else
+            else{
                 s.valorConstante = -1; //não é usado
+                s.tipoConstante = false;
+            }
             insereSimbolo(simbolo, vTab[0], s, i);
-            editaDefinicao(definicao, vTab[0], i); //atualize endereço em TD caso símbolo esteja em TD
+            editaDefinicao(definicao, vTab[0], s.posicao); //atualize endereço em TD caso símbolo esteja em TD
 
             //inserido rótulo, calcula PC
             aux.append(vTab[1]);

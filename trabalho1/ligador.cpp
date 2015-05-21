@@ -73,6 +73,8 @@ int calculaFatorCorrecao(ifstream& arq){
         //cout << linha << " tamanho:" << tamanho <<endl;
     }
     tamanho++; //mais um para indicar pŕoximo espaço vazio
+
+    //cout << "fator de correção: " << tamanho << endl;
     arq.clear();
     arq.seekg(0, arq.beg);
     return tamanho;
@@ -83,7 +85,6 @@ void escreveExe(ifstream& in, ofstream& out, map<string, int>& definicao, int fa
     map<int, string> uso; //tabela de uso
     vector<string> bits; //mapa de bits
     int endereco = 0; //contador de endereço
-    int soma = 0;
 
     getline(in, linha); //TABLE USE
     while(getline(in, linha) && !linha.empty()){ //constrói tabela de uso
@@ -114,17 +115,13 @@ void escreveExe(ifstream& in, ofstream& out, map<string, int>& definicao, int fa
             codigo != obj.end(), bit != bits.end();
             codigo++, bit++, endereco++
         ){
-
+        int soma = 0;
         if((*bit).compare("1") == 0){
-            cout << endl<< "if" << endl;
-            cout << "codigo: " << *codigo << " "; //escreve opcode (fixo)
-            cout << " bit: " << *bit << " ";
-
             map<int, string>::iterator it;
 
-            if(!uso.empty()){
+            if(!uso.empty()){ //se ainda há pendências de uso pra resolver
                 it = uso.find(endereco);
-                if(it != uso.end()){
+                if(it != uso.end()){ //se achar este endereço atual deste arquivo na tabela de uso
                     string label;
                     map<string, int>::iterator def;
 
@@ -132,23 +129,21 @@ void escreveExe(ifstream& in, ofstream& out, map<string, int>& definicao, int fa
                     label.append(it->second);
                     def = definicao.find(label);
                     //out << (def->second + fator + strtol((*codigo).c_str(), NULL, 10)) << " ";
-                    soma = def->second;
+                    soma = def->second - fator; //subtrai o valor de fator porque este endereço está na tabela geral de definição, logo o fator já foi calculado
 
                     uso.erase(it); //free
+
                 }
             }
             out << (soma + fator + strtol((*codigo).c_str(), NULL, 10)) << " ";
-            cout << " endereco: "<< (soma + fator + strtol((*codigo).c_str(), NULL, 10)) << endl;
+            //cout << " endereco: "<< (soma + fator + strtol((*codigo).c_str(), NULL, 10)) << endl;
             //cin.get();
         }
         else{
             out << *codigo << " "; //escreve opcode (fixo)
-            cout << "codigo: " << *codigo << " "; //escreve opcode (fixo)
-            cout << " bit: " << *bit << " ";
+            //cout << "codigo: " << *codigo << " "; //escreve opcode (fixo)
+            //cout << " bit: " << *bit << " ";
         }
-
-        cout << endl << "Final do for\tbit: " << *bit << " ";
-        //cin.get();
     }
 }
 
@@ -218,6 +213,10 @@ int main(int argc, char *argv[]){
             }
             criaTabelaGlobalDefinicao(in, definicao, fatorCorrecao);
             in.close();
+
+            cout << endl << "----TABELA DE DEFINICAO----" << endl;
+            for(map<string, int>::iterator it = definicao.begin(); it != definicao.end(); it++)
+                cout << it->first << " " << it->second << endl;
 
             in.open(input1);
             escreveExe(in, out, definicao, 0);
