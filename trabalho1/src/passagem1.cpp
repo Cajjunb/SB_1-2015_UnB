@@ -78,7 +78,7 @@ void separaSectionArgs(vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& d
     }
 }
 
-int calculaPC(vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, map<string, vector<int>>& uso, string token, int linha, vector<string>& vTab, int endereco){
+int calculaPC(vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, map<string, vector<int>>& uso, string token, int linha, vector<string>& vTab, int endereco, vector<int>& bits){
 
     if(isDiretiva(diretiva, token)){
         tipoDiretiva d;
@@ -90,10 +90,24 @@ int calculaPC(vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, 
         if(d.tamanho == -1){ //se tamanho == -1, então deve ter argumento dizendo o tamanho
             //LABEL:    SPACE   N
             //vTab[0]   vTab[1] vTab[2]
-            if(vTab.size() == 3)
-                return atoi(vTab[2].c_str()); //transforma argumento em número
-            else
+
+            if(vTab.size() == 3){
+                long int n;
+
+                if(vTab[2].find("x") != string::npos) //Número está em hexadecimal
+                        n = strtol(vTab[2].c_str(), NULL, 16);
+
+                else
+                    n = strtol(vTab[2].c_str(), NULL, 10);
+
+                for(long int i = 0; i < n; i++) //adiciona bit absoluto para cada space que existe
+                        bits.push_back(0); //endereço absoluto
+                return n;
+            }
+            else{
+                bits.push_back(0); //endereço absoluto
                 return 1; //Não tem argumentos
+            }
         }
 
         if(d.nome.compare("SECTION") == 0)
@@ -111,6 +125,9 @@ int calculaPC(vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, 
                 imprimeErro(ERRO_BEGIN_AUSENTE, linha);
             setEnd(true);
         }
+        else if(d.nome.compare("CONST") == 0){
+            bits.push_back(0); //endereço absoluto
+        }
 
         return d.tamanho;
     }
@@ -124,17 +141,30 @@ int calculaPC(vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, 
             imprimeErro(ERRO_LOCAL_INCORRETO, linha);
 
         i = pegaInstrucao(instrucao, token);
+        bits.push_back(0);
 
         if(vTab.size() > 1){
 
             aux.append(vTab[1]); //Supõe formato INSTR   ARG
-            if(vTab.size() == 3){ //está no formato: LABEL:  INSTR   ARG
-                aux.clear();
-                aux.append(vTab[2]);
+            //cout << "Aux velho: " << aux << endl;
+            if(vTab.size() >= 3){ //está no formato: LABEL:  INSTR   ARG
+                if(i.nome.compare("COPY") == 0){ //se for COPY
+                    if(vTab.size() == 3) //COPY ARG ARG
+                        aux.append(vTab[2]);
+                    else if(vTab.size() == 4){ //LABEL:  COPY    ARG ARG
+                        aux.clear();
+                        aux.append(vTab[2]);
+                        aux.append(vTab[3]);
+                    }
+                }
+                else{
+                    aux.clear();
+                    aux.append(vTab[2]);
+                }
             }
 
-            //cout << aux << endl();
-            explode(copyArg, aux, ", "); //procura se na string aux tem copy
+            //cout << "Aux novo: " << aux << endl;
+            explode(copyArg, aux, ","); //procura se na string aux tem copy
             do{
                 endAux++;
                 if(!copyArg.empty()){ //enquanto copyArg tiver argumentos
@@ -157,14 +187,25 @@ int calculaPC(vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, 
                         //cout << somaEndereco[0];
                         //cin.get();
 
-                        if(it != uso.end())
+                        if(it != uso.end()){ //tem na tabela de uso
+                            //cout << ">>>>>>>>>aux: " << aux << " bit 1" << endl;
+                            bits.push_back(1); //endereço relativo (argumento)
                             editaUso(uso, somaEndereco[0], endAux);
+                        }
+                        else{ //não tem na tabela de uso
+                            //cout << ">>>>>>>>>aux: " << somaEndereco[0] << " bit 1" << endl;
+                            bits.push_back(1);
+                        }
 
+                    } //se não tiver achado, então não tem mesmo na tabela de uso
+                    else{
+                        //cout << ">>>>>>>>>aux: " << aux << " bit 1" << endl;
+                        bits.push_back(1);
                     }
-                     //se não tiver achado, então não tem mesmo
                 }
                 else{
-
+                    //cout << ">>>>>>>>>aux: " << aux << " bit 1" << endl;
+                    bits.push_back(1); //endereço relativo (argumento)
                     editaUso(uso, aux, endAux);
                 }
             }while(copyArg.size() > 0);
@@ -177,7 +218,7 @@ int calculaPC(vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, 
     return 0;
 }
 
-void criaTabelas(ifstream& arq, vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, map<string, tipoTS>& simbolo, map<string, vector<int>>& uso, map<string, int>& definicao){
+void criaTabelas(ifstream& arq, vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, map<string, tipoTS>& simbolo, map<string, vector<int>>& uso, map<string, int>& definicao, vector<int>& bits){
     int pc = 0;
     int i; //contador de linhas
     string linha;
@@ -213,6 +254,8 @@ void criaTabelas(ifstream& arq, vector<tipoInstrucao>& instrucao, vector<tipoDir
             if(strcasecmp(vTab[1].c_str(), "CONST") == 0 ){                 // Insere o valor da constante na tabela de simbolos
                 s.valorConstante = (int) strtol(vTab.back().c_str(),NULL, 10);
             }
+            else
+                s.valorConstante = -1; //não é usado
             insereSimbolo(simbolo, vTab[0], s, i);
             editaDefinicao(definicao, vTab[0], i); //atualize endereço em TD caso símbolo esteja em TD
 
@@ -230,7 +273,7 @@ void criaTabelas(ifstream& arq, vector<tipoInstrucao>& instrucao, vector<tipoDir
             aux.append(vTab[0]);
         }
 
-        pc += calculaPC(instrucao, diretiva, uso, aux, i, vTab, pc);
+        pc += calculaPC(instrucao, diretiva, uso, aux, i, vTab, pc, bits);
 
     }
 

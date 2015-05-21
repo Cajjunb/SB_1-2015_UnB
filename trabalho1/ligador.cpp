@@ -6,7 +6,6 @@
 
 #include "include/base.h"
 #include "include/erro.h"
-#include "include/tabela.h"
 
 using namespace std;
 bool temDefinicao = false;
@@ -79,10 +78,12 @@ int calculaFatorCorrecao(ifstream& arq){
     return tamanho;
 }
 
-void escreveExe(ifstream& in, ofstream& out, vector<tipoInstrucao>& instrucao, map<string, int>& definicao, int fator){
+void escreveExe(ifstream& in, ofstream& out, map<string, int>& definicao, int fator){
     string linha;
-    map<int, string> uso;
-    int endereco = 0;
+    map<int, string> uso; //tabela de uso
+    vector<string> bits; //mapa de bits
+    int endereco = 0; //contador de endereço
+    int soma = 0;
 
     getline(in, linha); //TABLE USE
     while(getline(in, linha) && !linha.empty()){ //constrói tabela de uso
@@ -90,6 +91,14 @@ void escreveExe(ifstream& in, ofstream& out, vector<tipoInstrucao>& instrucao, m
         explode(vTab, linha, " ");
         uso.insert(pair<int, string>(strtol(vTab[1].c_str(), NULL, 10), vTab[0]));
     }
+
+    while(linha.compare("R") != 0){ //enquanto não achar R
+        getline(in, linha); //pegue linha
+    }//achou R
+
+    getline(in, linha); //pegue linha
+    explode(bits, linha, " "); //divide cada bit em posição de vetor
+
     while(linha.compare("CODE") != 0){
         getline(in, linha);
     } //achou CODE
@@ -101,43 +110,45 @@ void escreveExe(ifstream& in, ofstream& out, vector<tipoInstrucao>& instrucao, m
     //em geral, vetor obj estará
     //obj[0]    obj[1]  obj[2]  obj[3]
     //op        arg     op      arg
-    for(vector<string>::iterator codigo = obj.begin(); codigo != obj.end(); ++codigo){
+    for(    vector<string>::iterator codigo = obj.begin(), bit = bits.begin();
+            codigo != obj.end(), bit != bits.end();
+            codigo++, bit++, endereco++
+        ){
 
-        if((*codigo).compare("d") != 0){ //d de diretiva
-            int arg;
-            tipoInstrucao i = pegaInstrucaoOpcode(instrucao, strtol((*codigo).c_str(), NULL, 10));
+        if((*bit).compare("1") == 0){
+            cout << endl<< "if" << endl;
+            cout << "codigo: " << *codigo << " "; //escreve opcode (fixo)
+            cout << " bit: " << *bit << " ";
 
-            out << *codigo << " "; //escreve opcode (fixo)
-            endereco++; //contador de endereços
+            map<int, string>::iterator it;
 
-            arg = i.tamanho - 1; //retira um pois ignora o código da instrução
-            while(arg > 0){
-                codigo++; //pega próximo código, que é argumento
-                map<int, string>::iterator it;
+            if(!uso.empty()){
+                it = uso.find(endereco);
+                if(it != uso.end()){
+                    string label;
+                    map<string, int>::iterator def;
 
-                if(!uso.empty()){
-                    it = uso.find(endereco);
-                    if(it != uso.end()){
-                        string label;
-                        map<string, int>::iterator def;
+                    label.clear();
+                    label.append(it->second);
+                    def = definicao.find(label);
+                    //out << (def->second + fator + strtol((*codigo).c_str(), NULL, 10)) << " ";
+                    soma = def->second;
 
-                        label.clear();
-                        label.append(it->second);
-                        def = definicao.find(label);
-                        out << (def->second + fator + strtol((*codigo).c_str(), NULL, 10)) << " ";
-
-                        uso.erase(it); //free
-                    }
+                    uso.erase(it); //free
                 }
-                endereco++;
-                arg--; //decrementa um argumento
             }
+            out << (soma + fator + strtol((*codigo).c_str(), NULL, 10)) << " ";
+            cout << " endereco: "<< (soma + fator + strtol((*codigo).c_str(), NULL, 10)) << endl;
+            //cin.get();
         }
         else{
-            codigo++;
-            out << *codigo << " ";
+            out << *codigo << " "; //escreve opcode (fixo)
+            cout << "codigo: " << *codigo << " "; //escreve opcode (fixo)
+            cout << " bit: " << *bit << " ";
         }
 
+        cout << endl << "Final do for\tbit: " << *bit << " ";
+        //cin.get();
     }
 }
 
@@ -184,7 +195,6 @@ int main(int argc, char *argv[]){
     fatorCorrecao = calculaFatorCorrecao(in);
     if(fatorCorrecao < 0){ //Significa que só tem um arquivo e que ele não precisa ser ligado
         string linha;
-        cout << fatorCorrecao << endl;
 
         out.open(output, std::ofstream::out | std::ofstream::trunc);
         while(getline(in, linha)) //Enquanto consegue ler do arquivo de input
@@ -196,10 +206,6 @@ int main(int argc, char *argv[]){
             imprimeErro(ERRO_FALTA_ARQUIVO);
         }
         else{
-            vector<tipoInstrucao> instrucao;
-            arq.open("tabelas/instrucoes.txt");
-            criaInstrucao(arq, instrucao);
-            arq.close();
 
             out.open(output, std::ofstream::out | std::ofstream::trunc);
             criaTabelaGlobalDefinicao(in, definicao, 0);
@@ -214,11 +220,11 @@ int main(int argc, char *argv[]){
             in.close();
 
             in.open(input1);
-            escreveExe(in, out, instrucao, definicao, 0);
+            escreveExe(in, out, definicao, 0);
             in.close();
 
             in.open(input2);
-            escreveExe(in, out, instrucao, definicao, fatorCorrecao);
+            escreveExe(in, out, definicao, fatorCorrecao);
             in.close();
 
             out.close();

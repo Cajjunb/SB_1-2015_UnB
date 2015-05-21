@@ -2,6 +2,7 @@
 
 
 void escreveOp(ofstream& out, vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, map<string, tipoTS>& simbolo, string token, string arg, int tipo){ //tipo é INSTRUÇÃO = 0 ou DIRETIVA = 1
+
     switch(tipo){
         case 0: {
             tipoInstrucao i;
@@ -17,7 +18,8 @@ void escreveOp(ofstream& out, vector<tipoInstrucao>& instrucao, vector<tipoDiret
 
             if(i.tamanho > 1){ //se tamanho for maior que 1, então no mínimo tem argumentos
                 aux.append(arg); //Supõe formato INSTR   ARG
-                explode(copyArg, aux, ",\t"); //procura se na string aux tem copy
+                //cout << "arg: " << arg << endl;
+                explode(copyArg, aux, ","); //procura se na string aux tem copy
                 do{
                     mais = 0;
                     if(!copyArg.empty()){ //enquanto copyArg tiver argumentos
@@ -38,6 +40,8 @@ void escreveOp(ofstream& out, vector<tipoInstrucao>& instrucao, vector<tipoDiret
                     map<string, tipoTS>::iterator it = simbolo.find(aux);
                     tipoTS s = it->second;
                     mais += s.posicao;
+                    //cout << " aux: " << aux << " s.posicao: " << s.posicao << " mais final: " << mais << endl;
+                    //cin.get();
 
                     out << mais;
                     //cout << mais;
@@ -57,14 +61,12 @@ void escreveOp(ofstream& out, vector<tipoInstrucao>& instrucao, vector<tipoDiret
                         long int space = strtol(arg.c_str(), NULL, 16);
                         do{
                             //cout << "00 ";
-                            out << "d ";
                             out << "00 ";
                             space--;
                         }while(space > 0);
                     }
                     else{
                         //cout << strtol(arg.c_str(), NULL, 16);
-                        out << "d ";
                         out << strtol(arg.c_str(), NULL, 16) << " ";
                     }
                 }
@@ -73,14 +75,12 @@ void escreveOp(ofstream& out, vector<tipoInstrucao>& instrucao, vector<tipoDiret
                         long int space = strtol(arg.c_str(), NULL, 10);
                         do{
                             //cout << "00 ";
-                            out << "d ";
                             out << "00 ";
                             space--;
                         }while(space > 0);
                     }
                     else{
                         //cout << arg;
-                        out << "d ";
                         out << arg << " ";
                     }
                 }
@@ -94,7 +94,9 @@ void separaOp(ofstream& out, vector<tipoInstrucao>& instrucao, vector<tipoDireti
     if(isInstrucao(instrucao, vTab[0])){ //INSTRUÇÃO ARG
         detectarErrosInstrucao(simbolo, vTab,  linha);
         if(vTab.size() > 1){
-            cout << "\n\t Cheguei aqui\t" << vTab[0];
+            if(vTab.size() == 3) //COPY ARG,    ARG
+                vTab[1].append(vTab[2]);
+
             escreveOp(out, instrucao, diretiva, simbolo, vTab[0], vTab[1], 0);
         }else
             escreveOp(out, instrucao, diretiva, simbolo, vTab[0], vTab[0], 0); //STOP
@@ -121,7 +123,7 @@ void separaOp(ofstream& out, vector<tipoInstrucao>& instrucao, vector<tipoDireti
     }
 }
 
-void criaArqObj(ifstream& in, ofstream& out, vector<tipoGramatica>& gramatica, vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, map<string, tipoTS>& simbolo, map<string, vector<int>>& uso, map<string, int>& definicao){
+void criaArqObj(ifstream& in, ofstream& out, vector<tipoGramatica>& gramatica, vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, map<string, tipoTS>& simbolo, map<string, vector<int>>& uso, map<string, int>& definicao, vector<int>& bits){
     string linha;
     int i = 0;
     if(!definicao.empty() || !uso.empty()){
@@ -142,15 +144,26 @@ void criaArqObj(ifstream& in, ofstream& out, vector<tipoGramatica>& gramatica, v
             //cout << it->first << " " << it->second << endl;
         }
         out << endl;
+        out << "R" << endl;
+        //cout << "TABLE DEFINITION" << endl;
+        //cout << "tamanho: " << bits.size();
+        for (vector<int>::iterator it = bits.begin(); it != bits.end(); it++){
+            out << *it << ' ';
+            //cout << it->first << " " << it->second << endl;
+        }
+        out << endl << endl;
         //cout << endl;
         out << "CODE" << endl;
         //cout << "CODE" << endl;
     }
-    cout << "\n Comeca a segunda passagem";
+    //cout << "\n Comeca a segunda passagem";
     while(getline(in, linha)){
+
         vector<string> vTab;
         int tamanho;
+
         //cout << linha << endl;
+
         explode(vTab, linha, "\t");
         i = (int)strtol(vTab.back().c_str(), NULL, 10); //último elemento desta linha informa a linha no arquivo anterior
         vTab.pop_back(); //retira esse elemento
@@ -171,7 +184,7 @@ void criaArqObj(ifstream& in, ofstream& out, vector<tipoGramatica>& gramatica, v
 bool detectarErrosInstrucao(map<string, tipoTS>& simbolo, vector<string> vTab, int linha){
     int erro_encontrado = 0;
     if( analisaLexico(vTab) != ERRO_LEXICO ){                        // ANALISE LEXICA DE TODA A LINHA
-        imprimeErro(ERRO_INVALIDO,linha);                   // IMPRIME O ERRO 
+        imprimeErro(ERRO_INVALIDO,linha);                   // IMPRIME O ERRO
         erro_encontrado = 1;
     }
     if(vTab.size() > 1){

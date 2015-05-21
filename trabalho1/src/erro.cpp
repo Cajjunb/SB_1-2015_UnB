@@ -117,7 +117,7 @@ int analisaLexico(vector<string> tokens){
 }
 
 bool isDivisaoPorZero(string& token,map<string, tipoTS>& simbolo){
-    cout << "\n\t SIMBOL[TOKEN] =" <<  simbolo[token].valorConstante;
+    //cout << "\n\t SIMBOL[TOKEN] =" <<  simbolo[token].valorConstante;
     if(simbolo[token].valorConstante == 0)
         return true;
     else
