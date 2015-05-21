@@ -168,19 +168,20 @@ void criaArqObj(ifstream& in, ofstream& out, vector<tipoGramatica>& gramatica, v
 
 
 bool detectarErrosInstrucao(map<string, tipoTS>& simbolo , vector<string> vTab, vector<tipoGramatica>& gramatica, int linha){
-    int erro_encontrado = 0;
+    bool erro_encontrado = false;
     if( analisaLexico(vTab) != ERRO_LEXICO ){                        // ANALISE LEXICA DE TODA A LINHA
         imprimeErro(ERRO_INVALIDO,linha);                   // IMPRIME O ERRO 
-        erro_encontrado = 1;
+        erro_encontrado = true;
     }
     if(vTab.size() > 1){
         if( (vTab[0] == "DIV" && isDivisaoPorZero(vTab[1], simbolo)) ||
            (vTab[1] == "DIV" && isDivisaoPorZero(vTab[2], simbolo))){
             imprimeErro(ERRO_DIVISAO_POR_ZERO,linha);
-            erro_encontrado = 1;
+            erro_encontrado = true;
         }
         if(isMudancaDeValorConstante(vTab, simbolo, gramatica )){
             imprimeErro(ERRO_ALTERANDO_CONSTANTE, linha);
+            erro_encontrado = true;
         }
     }
     if(erro_encontrado)

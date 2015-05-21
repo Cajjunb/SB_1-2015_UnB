@@ -7,7 +7,7 @@ bool modBegin = false; //global que diz quando um módulo começa
 bool modEnd = false; //global que diz quando um módulo termina
 
 void imprimeErro(tipoErro e, int linha){
-    cout << ">>>>>ERRO: ";
+    cout << "\n>>>>>ERRO: ";
     switch(e){
         case ERRO_REDEFINICAO:
             cout << "Semantico: Redefinicao de simbolos";
