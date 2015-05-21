@@ -24,6 +24,9 @@ void imprimeErro(tipoErro e, int linha){
         case ERRO_TEXT_AUSENTE:
             cout << "Semantico: SECTION TEXT ausente";
         break;
+        case ERRO_DATA_AUSENTE:
+            cout << "Semantico: SECTION DATA necessaria";
+        break;
         case ERRO_BEGIN_AUSENTE:
             cout << "Semantico: existe definicao de diretiva END, mas nao de LABEL: BEGIN";
         break;
@@ -43,10 +46,13 @@ void imprimeErro(tipoErro e, int linha){
             cout << "Semantico: simbolo ja definido em outro modulo";
         break;
         case ERRO_DIVISAO_POR_ZERO:
-            cout << "Semantico: Divisao por Zero! ";
+            cout << "Semantico: nao e permitido divisao por zero";
         break;
         case ERRO_ALTERANDO_CONSTANTE:
-            cout << "Semantico: ALTERANDO VALOR DE CONSTANTE! ";
+            cout << "Semantico: nao e permitido alterar valor de constante";
+        break;
+        case ERRO_SIMBOLO_NAO_DEFINIDO:
+            cout << "Sintatico: simbolo nao definido";
         break;
         default:
             cout << "Erro Indefinido";
@@ -102,6 +108,10 @@ bool getEnd(){
     return modEnd;
 }
 
+bool getData(){
+    return sectionData;
+}
+
 bool isTokenValido(string token){
     if(isdigit(token[0])){
         return false;
@@ -128,7 +138,7 @@ bool isDivisaoPorZero(string& token,map<string, tipoTS>& simbolo){
 }
 
 bool isMudancaDeValorConstante(vector<string> tokens, map<string, tipoTS>& simbolo,  vector<tipoGramatica>& gramatica ){
-    tipoGramatica gramaticaInstrucao = pegaGramatica(gramatica ,tokens[0]);                            // pega gramatica 
+    tipoGramatica gramaticaInstrucao = pegaGramatica(gramatica ,tokens[0]);                            // pega gramatica
     bool args[3] = {false,false,false};
     for(unsigned int i = 0;  i < tokens.size(); i++){
         args[i] = simbolo[tokens[i]].tipoConstante;

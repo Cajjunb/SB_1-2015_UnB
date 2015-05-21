@@ -236,7 +236,7 @@ void criaTabelas(ifstream& arq, vector<tipoInstrucao>& instrucao, vector<tipoDir
         vector<string> vTab;
         string aux;
         int tamanho;
-        //cout << linha << endl;
+        cout << linha << endl;
         explode(vTab, linha, "\t");
 
         i = (int)strtol(vTab.back().c_str(), NULL, 10); //último elemento desta linha informa a linha no arquivo anterior

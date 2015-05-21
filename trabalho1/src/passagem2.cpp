@@ -1,7 +1,7 @@
 #include "../include/passagem2.h"
 
 
-void escreveOp(ofstream& out, vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, map<string, tipoTS>& simbolo, string token, string arg, int tipo){ //tipo é INSTRUÇÃO = 0 ou DIRETIVA = 1
+void escreveOp(ofstream& out, vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, map<string, tipoTS>& simbolo, string token, string arg, int tipo, int linha){ //tipo é INSTRUÇÃO = 0 ou DIRETIVA = 1
 
     switch(tipo){
         case 0: {
@@ -37,16 +37,26 @@ void escreveOp(ofstream& out, vector<tipoInstrucao>& instrucao, vector<tipoDiret
                             mais = (int)strtol(maisAux[1].c_str(), NULL, 10);
                     }
 
-                    map<string, tipoTS>::iterator it = simbolo.find(aux);
-                    tipoTS s = it->second;
-                    mais += s.posicao;
-                    //cout << " aux: " << aux << " s.posicao: " << s.posicao << " mais final: " << mais << endl;
-                    //cin.get();
+                    if(!simbolo.empty()){
+                        map<string, tipoTS>::iterator it = simbolo.find(aux);
+                        if(it != simbolo.end()){
+                            tipoTS s = it->second;
+                            mais += s.posicao;
+                            //cout << " aux: " << aux << " s.posicao: " << s.posicao << " mais final: " << mais << endl;
+                            //cin.get();
 
-                    out << mais;
-                    //cout << mais;
-                    //cout << endl;
-                    out << " ";
+                            out << mais;
+                            //cout << mais;
+                            //cout << endl;
+                            out << " ";
+                        }
+                        else
+                            imprimeErro(ERRO_SIMBOLO_NAO_DEFINIDO, linha);
+                    }
+                    else{
+                        if(!getData())
+                            imprimeErro(ERRO_DATA_AUSENTE);
+                    }
 
                 }while(copyArg.size() > 0);
             }
@@ -97,31 +107,31 @@ void separaOp(ofstream& out, vector<tipoInstrucao>& instrucao,vector<tipoGramati
         if(vTab.size() > 1){
             if(vTab.size() == 3) //COPY ARG,    ARG
                 vTab[1].append(vTab[2]);
-            escreveOp(out, instrucao, diretiva, simbolo, vTab[0], vTab[1], 0);
+            escreveOp(out, instrucao, diretiva, simbolo, vTab[0], vTab[1], 0, linha);
         }else
-            escreveOp(out, instrucao, diretiva, simbolo, vTab[0], vTab[0], 0); //STOP
+            escreveOp(out, instrucao, diretiva, simbolo, vTab[0], vTab[0], 0, linha); //STOP
     }
     else if(isDiretiva(diretiva, vTab[0])){
         if(vTab.size() > 1)
-            escreveOp(out, instrucao, diretiva, simbolo, vTab[0], vTab[1], 1);
+            escreveOp(out, instrucao, diretiva, simbolo, vTab[0], vTab[1], 1, linha);
         else
-            escreveOp(out, instrucao, diretiva, simbolo, vTab[0], "00", 1); //SPACE SEM ARGUMENTO
+            escreveOp(out, instrucao, diretiva, simbolo, vTab[0], "00", 1, linha); //SPACE SEM ARGUMENTO
     }else{//é rótulo
             if(isInstrucao(instrucao, vTab[1])){
                 detectarErrosInstrucao(simbolo, vTab, gramatica,  linha);
                 if(vTab.size() > 2){
                     if(vTab.size() == 4) //LABEL:   COPY ARG,    ARG
                         vTab[2].append(vTab[3]);
-                    escreveOp(out, instrucao, diretiva, simbolo, vTab[1], vTab[2], 0);
+                    escreveOp(out, instrucao, diretiva, simbolo, vTab[1], vTab[2], 0, linha);
                 }
                 else
-                    escreveOp(out, instrucao, diretiva, simbolo, vTab[1], vTab[1], 0); //LABEL: STOP
+                    escreveOp(out, instrucao, diretiva, simbolo, vTab[1], vTab[1], 0, linha); //LABEL: STOP
             }
             else if(isDiretiva(diretiva, vTab[1])){
                 if(vTab.size() > 2)
-                escreveOp(out, instrucao, diretiva, simbolo, vTab[1], vTab[2], 1);
+                escreveOp(out, instrucao, diretiva, simbolo, vTab[1], vTab[2], 1, linha);
             else
-                escreveOp(out, instrucao, diretiva, simbolo, vTab[1], "00", 1); //SPACE SEM ARGUMENTO
+                escreveOp(out, instrucao, diretiva, simbolo, vTab[1], "00", 1, linha); //SPACE SEM ARGUMENTO
             }
     }
 }

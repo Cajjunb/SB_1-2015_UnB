@@ -214,10 +214,6 @@ int main(int argc, char *argv[]){
             criaTabelaGlobalDefinicao(in, definicao, fatorCorrecao);
             in.close();
 
-            cout << endl << "----TABELA DE DEFINICAO----" << endl;
-            for(map<string, int>::iterator it = definicao.begin(); it != definicao.end(); it++)
-                cout << it->first << " " << it->second << endl;
-
             in.open(input1);
             escreveExe(in, out, definicao, 0);
             in.close();

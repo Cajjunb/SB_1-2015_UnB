@@ -63,18 +63,6 @@ int main(int argc, char *argv[]){
     arq1.open("pre_processado.txt");
     arq2.open(output);
         criaTabelas(arq1, instrucao, diretiva, simbolo, uso, definicao, bits); //primeira passagem
-
-        cout << "---------- Tabela de Simbolos ----------" << endl;
-    cout << "Rotulo\t Externo\t Posicao" << endl;
-    for (map<string, tipoTS>::iterator it = simbolo.begin(); it != simbolo.end(); ++it)
-        cout << it->first << "\t " << it->second.externo << "\t " << it->second.posicao << endl;
-    cout << endl;
-
-    cout << "---------- Tabela de Definicoes ----------" << endl;
-    cout << "Rotulo\t Posicao" << endl;
-    for (map<string, int>::iterator it = definicao.begin(); it != definicao.end(); ++it)
-        cout << it->first << "\t " << it->second << endl;
-
         criaArqObj(arq1, arq2, gramatica, instrucao, diretiva, simbolo, uso, definicao, bits); //segunda passagem
     arq1.close();
     arq2.close();
