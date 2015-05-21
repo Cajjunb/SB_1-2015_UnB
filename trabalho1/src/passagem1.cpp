@@ -271,6 +271,8 @@ void criaTabelas(ifstream& arq, vector<tipoInstrucao>& instrucao, vector<tipoDir
                 s.valorConstante = -1; //não é usado
                 s.tipoConstante = false;
             }
+            s.section = getSectionAtual();
+
             insereSimbolo(simbolo, vTab[0], s, i);
             editaDefinicao(definicao, vTab[0], s.posicao); //atualize endereço em TD caso símbolo esteja em TD
 

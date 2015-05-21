@@ -8,12 +8,14 @@ using namespace std;
 
 //posicoa: posição na memória que se encontra
 //externo: diz se rótulo é externo ou não
+//section: diz em qual seção o rótulo percente. Aceita somente 't', SECTION TEXT, e 'd', SECTION DATA
 typedef struct{
     string simbolo;
     int posicao;
     bool externo;
     int  valorConstante;
-    bool tipoConstante = false ;
+    bool tipoConstante;
+    char section;
 }tipoTS; //tabela de símbolos
 
 // Enumeracao para comportamento em relacao a constantes na gramatica
@@ -76,7 +78,8 @@ typedef enum{
     ERRO_FALTA_ARQUIVO,
     ERRO_DIVISAO_POR_ZERO,
     ERRO_ALTERANDO_CONSTANTE,
-    ERRO_SECTION_DATA_ANTES
+    ERRO_SECTION_DATA_ANTES,
+    ERRO_JMP_INVALIDO
 }tipoErro;
 
 void explode(vector<string>& destino, string& fonte, const char* delimitador);

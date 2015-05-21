@@ -60,6 +60,9 @@ void imprimeErro(tipoErro e, int linha){
         case ERRO_SECTION_DATA_ANTES:
             cout << "Semantico: SECTION DATA definido antes de SECTION TEXT";
         break;
+        case ERRO_JMP_INVALIDO:
+            cout << "Semantico: pulo para rotulo invalido";
+        break;
         default:
             cout << "Erro Indefinido";
         break;

@@ -44,7 +44,10 @@ void escreveOp(ofstream& out, vector<tipoInstrucao>& instrucao, vector<tipoDiret
                             mais += s.posicao;
                             //cout << " aux: " << aux << " s.posicao: " << s.posicao << " mais final: " << mais << endl;
                             //cin.get();
-
+                            if(i.nome.find("JMP") != string::npos){ //se encontrar alguma das funções de Jump
+                                if(s.section == 'd') //se esse rotulo se refere a seção data
+                                    imprimeErro(ERRO_JMP_INVALIDO, linha);
+                            }
                             out << mais;
                             //cout << mais;
                             //cout << endl;
