@@ -23,6 +23,7 @@ typedef struct{
     int posicao;
     bool externo;
     int  valorConstante;
+    bool tipoConstante = false ;
 }tipoTS; //tabela de símbolos
 #endif
 

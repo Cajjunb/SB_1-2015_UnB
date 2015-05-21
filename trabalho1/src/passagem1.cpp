@@ -239,7 +239,8 @@ void criaTabelas(ifstream& arq, vector<tipoInstrucao>& instrucao, vector<tipoDir
         if(vTab[0][tamanho - 1] == ':'){
             tipoTS s;
             vTab[0] = vTab[0].substr(0, tamanho - 1); //eliminando :
-
+            s.simbolo = vTab[0];
+            
             if(strcasecmp(vTab[1].c_str(), "EXTERN") == 0){ //Se a próxima string for extern, então insere na tabela de uso
                 if(!getBegin() || getEnd()) //se begin não tiver sido definido
                     imprimeErro(ERRO_LOCAL_INCORRETO, i);
@@ -253,6 +254,7 @@ void criaTabelas(ifstream& arq, vector<tipoInstrucao>& instrucao, vector<tipoDir
             }
             if(strcasecmp(vTab[1].c_str(), "CONST") == 0 ){                 // Insere o valor da constante na tabela de simbolos
                 s.valorConstante = (int) strtol(vTab.back().c_str(),NULL, 10);
+                s.tipoConstante = true;
             }
             else
                 s.valorConstante = -1; //não é usado
