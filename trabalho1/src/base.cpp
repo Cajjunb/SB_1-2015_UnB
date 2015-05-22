@@ -30,3 +30,19 @@ void explode(vector<string>& destino, string& fonte, const char* delimitador){
     }
 }
 
+bool isNumber(string token){
+        //positivo                                  negativo
+    if((token[0] == '0' && token[1] == 'x') || (token[1] == '0' && token[2] == 'x')){ //É um número hexadecimal
+        if(0L != strtol(token.c_str(), NULL, 16)) //se pode ser convertido em um número
+            return true;
+        else
+            return false;
+    }
+    else{
+        if(token.find_first_not_of("0123456789") == std::string::npos) //se string só possui números
+            return true;
+    }
+
+    return false;
+}
+

@@ -1,7 +1,9 @@
 #include "../include/passagem1.h"
 
 void insereSimbolo(map<string, tipoTS>& simbolo, string& token, tipoTS s, int linha){
-    std::map<string, tipoTS>::iterator it = simbolo.find(token);
+
+    map<string, tipoTS>::iterator it;
+    it = simbolo.find(token);
     if(it == simbolo.end()){ //se não existe símbolo na tabela
         simbolo.insert(pair<string, tipoTS>(token, s)); //insere no map
     }
@@ -144,8 +146,13 @@ int calculaPC(vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, 
         if(getSectionAtual() == 'd' || getEnd())
             imprimeErro(ERRO_LOCAL_INCORRETO, linha);
         i = pegaInstrucao(instrucao, token);
-        if(i.nome.compare("STOP") == 0)
+        if(i.nome.compare("STOP") == 0 && !getStop()){
             setStop(true);
+        }
+        else{
+            if(getStop())
+                imprimeErro(ERRO_ENCERRA_PROGRAMA, linha);
+        }
         bits.push_back(0);
         //cout << endl << "INSTR - bit 0" << endl;
         if(i.tamanho > 1){
@@ -254,14 +261,21 @@ void criaTabelas(ifstream& arq, vector<tipoInstrucao>& instrucao, vector<tipoDir
                 s.posicao = pc;
                 s.externo = false;
             }
+
+            //Nem space nem const não podem não terem rótulo
             if(strcasecmp(vTab[1].c_str(), "CONST") == 0 ){                 // Insere o valor da constante na tabela de simbolos
-                s.valorConstante = (int) strtol(vTab.back().c_str(),NULL, 10);
+                if(vTab.back().find("x") != string::npos) //hexadecimal
+                    s.valorConstante = (int) strtol(vTab.back().c_str(),NULL, 16);
+                else //decimal
+                    s.valorConstante = (int) strtol(vTab.back().c_str(),NULL, 10);
+
                 s.tipoConstante = true;
             }
             else{
                 s.valorConstante = -1; //não é usado
                 s.tipoConstante = false;
             }
+
             s.section = getSectionAtual();
 
             insereSimbolo(simbolo, vTab[0], s, i);
@@ -285,6 +299,7 @@ void criaTabelas(ifstream& arq, vector<tipoInstrucao>& instrucao, vector<tipoDir
             incremento = calculaPC(instrucao, diretiva, uso, aux, i, vTab, pc, bits);
             pc += incremento;
         }
+        verificaLabels(vTab, i);
     }
     /*tipoTS endereco_limite;                               //CRIA UM SIMBOLO QUE INDICA O ENDERECO DO FINAL DO ARQUIVO, UMA CONSTANTE, NOME UM TOKEN INVALIDO
     endereco_limite.simbolo =";END";
@@ -294,7 +309,6 @@ void criaTabelas(ifstream& arq, vector<tipoInstrucao>& instrucao, vector<tipoDir
     insereSimbolo(simbolo,endereco_limite.simbolo, endereco_limite, i );        // INSERE O SIMBOLO DE FINAL DE ARQUIVO
     */
     verificaSectionText(); //verifica se o arquivo terminou declarando uma seção text
-
     arq.clear();
     arq.seekg(0, arq.beg); //rewind
 }

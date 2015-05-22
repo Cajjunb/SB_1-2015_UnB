@@ -27,6 +27,7 @@ bool teveErro(); //retorna se arquivo gerou erros ou não
 void imprimeErro(tipoErro e, int linha = -1); //imprime mensagem de erro. Mostra endereço de PC e linha caso seja passado
 void verificaSectionText(); //Verifica se seção text foi declarada
 void atualizaSection(string arg, int linha); //atualiza sectionAtual e verifica se é uma section válida
+void verificaLabels(vector<string> vTab, int linha); //verifica se na linha existe mais de uma label. Se tiver, imprime erro
 
 // Funcao que verifica dado um token se ele é valido lexicamente
 bool isTokenValido(string token);

@@ -1,24 +1,32 @@
 #include "../include/passagem2.h"
 
 
-void escreveOp(ofstream& out, vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, map<string, tipoTS>& simbolo, string token, string arg, int tipo, int linha){ //tipo é INSTRUÇÃO = 0 ou DIRETIVA = 1
+void escreveOp(ofstream& out, vector<tipoGramatica>& gramatica, vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, map<string, tipoTS>& simbolo, string token, string arg, int tipo, int linha){ //tipo é INSTRUÇÃO = 0 ou DIRETIVA = 1
 
     switch(tipo){
         case 0: {
             tipoInstrucao i;
+            tipoGramatica g;
             string aux; //string auxiliar que contém argumentos
             vector<string> copyArg; //vetor de string para conter argumentos que estão separados por vírgula
             vector<string> maisAux; //vetor de string para conter argumentos que estão separados por +
             int mais;
+            int qtdArg = 0;
+
+            //cout << "token:--" << token << "--" << endl;
             i = pegaInstrucao(instrucao, token);
+            g = pegaGramatica(gramatica, token);
+
             out << i.op << " ";
             //cout << i.op << " ";
-            if(i.tamanho > 1){ //se tamanho for maior que 1, então no mínimo tem argumentos
+
+            if(g.qtdOperandos > 0 && !arg.empty()){ //se qtdOperandos > 0 e argumento != vazio
                 aux.append(arg); //Supõe formato INSTR   ARG
                 //cout << "arg: " << arg << endl;
                 explode(copyArg, aux, ","); //procura se na string aux tem copy
                 do{
                     mais = 0;
+                    qtdArg++;
                     if(!copyArg.empty()){ //enquanto copyArg tiver argumentos
                         aux.clear();
                         aux.append(copyArg.front());
@@ -37,20 +45,23 @@ void escreveOp(ofstream& out, vector<tipoInstrucao>& instrucao, vector<tipoDiret
                         map<string, tipoTS>::iterator it = simbolo.find(aux);
                         if(it != simbolo.end()){
                             tipoTS s = it->second;
+
+                            if(s.posicao == -1)
+                                imprimeErro(ERRO_OP_INVALIDO, linha);
+
                             mais += s.posicao;
                             //cout << " aux: " << aux << " s.posicao: " << s.posicao << " mais final: " << mais << endl;
                             //cin.get();
-                            if(i.nome.find("JMP") != string::npos){ //se encontrar alguma das funções de Jump
-                                if(s.section == 'd') //se esse rotulo se refere a seção data
-                                    imprimeErro(ERRO_JMP_INVALIDO, linha);
-                            }
+
                             out << mais;
                             //cout << mais;
                             //cout << endl;
                             out << " ";
                         }
-                        else
+                        else{
                             imprimeErro(ERRO_SIMBOLO_NAO_DEFINIDO, linha);
+                            imprimeErro(ERRO_ARG_INVALIDO, linha);
+                        }
                     }
                     else{
                         if(!getData())
@@ -58,6 +69,20 @@ void escreveOp(ofstream& out, vector<tipoInstrucao>& instrucao, vector<tipoDiret
                     }
 
                 }while(copyArg.size() > 0);
+
+                //cout << "g.nome: " << g.nome << " g.qtdOperandos: " << g.qtdOperandos << endl;
+                //cout << "qtdArgs: " << qtdArg << endl;
+                if(qtdArg != g.qtdOperandos){
+                    imprimeErro(ERRO_QTD_ARG, linha);
+                }
+            }
+            else{
+                if(i.op == 14 && !arg.empty()){ //se for STOP e tiver argumentos
+                    imprimeErro(ERRO_QTD_ARG, linha); //erro
+                }
+                else if(i.op != 14){
+                    imprimeErro(ERRO_QTD_ARG, linha); //não é STOP e não tinha argumentos
+                }
             }
             break;
         }
@@ -65,33 +90,38 @@ void escreveOp(ofstream& out, vector<tipoInstrucao>& instrucao, vector<tipoDiret
             tipoDiretiva d;
             d = pegaDiretiva(diretiva, token);
             if(d.formato == 'N'){
-                if(arg.find("x") != string::npos){ //Número está em hexadecimal
-                    if(d.nome.compare("SPACE") == 0){
-                        long int space = strtol(arg.c_str(), NULL, 16);
-                        do{
-                            //cout << "00 ";
-                            out << "00 ";
-                            space--;
-                        }while(space > 0);
+                if(isNumber(arg)){
+                    if(arg.find("x") != string::npos){ //Número está em hexadecimal
+                        if(d.nome.compare("SPACE") == 0){
+                            long int space = strtol(arg.c_str(), NULL, 16);
+                            do{
+                                //cout << "00 ";
+                                out << "00 ";
+                                space--;
+                            }while(space > 0);
+                        }
+                        else{
+                            //cout << strtol(arg.c_str(), NULL, 16);
+                            out << strtol(arg.c_str(), NULL, 16) << " ";
+                        }
                     }
-                    else{
-                        //cout << strtol(arg.c_str(), NULL, 16);
-                        out << strtol(arg.c_str(), NULL, 16) << " ";
+                    else{ //É um número em decimal
+                        if(d.nome.compare("SPACE") == 0){
+                            long int space = strtol(arg.c_str(), NULL, 10);
+                            do{
+                                //cout << "00 ";
+                                out << "00 ";
+                                space--;
+                            }while(space > 0);
+                        }
+                        else{
+                            //cout << arg;
+                            out << arg << " ";
+                        }
                     }
                 }
-                else{ //É um número em decimal
-                    if(d.nome.compare("SPACE") == 0){
-                        long int space = strtol(arg.c_str(), NULL, 10);
-                        do{
-                            //cout << "00 ";
-                            out << "00 ";
-                            space--;
-                        }while(space > 0);
-                    }
-                    else{
-                        //cout << arg;
-                        out << arg << " ";
-                    }
+                else{
+                    imprimeErro(ERRO_INVALIDO, linha);
                 }
             }
             break;
@@ -105,31 +135,31 @@ void separaOp(ofstream& out, vector<tipoInstrucao>& instrucao,vector<tipoGramati
         if(vTab.size() > 1){
             if(vTab.size() == 3) //COPY ARG,    ARG
                 vTab[1].append(vTab[2]);
-            escreveOp(out, instrucao, diretiva, simbolo, vTab[0], vTab[1], 0, linha);
+            escreveOp(out, gramatica, instrucao, diretiva, simbolo, vTab[0], vTab[1], 0, linha);
         }else
-            escreveOp(out, instrucao, diretiva, simbolo, vTab[0], vTab[0], 0, linha); //STOP
+            escreveOp(out, gramatica, instrucao, diretiva, simbolo, vTab[0], "", 0, linha); //STOP
     }
     else if(isDiretiva(diretiva, vTab[0])){
         if(vTab.size() > 1)
-            escreveOp(out, instrucao, diretiva, simbolo, vTab[0], vTab[1], 1, linha);
+            escreveOp(out, gramatica, instrucao, diretiva, simbolo, vTab[0], vTab[1], 1, linha);
         else
-            escreveOp(out, instrucao, diretiva, simbolo, vTab[0], "00", 1, linha); //SPACE SEM ARGUMENTO
+            escreveOp(out, gramatica, instrucao, diretiva, simbolo, vTab[0], "00", 1, linha); //SPACE SEM ARGUMENTO
     }else{//é rótulo
             if(isInstrucao(instrucao, vTab[1])){
                 detectarErrosInstrucao(simbolo, vTab, gramatica,  linha);
                 if(vTab.size() > 2){
                     if(vTab.size() == 4) //LABEL:   COPY ARG,    ARG
                         vTab[2].append(vTab[3]);
-                    escreveOp(out, instrucao, diretiva, simbolo, vTab[1], vTab[2], 0, linha);
+                    escreveOp(out, gramatica, instrucao, diretiva, simbolo, vTab[1], vTab[2], 0, linha);
                 }
                 else
-                    escreveOp(out, instrucao, diretiva, simbolo, vTab[1], vTab[1], 0, linha); //LABEL: STOP
+                    escreveOp(out, gramatica, instrucao, diretiva, simbolo, vTab[1], "", 0, linha); //LABEL: STOP
             }
             else if(isDiretiva(diretiva, vTab[1])){
                 if(vTab.size() > 2)
-                escreveOp(out, instrucao, diretiva, simbolo, vTab[1], vTab[2], 1, linha);
+                escreveOp(out, gramatica, instrucao, diretiva, simbolo, vTab[1], vTab[2], 1, linha);
             else
-                escreveOp(out, instrucao, diretiva, simbolo, vTab[1], "00", 1, linha); //SPACE SEM ARGUMENTO
+                escreveOp(out, gramatica, instrucao, diretiva, simbolo, vTab[1], "00", 1, linha); //SPACE SEM ARGUMENTO
             }
     }
 }
