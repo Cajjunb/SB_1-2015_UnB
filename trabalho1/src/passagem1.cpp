@@ -144,8 +144,13 @@ int calculaPC(vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, 
 
         i = pegaInstrucao(instrucao, token);
 
-        if(i.nome.compare("STOP") == 0)
+        if(i.nome.compare("STOP") == 0 && !getStop()){
             setStop(true);
+        }
+        else{
+            if(getStop())
+                imprimeErro(ERRO_ENCERRA_PROGRAMA, linha);
+        }
         bits.push_back(0);
         //cout << endl << "INSTR - bit 0" << endl;
 

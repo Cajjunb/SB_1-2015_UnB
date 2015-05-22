@@ -69,6 +69,9 @@ void imprimeErro(tipoErro e, int linha){
         case ERRO_QTD_ARG:
             cout << "Sintatico: instrucao com argumentos invalidos";
         break;
+        case ERRO_ENCERRA_PROGRAMA:
+            cout << "Semantico: nao e permitido instrucao apos STOP";
+        break;
         default:
             cout << "Erro Indefinido";
         break;
