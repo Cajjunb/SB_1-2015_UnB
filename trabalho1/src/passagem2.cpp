@@ -50,17 +50,16 @@ void escreveOp(ofstream& out, vector<tipoGramatica>& gramatica, vector<tipoInstr
                             mais += s.posicao;
                             //cout << " aux: " << aux << " s.posicao: " << s.posicao << " mais final: " << mais << endl;
                             //cin.get();
-                            if(i.nome.find("JMP") != string::npos){ //se encontrar alguma das funções de Jump
-                                if(s.section == 'd') //se esse rotulo se refere a seção data
-                                    imprimeErro(ERRO_JMP_INVALIDO, linha);
-                            }
+
                             out << mais;
                             //cout << mais;
                             //cout << endl;
                             out << " ";
                         }
-                        else
+                        else{
                             imprimeErro(ERRO_SIMBOLO_NAO_DEFINIDO, linha);
+                            imprimeErro(ERRO_QTD_ARG, linha);
+                        }
                     }
                     else{
                         if(!getData())
@@ -71,14 +70,17 @@ void escreveOp(ofstream& out, vector<tipoGramatica>& gramatica, vector<tipoInstr
 
                 //cout << "g.nome: " << g.nome << " g.qtdOperandos: " << g.qtdOperandos << endl;
                 //cout << "qtdArgs: " << qtdArg << endl;
-                if(qtdArg != g.qtdOperandos)
+                if(qtdArg != g.qtdOperandos){
                     imprimeErro(ERRO_QTD_ARG, linha);
+                }
             }
             else{
-                if(i.op == 14 && !arg.empty()) //se for STOP e tiver argumentos
+                if(i.op == 14 && !arg.empty()){ //se for STOP e tiver argumentos
                     imprimeErro(ERRO_QTD_ARG, linha); //erro
-                else
+                }
+                else if(i.op != 14){
                     imprimeErro(ERRO_QTD_ARG, linha); //não é STOP e não tinha argumentos
+                }
             }
             break;
         }
@@ -86,33 +88,38 @@ void escreveOp(ofstream& out, vector<tipoGramatica>& gramatica, vector<tipoInstr
             tipoDiretiva d;
             d = pegaDiretiva(diretiva, token);
             if(d.formato == 'N'){
-                if(arg.find("x") != string::npos){ //Número está em hexadecimal
-                    if(d.nome.compare("SPACE") == 0){
-                        long int space = strtol(arg.c_str(), NULL, 16);
-                        do{
-                            //cout << "00 ";
-                            out << "00 ";
-                            space--;
-                        }while(space > 0);
+                if(isNumber(arg)){
+                    if(arg.find("x") != string::npos){ //Número está em hexadecimal
+                        if(d.nome.compare("SPACE") == 0){
+                            long int space = strtol(arg.c_str(), NULL, 16);
+                            do{
+                                //cout << "00 ";
+                                out << "00 ";
+                                space--;
+                            }while(space > 0);
+                        }
+                        else{
+                            //cout << strtol(arg.c_str(), NULL, 16);
+                            out << strtol(arg.c_str(), NULL, 16) << " ";
+                        }
                     }
-                    else{
-                        //cout << strtol(arg.c_str(), NULL, 16);
-                        out << strtol(arg.c_str(), NULL, 16) << " ";
+                    else{ //É um número em decimal
+                        if(d.nome.compare("SPACE") == 0){
+                            long int space = strtol(arg.c_str(), NULL, 10);
+                            do{
+                                //cout << "00 ";
+                                out << "00 ";
+                                space--;
+                            }while(space > 0);
+                        }
+                        else{
+                            //cout << arg;
+                            out << arg << " ";
+                        }
                     }
                 }
-                else{ //É um número em decimal
-                    if(d.nome.compare("SPACE") == 0){
-                        long int space = strtol(arg.c_str(), NULL, 10);
-                        do{
-                            //cout << "00 ";
-                            out << "00 ";
-                            space--;
-                        }while(space > 0);
-                    }
-                    else{
-                        //cout << arg;
-                        out << arg << " ";
-                    }
+                else{
+                    imprimeErro(ERRO_INVALIDO, linha);
                 }
             }
             break;
@@ -194,6 +201,8 @@ bool criaArqObj(ifstream& in, ofstream& out, vector<tipoGramatica>& gramatica, v
     }
     //cout << "\n Comeca a segunda passagem";
     while(getline(in, linha)){
+
+        //cout << linha << endl;
 
         vector<string> vTab;
         int tamanho;

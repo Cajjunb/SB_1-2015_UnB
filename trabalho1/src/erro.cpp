@@ -112,7 +112,7 @@ void atualizaSection(string arg, int linha){
             imprimeErro(ERRO_REDEFINICAO, linha);
     }
     else
-        imprimeErro(ERRO_INVALIDO, linha);
+        imprimeErro(ERRO_USO_INCORRETO, linha);
 }
 
 char getSectionAtual(){
@@ -142,11 +142,14 @@ bool getData(){
 }
 
 bool isTokenValido(string token){
-    if(isdigit(token[0])){
-        return false;
-    }
-    else
+    if(isNumber(token))
         return true;
+    else{
+        if(isdigit(token[0]))
+            return false;
+        else
+            return true;
+    }
 }
 
 int analisaLexico(vector<string> tokens){

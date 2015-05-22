@@ -60,11 +60,11 @@ typedef struct{
 
 //enumeração dos tipos de erros
 typedef enum{
-    ERRO_LEXICO = 0,
+    ERRO_LEXICO,
     ERRO_SINTATICO,
     ERRO_SEMANTICO,
     ERRO_REDEFINICAO,
-    ERRO_INVALIDO ,
+    ERRO_INVALIDO,
     ERRO_SIMBOLO_NAO_DEFINIDO ,
     ERRO_TEXT_AUSENTE,
     ERRO_DATA_AUSENTE,
@@ -85,3 +85,4 @@ typedef enum{
 }tipoErro;
 
 void explode(vector<string>& destino, string& fonte, const char* delimitador);
+bool isNumber(string token);
