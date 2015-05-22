@@ -66,8 +66,11 @@ void imprimeErro(tipoErro e, int linha){
         case ERRO_DEF_LABELS_MESMA_LINHA:
             cout << "Sintatico: definicao de mais de um simbolo na mesma linha";
         break;
-        case ERRO_QTD_ARG:
+        case ERRO_ARG_INVALIDO:
             cout << "Sintatico: instrucao com argumentos invalidos";
+        break;
+        case ERRO_QTD_ARG:
+            cout << "Sintatico: instrucao com quantidade de argumentos invalidos";
         break;
         case ERRO_ENCERRA_PROGRAMA:
             cout << "Semantico: nao e permitido instrucao apos STOP";

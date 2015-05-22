@@ -61,7 +61,7 @@ void escreveOp(ofstream& out, vector<tipoGramatica>& gramatica, vector<tipoInstr
                         }
                         else{
                             imprimeErro(ERRO_SIMBOLO_NAO_DEFINIDO, linha);
-                            imprimeErro(ERRO_QTD_ARG, linha);
+                            imprimeErro(ERRO_ARG_INVALIDO, linha);
                         }
                     }
                     else{
