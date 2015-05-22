@@ -41,6 +41,7 @@ void escreveOp(ofstream& out, vector<tipoInstrucao>& instrucao, vector<tipoDiret
                         map<string, tipoTS>::iterator it = simbolo.find(aux);
                         if(it != simbolo.end()){
                             tipoTS s = it->second;
+
                             mais += s.posicao;
                             //cout << " aux: " << aux << " s.posicao: " << s.posicao << " mais final: " << mais << endl;
                             //cin.get();
@@ -180,8 +181,6 @@ bool criaArqObj(ifstream& in, ofstream& out, vector<tipoGramatica>& gramatica, v
 
         vector<string> vTab;
         int tamanho;
-
-        //cout << linha << endl;
 
         explode(vTab, linha, "\t");
         i = (int)strtol(vTab.back().c_str(), NULL, 10); //último elemento desta linha informa a linha no arquivo anterior

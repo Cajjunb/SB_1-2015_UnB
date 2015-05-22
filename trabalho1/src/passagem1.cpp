@@ -263,14 +263,21 @@ void criaTabelas(ifstream& arq, vector<tipoInstrucao>& instrucao, vector<tipoDir
                 s.posicao = pc;
                 s.externo = false;
             }
+
+            //Nem space nem const não podem não terem rótulo
             if(strcasecmp(vTab[1].c_str(), "CONST") == 0 ){                 // Insere o valor da constante na tabela de simbolos
-                s.valorConstante = (int) strtol(vTab.back().c_str(),NULL, 10);
+                if(vTab.back().find("x") != string::npos) //hexadecimal
+                    s.valorConstante = (int) strtol(vTab.back().c_str(),NULL, 16);
+                else //decimal
+                    s.valorConstante = (int) strtol(vTab.back().c_str(),NULL, 10);
+
                 s.tipoConstante = true;
             }
             else{
                 s.valorConstante = -1; //não é usado
                 s.tipoConstante = false;
             }
+
             s.section = getSectionAtual();
 
             insereSimbolo(simbolo, vTab[0], s, i);
@@ -291,6 +298,7 @@ void criaTabelas(ifstream& arq, vector<tipoInstrucao>& instrucao, vector<tipoDir
         }
 
         pc += calculaPC(instrucao, diretiva, uso, aux, i, vTab, pc, bits);
+        verificaLabels(vTab, i);
 
     }
 

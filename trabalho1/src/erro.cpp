@@ -63,6 +63,12 @@ void imprimeErro(tipoErro e, int linha){
         case ERRO_JMP_INVALIDO:
             cout << "Semantico: pulo para rotulo invalido";
         break;
+        case ERRO_DEF_LABELS_MESMA_LINHA:
+            cout << "Sintatico: definicao de mais de um simbolo na mesma linha";
+        break;
+        case ERRO_SEGFAULT:
+            cout << "Semantico: Segmetation fault";
+        break;
         default:
             cout << "Erro Indefinido";
         break;
@@ -177,3 +183,15 @@ bool isMudancaDeValorConstante(vector<string> tokens, map<string, tipoTS>& simbo
         return false;
 }
 
+void verificaLabels(vector<string> vTab, int linha){
+    int contador = 0;
+
+    for(vector<string>::iterator it = vTab.begin(); it != vTab.end(); ++it){
+        int tamanho = (*it).size();
+
+        if((*it)[tamanho - 1] == ':')
+            contador++;
+    }
+    if(contador > 0)
+        imprimeErro(ERRO_DEF_LABELS_MESMA_LINHA, linha);
+}
