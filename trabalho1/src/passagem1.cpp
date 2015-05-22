@@ -1,11 +1,15 @@
 #include "../include/passagem1.h"
 
 void insereSimbolo(map<string, tipoTS>& simbolo, string& token, tipoTS s, int linha){
-    if(simbolo.find(token) == simbolo.end()){ //se não existe símbolo na tabela
+    map<string, tipoTS>::iterator it;
+    it = simbolo.find(token);
+    if(it == simbolo.end()){ //se não existe símbolo na tabela
         simbolo.insert(pair<string, tipoTS>(token, s)); //insere no map
     }
-    else
-         imprimeErro(ERRO_REDEFINICAO, linha);
+    else{
+        it->second.posicao = -1;
+        imprimeErro(ERRO_REDEFINICAO, linha);
+    }
 }
 
 bool isSimbolo(map<string, tipoTS>& simbolo, string& token){

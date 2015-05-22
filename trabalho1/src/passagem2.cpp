@@ -20,7 +20,7 @@ void escreveOp(ofstream& out, vector<tipoGramatica>& gramatica, vector<tipoInstr
             out << i.op << " ";
             //cout << i.op << " ";
 
-            if(i.tamanho > 1 && !arg.empty()){ //se tamanho for maior que 1 e argumento != vazio, então no mínimo tem argumentos
+            if(g.qtdOperandos > 0 && !arg.empty()){ //se qtdOperandos > 0 e argumento != vazio
                 aux.append(arg); //Supõe formato INSTR   ARG
                 //cout << "arg: " << arg << endl;
                 explode(copyArg, aux, ","); //procura se na string aux tem copy
@@ -46,6 +46,9 @@ void escreveOp(ofstream& out, vector<tipoGramatica>& gramatica, vector<tipoInstr
                         map<string, tipoTS>::iterator it = simbolo.find(aux);
                         if(it != simbolo.end()){
                             tipoTS s = it->second;
+
+                            if(s.posicao == -1)
+                                imprimeErro(ERRO_OP_INVALIDO, linha);
 
                             mais += s.posicao;
                             //cout << " aux: " << aux << " s.posicao: " << s.posicao << " mais final: " << mais << endl;

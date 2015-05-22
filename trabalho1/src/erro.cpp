@@ -60,8 +60,8 @@ void imprimeErro(tipoErro e, int linha){
         case ERRO_SECTION_DATA_ANTES:
             cout << "Semantico: SECTION DATA definido antes de SECTION TEXT";
         break;
-        case ERRO_JMP_INVALIDO:
-            cout << "Semantico: pulo para rotulo invalido";
+        case ERRO_OP_INVALIDO:
+            cout << "Semantico: operacao com rotulo invalido";
         break;
         case ERRO_DEF_LABELS_MESMA_LINHA:
             cout << "Sintatico: definicao de mais de um simbolo na mesma linha";
