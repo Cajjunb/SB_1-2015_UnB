@@ -104,7 +104,6 @@ bool preProcessaArq2(string nomeArquivo){
     FILE *ponteiroEscrita ;
     string stringCplusplus ;
     unsigned int linha = 1;
-//    int linha = 1;
                                                        // INICIALIZA O BUFFER
     if(!ponteiroLeitura.is_open() ){
         printf("ERRO NA leitura do teste");

@@ -5,9 +5,12 @@ bool sectionText = false; //global que define se seção text foi declarada
 char sectionAtual = (char)0; //global que diz a atual seção
 bool modBegin = false; //global que diz quando um módulo começa
 bool modEnd = false; //global que diz quando um módulo termina
+bool deuErro = false; //global que indica se deu erro em algum lugar
+bool instrStop = false; //global que indica se tem stop
 
 void imprimeErro(tipoErro e, int linha){
-    cout << "\n>>>>>ERRO: ";
+    deuErro = true;
+    cout << ">>>>>ERRO: ";
     switch(e){
         case ERRO_REDEFINICAO:
             cout << "Semantico: Redefinicao de simbolos";
@@ -24,8 +27,14 @@ void imprimeErro(tipoErro e, int linha){
         case ERRO_TEXT_AUSENTE:
             cout << "Semantico: SECTION TEXT ausente";
         break;
+        case ERRO_DATA_AUSENTE:
+            cout << "Semantico: SECTION DATA necessaria";
+        break;
         case ERRO_BEGIN_AUSENTE:
             cout << "Semantico: existe definicao de diretiva END, mas nao de LABEL: BEGIN";
+        break;
+        case ERRO_STOP_AUSENTE:
+            cout << "Semantico: instrucao STOP ausente";
         break;
         case ERRO_USO_INCORRETO:
             cout << "Sintatico: uso incorreto de token";
@@ -39,14 +48,23 @@ void imprimeErro(tipoErro e, int linha){
         case ERRO_FALTA_ARQUIVO:
             cout << "Necessario passar outro arquivo para finalizacao do processo de ligacao";
         break;
-        case ERRO_DEFINIDO_ANTES:
-            cout << "Semantico: simbolo ja definido em outro modulo";
-        break;
         case ERRO_DIVISAO_POR_ZERO:
-            cout << "Semantico: Divisao por Zero! ";
+            cout << "Semantico: nao e permitido divisao por zero";
         break;
         case ERRO_ALTERANDO_CONSTANTE:
-            cout << "Semantico: ALTERANDO VALOR DE CONSTANTE! ";
+            cout << "Semantico: nao e permitido alterar valor de constante";
+        break;
+        case ERRO_SIMBOLO_NAO_DEFINIDO:
+            cout << "Sintatico: simbolo nao definido";
+        break;
+        case ERRO_SECTION_DATA_ANTES:
+            cout << "Semantico: SECTION DATA definido antes de SECTION TEXT";
+        break;
+        case ERRO_JMP_INVALIDO:
+            cout << "Semantico: pulo para rotulo invalido";
+        break;
+        case ERRO_ACESSO_ENDERECO_NAO_RESERVADO:
+            cout << "Semantico: A instrucao tenta acessar um endereco nao reservado!";
         break;
         default:
             cout << "Erro Indefinido";
@@ -56,6 +74,14 @@ void imprimeErro(tipoErro e, int linha){
     if(linha > -1)
         cout << "\t linha: " << linha;
     cout << "<<<<<" << endl;
+}
+
+bool teveErro(){
+    return deuErro;
+}
+
+bool getStop(){
+    return instrStop;
 }
 
 void verificaSectionText(){
@@ -74,6 +100,8 @@ void atualizaSection(string arg, int linha){
     }
     else if(strcasecmp("TEXT", arg.c_str()) == 0){
         if(!sectionText){
+            if(sectionData) //se seção data estiver definida antes de texto
+                imprimeErro(ERRO_SECTION_DATA_ANTES);
             sectionText = true;
             sectionAtual = 't';
         }
@@ -91,6 +119,10 @@ char getSectionAtual(){
 void setBegin(bool s){
     modBegin = s;
 }
+
+void setStop(bool s){
+    instrStop = s;
+}
 void setEnd(bool s){
     modEnd = s;
 }
@@ -100,6 +132,10 @@ bool getBegin(){
 }
 bool getEnd(){
     return modEnd;
+}
+
+bool getData(){
+    return sectionData;
 }
 
 bool isTokenValido(string token){
@@ -120,19 +156,21 @@ int analisaLexico(vector<string> tokens){
 }
 
 bool isDivisaoPorZero(string& token,map<string, tipoTS>& simbolo){
-    cout << "\n\t SIMBOL[TOKEN] =" <<  simbolo[token].valorConstante;
+    //cout << "\n\t SIMBOL[TOKEN] =" <<  simbolo[token].valorConstante;
     if(simbolo[token].valorConstante == 0)
         return true;
     else
         return false;
 }
 
-
 bool isMudancaDeValorConstante(vector<string> tokens, map<string, tipoTS>& simbolo,  vector<tipoGramatica>& gramatica ){
-    tipoGramatica gramaticaInstrucao = pegaGramatica(gramatica ,tokens[0]);                            // pega gramatica 
+    tipoGramatica gramaticaInstrucao = pegaGramatica(gramatica ,tokens[0]);                            // pega gramatica
     bool args[3] = {false,false,false};
     for(unsigned int i = 0;  i < tokens.size(); i++){
-        args[i] = simbolo[tokens[i]].tipoConstante;
+        map<string, tipoTS>::iterator it = simbolo.find(tokens[i]);
+        if(it != simbolo.end()){
+            args[i] = it->second.tipoConstante;
+        }
     }
     if( ((gramaticaInstrucao.comportamentoConstante == NAO_ACEITA) && (args[1] == true) ) ||
         ( (gramaticaInstrucao.comportamentoConstante == SOMENTE_SRC )&&(args[2] == true)) ){
@@ -140,4 +178,41 @@ bool isMudancaDeValorConstante(vector<string> tokens, map<string, tipoTS>& simbo
     }
     else
         return false;
+}
+
+
+bool isJMPEnderecoInvalido(vector<string> tokens,map<string, tipoTS>& simbolo){
+    string instrucao = tokens[0];
+    if( (instrucao == "JMP")    ||
+        (instrucao == "JMPP")   ||
+        (instrucao == "JMPZ")   ||
+        (instrucao == "JMPN")
+        ){
+        tipoTS simboloConstante = simbolo[";END"];
+        int endereco_maximo = simboloConstante.valorConstante;
+        simboloConstante = simbolo[tokens[1]];
+        if(endereco_maximo < simboloConstante.valorConstante){
+            return true;
+        }
+        else
+            return false;
+    }
+    else
+        return false;
+}
+
+bool isAcessoMemoriaNaoReservado(vector<string> tokens,map<string, tipoTS>& simbolo){
+    int tamanho = tokens.size();
+    std::vector<string> operandoSoma;
+    for(int i = 1 ; i < tamanho; i++){
+        explode(operandoSoma,tokens[i],"+");
+        if(operandoSoma.size() > 1){
+            map<string, tipoTS>::iterator it = simbolo.find(operandoSoma[0]);
+            if(it != simbolo.end()){
+                if((unsigned)std::stoi(operandoSoma[1])  > it->second.tamanhoMemoria -1)
+                    return true;
+            }
+        }
+    }
+    return false;
 }

@@ -26,8 +26,10 @@ int main(int argc, char *argv[]){
     map<string, tipoTS> simbolo; //Tabela de símbolos
     map<string, int> definicao; //Tabela de definição <nome, endereço>
     map<string, vector<int>> uso; //Tabela de uso <nome, endereços>
+    vector<int> bits; //mapa de bits: indica endereços absolutos e relativos
     ifstream arq1;
     ofstream arq2;
+    bool ligar;
 
     //Verifica passagem de argumentos
     if(argc != 3){
@@ -61,12 +63,32 @@ int main(int argc, char *argv[]){
 
     arq1.open("pre_processado.txt");
     arq2.open(output);
-        criaTabelas(arq1, instrucao, diretiva, simbolo, uso, definicao); //primeira passagem
-        criaArqObj(arq1, arq2, gramatica, instrucao, diretiva, simbolo, uso, definicao); //segunda passagem
+        criaTabelas(arq1, instrucao, diretiva, simbolo, uso, definicao, bits); //primeira passagem
+        ligar = criaArqObj(arq1, arq2, gramatica, instrucao, diretiva, simbolo, uso, definicao, bits); //segunda passagem
     arq1.close();
     arq2.close();
 
-    //remove("pre_processado.txt"); //remoção do arquivo pré-processado temporário
+    if(!ligar){ //se não precisa ligar
+        string aux;
+        output.clear();
+
+        output.append(argv[2]);
+        if(!temExtensao(output)){ //se não tiver extensão
+            output.append(".e"); //coloca extensão .e,
+
+            aux.append(argv[2]);
+            aux.append(".o"); //coloca extensão .o
+
+            rename(aux.c_str(), output.c_str());
+        }
+    }
+
+    if(teveErro()){ //se teve erro
+        cout << "Erro na geração de " << output << endl;
+        remove(output.c_str()); //apague arquivo de saída
+    }
+
+//    remove("pre_processado.txt"); //remoção do arquivo pré-processado temporário
 
     return 0;
 }

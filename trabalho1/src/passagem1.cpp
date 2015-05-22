@@ -1,12 +1,21 @@
 #include "../include/passagem1.h"
 
 void insereSimbolo(map<string, tipoTS>& simbolo, string& token, tipoTS s, int linha){
-
-    if(simbolo.find(token) == simbolo.end()){ //se não existe símbolo na tabela
+    std::map<string, tipoTS>::iterator it = simbolo.find(token);
+    if(it == simbolo.end()){ //se não existe símbolo na tabela
         simbolo.insert(pair<string, tipoTS>(token, s)); //insere no map
     }
-    else
+    else{
+        it->second.posicao = -1 ;           //  -1 indica que teve erro de redefinicao nesse simbolo
          imprimeErro(ERRO_REDEFINICAO, linha);
+    }
+}
+
+void editaTamanhoSimbolo(map<string, tipoTS>& simbolo, string& token, unsigned int tamanhoMemoria){
+    std::map<string, tipoTS>::iterator it = simbolo.find(token);
+    if(it != simbolo.end()){  //se  existe símbolo na tabela
+        it->second.tamanhoMemoria = tamanhoMemoria;        //Coloca nova definicao do simbolo.
+    }
 }
 
 bool isSimbolo(map<string, tipoTS>& simbolo, string& token){
@@ -78,22 +87,32 @@ void separaSectionArgs(vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& d
     }
 }
 
-int calculaPC(vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, map<string, vector<int>>& uso, string token, int linha, vector<string>& vTab, int endereco){
-
+int calculaPC(vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, map<string, vector<int>>& uso, string token, int linha, vector<string>& vTab, int endereco, vector<int>& bits){
     if(isDiretiva(diretiva, token)){
         tipoDiretiva d;
         d = pegaDiretiva(diretiva, token);
-
         if(getEnd())
             imprimeErro(ERRO_LOCAL_INCORRETO, linha);
-
         if(d.tamanho == -1){ //se tamanho == -1, então deve ter argumento dizendo o tamanho
             //LABEL:    SPACE   N
             //vTab[0]   vTab[1] vTab[2]
-            if(vTab.size() == 3)
-                return atoi(vTab[2].c_str()); //transforma argumento em número
-            else
+            if(vTab.size() == 3){
+                long int n;
+                if(vTab[2].find("x") != string::npos) //Número está em hexadecimal
+                        n = strtol(vTab[2].c_str(), NULL, 16);
+                else
+                    n = strtol(vTab[2].c_str(), NULL, 10);
+                for(long int i = 0; i < n; i++){ //adiciona bit absoluto para cada space que existe
+                    //cout << "SPACE - bit 0" << endl;
+                    bits.push_back(0); //endereço absoluto
+                }
+
+                return n;
+            }
+            else{
+                bits.push_back(0); //endereço absoluto
                 return 1; //Não tem argumentos
+            }
         }
 
         if(d.nome.compare("SECTION") == 0)
@@ -111,7 +130,10 @@ int calculaPC(vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, 
                 imprimeErro(ERRO_BEGIN_AUSENTE, linha);
             setEnd(true);
         }
-
+        else if(d.nome.compare("CONST") == 0){
+            //cout << "CONST - bit 0" << endl;
+            bits.push_back(0); //endereço absoluto
+        }
         return d.tamanho;
     }
     else if(isInstrucao(instrucao, token)){
@@ -119,22 +141,33 @@ int calculaPC(vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, 
         string aux; //string auxiliar que contém argumentos
         int endAux = endereco; //endereço auxiliar (o tamanho de uma instrução leva em consideração seus argumentos, então cada argumento +1 no endereço)
         vector<string> copyArg; //vetor de string para conter argumentos que estão separados por vírgula ou por +
-
         if(getSectionAtual() == 'd' || getEnd())
             imprimeErro(ERRO_LOCAL_INCORRETO, linha);
-
         i = pegaInstrucao(instrucao, token);
-
-        if(vTab.size() > 1){
-
+        if(i.nome.compare("STOP") == 0)
+            setStop(true);
+        bits.push_back(0);
+        //cout << endl << "INSTR - bit 0" << endl;
+        if(i.tamanho > 1){
             aux.append(vTab[1]); //Supõe formato INSTR   ARG
-            if(vTab.size() == 3){ //está no formato: LABEL:  INSTR   ARG
-                aux.clear();
-                aux.append(vTab[2]);
+            //cout << "Aux velho: " << aux << endl;
+            if(vTab.size() >= 3){ //está no formato: LABEL:  INSTR   ARG
+                if(i.nome.compare("COPY") == 0){ //se for COPY
+                    if(vTab.size() == 3) //COPY ARG ARG
+                        aux.append(vTab[2]);
+                    else if(vTab.size() == 4){ //LABEL:  COPY    ARG ARG
+                        aux.clear();
+                        aux.append(vTab[2]);
+                        aux.append(vTab[3]);
+                    }
+                }
+                else{
+                    aux.clear();
+                    aux.append(vTab[2]);
+                }
             }
-
-            //cout << aux << endl();
-            explode(copyArg, aux, ", "); //procura se na string aux tem copy
+            //cout << "Aux novo: " << aux << endl;
+            explode(copyArg, aux, ","); //procura se na string aux tem copy
             do{
                 endAux++;
                 if(!copyArg.empty()){ //enquanto copyArg tiver argumentos
@@ -143,33 +176,43 @@ int calculaPC(vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, 
                     copyArg.erase(copyArg.begin());
                 }
                 map<string, vector<int>>::iterator it = uso.find(aux);
-
                 if(it == uso.end()){
                     //NAO DESISTE, AINDA PODE ESTAR: INSTR LABEL + NÚMERO
                     size_t found = aux.find("+");
-
                     if(found != string::npos){
                         //subdivide a string de alguma forma
                         vector<string> somaEndereco;
                         explode(somaEndereco, aux, "+");
-
                         it = uso.find(somaEndereco[0]);
                         //cout << somaEndereco[0];
                         //cin.get();
-
-                        if(it != uso.end())
+                        if(it != uso.end()){ //tem na tabela de uso
+                            //cout << "ARG - bit 1 ";
+                            bits.push_back(1); //endereço relativo (argumento)
                             editaUso(uso, somaEndereco[0], endAux);
-
+                        }
+                        else{ //não tem na tabela de uso
+                            //cout << ">>>>>>>>>aux: " << somaEndereco[0] << " bit 1" << endl;
+                            //cout << "ARG - bit 1 ";
+                            bits.push_back(1);
+                        }
+                    } //se não tiver achado, então não tem mesmo na tabela de uso
+                    else{
+                        //cout << ">>>>>>>>>aux: " << aux << " bit 1" << endl;
+                        //cout << "ARG - bit 1 ";
+                        bits.push_back(1);
                     }
-                     //se não tiver achado, então não tem mesmo
                 }
                 else{
-
+                    //cout << ">>>>>>>>>aux: " << aux << " bit 1" << endl;
+                    //cout << "ARG - bit 1 ";
+                    bits.push_back(1); //endereço relativo (argumento)
                     editaUso(uso, aux, endAux);
                 }
+                //cout << endl;
+                //cin.get();
             }while(copyArg.size() > 0);
         }
-
         return i.tamanho;
     }
 
@@ -177,8 +220,8 @@ int calculaPC(vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, 
     return 0;
 }
 
-void criaTabelas(ifstream& arq, vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, map<string, tipoTS>& simbolo, map<string, vector<int>>& uso, map<string, int>& definicao){
-    int pc = 0;
+void criaTabelas(ifstream& arq, vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, map<string, tipoTS>& simbolo, map<string, vector<int>>& uso, map<string, int>& definicao, vector<int>& bits){
+    int pc = 0,incremento = 0;
     int i; //contador de linhas
     string linha;
 
@@ -199,7 +242,7 @@ void criaTabelas(ifstream& arq, vector<tipoInstrucao>& instrucao, vector<tipoDir
             tipoTS s;
             vTab[0] = vTab[0].substr(0, tamanho - 1); //eliminando :
             s.simbolo = vTab[0];
-            
+
             if(strcasecmp(vTab[1].c_str(), "EXTERN") == 0){ //Se a próxima string for extern, então insere na tabela de uso
                 if(!getBegin() || getEnd()) //se begin não tiver sido definido
                     imprimeErro(ERRO_LOCAL_INCORRETO, i);
@@ -215,11 +258,20 @@ void criaTabelas(ifstream& arq, vector<tipoInstrucao>& instrucao, vector<tipoDir
                 s.valorConstante = (int) strtol(vTab.back().c_str(),NULL, 10);
                 s.tipoConstante = true;
             }
+            else{
+                s.valorConstante = -1; //não é usado
+                s.tipoConstante = false;
+            }
+            s.section = getSectionAtual();
+
             insereSimbolo(simbolo, vTab[0], s, i);
-            editaDefinicao(definicao, vTab[0], i); //atualize endereço em TD caso símbolo esteja em TD
+            editaDefinicao(definicao, vTab[0], s.posicao); //atualize endereço em TD caso símbolo esteja em TD
 
             //inserido rótulo, calcula PC
             aux.append(vTab[1]);
+            incremento = calculaPC(instrucao, diretiva, uso, aux, i, vTab, pc, bits);
+            pc += incremento;
+            editaTamanhoSimbolo(simbolo,vTab[0],incremento);                            //ALOCA A MEMORIA NA TABELA DE SIMBOLOS
         }
         else{ //somente calcula o pc
             if(strcasecmp(vTab[0].c_str(), "PUBLIC") == 0){ //Se diretiva for PUBLIC, insere na tabela de definição
@@ -230,12 +282,17 @@ void criaTabelas(ifstream& arq, vector<tipoInstrucao>& instrucao, vector<tipoDir
             if(strcasecmp(vTab[0].c_str(), "BEGIN") == 0) //Begin DEVE ter um rótulo
                 imprimeErro(ERRO_USO_INCORRETO, i);
             aux.append(vTab[0]);
+            incremento = calculaPC(instrucao, diretiva, uso, aux, i, vTab, pc, bits);
+            pc += incremento;
         }
-
-        pc += calculaPC(instrucao, diretiva, uso, aux, i, vTab, pc);
-
     }
-
+    /*tipoTS endereco_limite;                               //CRIA UM SIMBOLO QUE INDICA O ENDERECO DO FINAL DO ARQUIVO, UMA CONSTANTE, NOME UM TOKEN INVALIDO
+    endereco_limite.simbolo =";END";
+    endereco_limite.posicao = pc;
+    endereco_limite.tipoConstante = true ;
+    endereco_limite.valorConstante = pc ;
+    insereSimbolo(simbolo,endereco_limite.simbolo, endereco_limite, i );        // INSERE O SIMBOLO DE FINAL DE ARQUIVO
+    */
     verificaSectionText(); //verifica se o arquivo terminou declarando uma seção text
 
     arq.clear();

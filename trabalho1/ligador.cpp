@@ -6,10 +6,8 @@
 
 #include "include/base.h"
 #include "include/erro.h"
-#include "include/tabela.h"
 
 using namespace std;
-bool temDefinicao = false;
 
 bool temExtensao(string aux){
 
@@ -28,6 +26,10 @@ void criaTabelaGlobalDefinicao(ifstream& in, map<string, int>& definicao, int fa
         if(linha.compare("TABLE DEFINITION") == 0) //se achar a tabela de definicao
             break; //pare o loop
     }
+    if(in.eof()){
+        cout << "Arquivo no formato incorreto. Encerrando";
+        exit(EXIT_FAILURE);
+    }
 
     do{
         map<string, int>::iterator it;
@@ -44,7 +46,7 @@ void criaTabelaGlobalDefinicao(ifstream& in, map<string, int>& definicao, int fa
                 definicao.insert(pair<string, int>(vTab[0], valor));
             }
             else
-                imprimeErro(ERRO_DEFINIDO_ANTES);
+                imprimeErro(ERRO_REDEFINICAO);
         }
     }while(!linha.empty());
 
@@ -58,15 +60,14 @@ int calculaFatorCorrecao(ifstream& arq){
 
     while(getline(arq,linha)){
         //cout << linha << endl;
-        if(linha.compare("CODE") == 0){
-            temDefinicao = true;
+        if(linha.compare("CODE") == 0)
             break;
-        }
+
     }
     if(arq.eof()){
-        arq.clear();
-        arq.seekg(0, arq.beg); //rewind
-        return -1;
+        arq.close();
+        cout << "Arquivo nao precisa ser ligado. Encerrando";
+        exit(EXIT_SUCCESS);
     }
 
     while(getline(arq,linha, ' ')){
@@ -74,15 +75,18 @@ int calculaFatorCorrecao(ifstream& arq){
         //cout << linha << " tamanho:" << tamanho <<endl;
     }
     tamanho++; //mais um para indicar pŕoximo espaço vazio
+
+    //cout << "fator de correção: " << tamanho << endl;
     arq.clear();
     arq.seekg(0, arq.beg);
     return tamanho;
 }
 
-void escreveExe(ifstream& in, ofstream& out, vector<tipoInstrucao>& instrucao, map<string, int>& definicao, int fator){
+void escreveExe(ifstream& in, ofstream& out, map<string, int>& definicao, int fator){
     string linha;
-    map<int, string> uso;
-    int endereco = 0;
+    map<int, string> uso; //tabela de uso
+    vector<string> bits; //mapa de bits
+    int endereco = 0; //contador de endereço
 
     getline(in, linha); //TABLE USE
     while(getline(in, linha) && !linha.empty()){ //constrói tabela de uso
@@ -90,6 +94,14 @@ void escreveExe(ifstream& in, ofstream& out, vector<tipoInstrucao>& instrucao, m
         explode(vTab, linha, " ");
         uso.insert(pair<int, string>(strtol(vTab[1].c_str(), NULL, 10), vTab[0]));
     }
+
+    while(linha.compare("R") != 0){ //enquanto não achar R
+        getline(in, linha); //pegue linha
+    }//achou R
+
+    getline(in, linha); //pegue linha
+    explode(bits, linha, " "); //divide cada bit em posição de vetor
+
     while(linha.compare("CODE") != 0){
         getline(in, linha);
     } //achou CODE
@@ -101,43 +113,39 @@ void escreveExe(ifstream& in, ofstream& out, vector<tipoInstrucao>& instrucao, m
     //em geral, vetor obj estará
     //obj[0]    obj[1]  obj[2]  obj[3]
     //op        arg     op      arg
-    for(vector<string>::iterator codigo = obj.begin(); codigo != obj.end(); ++codigo){
+    for(    vector<string>::iterator codigo = obj.begin(), bit = bits.begin();
+            codigo != obj.end(), bit != bits.end();
+            codigo++, bit++, endereco++
+        ){
+        int soma = 0;
+        if((*bit).compare("1") == 0){
+            map<int, string>::iterator it;
 
-        if((*codigo).compare("d") != 0){ //d de diretiva
-            int arg;
-            tipoInstrucao i = pegaInstrucaoOpcode(instrucao, strtol((*codigo).c_str(), NULL, 10));
+            if(!uso.empty()){ //se ainda há pendências de uso pra resolver
+                it = uso.find(endereco);
+                if(it != uso.end()){ //se achar este endereço atual deste arquivo na tabela de uso
+                    string label;
+                    map<string, int>::iterator def;
 
-            out << *codigo << " "; //escreve opcode (fixo)
-            endereco++; //contador de endereços
+                    label.clear();
+                    label.append(it->second);
+                    def = definicao.find(label);
+                    //out << (def->second + fator + strtol((*codigo).c_str(), NULL, 10)) << " ";
+                    soma = def->second - fator; //subtrai o valor de fator porque este endereço está na tabela geral de definição, logo o fator já foi calculado
 
-            arg = i.tamanho - 1; //retira um pois ignora o código da instrução
-            while(arg > 0){
-                codigo++; //pega próximo código, que é argumento
-                map<int, string>::iterator it;
+                    uso.erase(it); //free
 
-                if(!uso.empty()){
-                    it = uso.find(endereco);
-                    if(it != uso.end()){
-                        string label;
-                        map<string, int>::iterator def;
-
-                        label.clear();
-                        label.append(it->second);
-                        def = definicao.find(label);
-                        out << (def->second + fator + strtol((*codigo).c_str(), NULL, 10)) << " ";
-
-                        uso.erase(it); //free
-                    }
                 }
-                endereco++;
-                arg--; //decrementa um argumento
             }
+            out << (soma + fator + strtol((*codigo).c_str(), NULL, 10)) << " ";
+            //cout << " endereco: "<< (soma + fator + strtol((*codigo).c_str(), NULL, 10)) << endl;
+            //cin.get();
         }
         else{
-            codigo++;
-            out << *codigo << " ";
+            out << *codigo << " "; //escreve opcode (fixo)
+            //cout << "codigo: " << *codigo << " "; //escreve opcode (fixo)
+            //cout << " bit: " << *bit << " ";
         }
-
     }
 }
 
@@ -150,8 +158,8 @@ int main(int argc, char *argv[]){
     map<string, vector<int>> uso;
 
     //Verifica passagem de argumentos
-    if(argc < 3 || argc > 4){
-        cout << "Numero de argumentos incorretos. Encerrando" << argc;
+    if(argc != 4){
+        cout << "Numero de argumentos incorretos. Encerrando";
         exit(EXIT_FAILURE);
     }
 
@@ -159,20 +167,14 @@ int main(int argc, char *argv[]){
     input1.append(argv[1]);
     if(!temExtensao(input1))
         input1.append(".o");
-    if(argc == 4){
-        input2.append(argv[2]);
-        if(!temExtensao(input1))
-            input2.append(".o");
 
-        output.append(argv[3]);
-        if(!temExtensao(output))
-            output.append(".e");
-    }
-    else{
-        output.append(argv[2]);
-        if(!temExtensao(output))
-            output.append(".e");
-    }
+    input2.append(argv[2]);
+    if(!temExtensao(input1))
+        input2.append(".o");
+
+    output.append(argv[3]);
+    if(!temExtensao(output))
+        output.append(".e");
 
 
     in.open(input1);
@@ -182,47 +184,32 @@ int main(int argc, char *argv[]){
     }
 
     fatorCorrecao = calculaFatorCorrecao(in);
-    if(fatorCorrecao < 0){ //Significa que só tem um arquivo e que ele não precisa ser ligado
-        string linha;
-        cout << fatorCorrecao << endl;
-
-        out.open(output, std::ofstream::out | std::ofstream::trunc);
-        while(getline(in, linha)) //Enquanto consegue ler do arquivo de input
-            out << linha; //escreva no arquivo de output
-        out.close();
+    if(input2.empty()){
+        imprimeErro(ERRO_FALTA_ARQUIVO);
     }
     else{
-        if(input2.empty()){
-            imprimeErro(ERRO_FALTA_ARQUIVO);
+
+        out.open(output, std::ofstream::out | std::ofstream::trunc);
+        criaTabelaGlobalDefinicao(in, definicao, 0);
+        in.close();
+
+        in.open(input2);
+         if(!in.is_open()){
+            cout << "Erro ao abrir o arquivo " << input2 << ". Encerrando";
+            exit(EXIT_FAILURE);
         }
-        else{
-            vector<tipoInstrucao> instrucao;
-            arq.open("tabelas/instrucoes.txt");
-            criaInstrucao(arq, instrucao);
-            arq.close();
+        criaTabelaGlobalDefinicao(in, definicao, fatorCorrecao);
+        in.close();
 
-            out.open(output, std::ofstream::out | std::ofstream::trunc);
-            criaTabelaGlobalDefinicao(in, definicao, 0);
-            in.close();
+        in.open(input1);
+        escreveExe(in, out, definicao, 0);
+        in.close();
 
-            in.open(input2);
-             if(!in.is_open()){
-                cout << "Erro ao abrir o arquivo " << input2 << ". Encerrando";
-                exit(EXIT_FAILURE);
-            }
-            criaTabelaGlobalDefinicao(in, definicao, fatorCorrecao);
-            in.close();
+        in.open(input2);
+        escreveExe(in, out, definicao, fatorCorrecao);
+        in.close();
 
-            in.open(input1);
-            escreveExe(in, out, instrucao, definicao, 0);
-            in.close();
-
-            in.open(input2);
-            escreveExe(in, out, instrucao, definicao, fatorCorrecao);
-            in.close();
-
-            out.close();
-        }
+        out.close();
     }
 
     in.close();

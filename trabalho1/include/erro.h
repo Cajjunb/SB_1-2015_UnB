@@ -8,40 +8,6 @@
 #include "passagem1.h"
 #include <locale>         // std::locale, std::isdigit
 
-
-//posicoa: posição na memória que se encontra
-//externo: diz se rótulo é externo ou não
-#ifndef TIPO_TS
-#define TIPO_TS
-typedef struct{
-    std::string simbolo;
-    int posicao;
-    bool externo;
-    int  valorConstante;
-    bool tipoConstante = false ;
-}tipoTS; //tabela de símbolos
-#endif
-
-typedef enum{
-    ERRO_LEXICO = 0,
-    ERRO_SINTATICO,
-    ERRO_SEMANTICO,
-    ERRO_REDEFINICAO,
-    ERRO_DEFINIDO_ANTES,
-    ERRO_INVALIDO ,
-    ERRO_SIMBOLO_NAO_DEFINIDO ,
-    ERRO_TEXT_AUSENTE,
-    ERRO_BEGIN_AUSENTE,
-    ERRO_USO_INCORRETO,
-    ERRO_NAO_ENCONTRADO,
-    ERRO_COMANDO_NAO_ENCONTRADO,
-    ERRO_FALTA_DEFINICAO_EXTERN,
-    ERRO_LOCAL_INCORRETO,
-    ERRO_FALTA_ARQUIVO,
-    ERRO_DIVISAO_POR_ZERO,
-    ERRO_ALTERANDO_CONSTANTE
-}tipoErro;
-
 using namespace std;
 
 //0: nenhuma seção foi declarada
@@ -53,6 +19,10 @@ void setBegin(bool s); //seta quando módulo começa a ser definido
 bool getBegin(); //retorna se módulo foi definido ou não
 void setEnd(bool s); //seta quando módulo termina
 bool getEnd(); //retorna se módulo foi definido ou não
+bool getData(); //retorna se seção data já foi definida ou não
+void setStop(bool s); //seta quando arquivo tem instrução STOP
+bool getStop(); //retorna se arquivo tem instrução stop ou não
+bool teveErro(); //retorna se arquivo gerou erros ou não
 
 void imprimeErro(tipoErro e, int linha = -1); //imprime mensagem de erro. Mostra endereço de PC e linha caso seja passado
 void verificaSectionText(); //Verifica se seção text foi declarada
@@ -62,7 +32,7 @@ void atualizaSection(string arg, int linha); //atualiza sectionAtual e verifica 
 bool isTokenValido(string token);
 // Funcao que analissa lexicamente uma linha completa e retorna qual dos tokens é invalido, caso contrario retorna
 // CORRETO_LEXICO
-int analisaLexico(vector<string> tokens); 
+int analisaLexico(vector<string> tokens);
 
 // Funcao que faz a verificacao se uma operacao de divisao sera por zero
 // caso sim retorna true! caso contrario retorna false
@@ -71,3 +41,11 @@ bool isDivisaoPorZero(string& token,map<string, tipoTS>& simbolo);
 //  Funcao que verifica se a instrucao passada vai acabar gerando uma mudança de valor de uma constante
 //  Caso sim retorna true, caso não false.
 bool isMudancaDeValorConstante(vector<string> tokens, map<string, tipoTS>& simbolo,  vector<tipoGramatica>& gramatica );
+
+//  Funcao que verifica dado um vector de tokens, se é uma instrucao do tipo jmp e afins e se está pulando para um endereco
+//  nao alocado, Caso sim retorna true, caso contrario retorna false 
+bool isJMPEnderecoInvalido(vector<string> tokens,map<string, tipoTS>& simbolo);
+
+//  Funcao que verifica dado um vector de tokens, se uma instrucao ao tentar calcular o endereco acessa uma posicao na memoria que
+//  Nao eh reservada para aquele simbolo. Caso ocorra o erro retorna True, caso contrario retorna falso.
+bool isAcessoMemoriaNaoReservado(vector<string> tokens,map<string, tipoTS>& simbolo);
