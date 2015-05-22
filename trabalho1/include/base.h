@@ -81,7 +81,7 @@ typedef enum{
     ERRO_SECTION_DATA_ANTES,
     ERRO_JMP_INVALIDO,
     ERRO_DEF_LABELS_MESMA_LINHA,
-    ERRO_SEGFAULT
+    ERRO_QTD_ARG
 }tipoErro;
 
 void explode(vector<string>& destino, string& fonte, const char* delimitador);

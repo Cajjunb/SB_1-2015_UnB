@@ -1,27 +1,32 @@
 #include "../include/passagem2.h"
 
 
-void escreveOp(ofstream& out, vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, map<string, tipoTS>& simbolo, string token, string arg, int tipo, int linha){ //tipo é INSTRUÇÃO = 0 ou DIRETIVA = 1
+void escreveOp(ofstream& out, vector<tipoGramatica>& gramatica, vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, map<string, tipoTS>& simbolo, string token, string arg, int tipo, int linha){ //tipo é INSTRUÇÃO = 0 ou DIRETIVA = 1
 
     switch(tipo){
         case 0: {
             tipoInstrucao i;
+            tipoGramatica g;
             string aux; //string auxiliar que contém argumentos
             vector<string> copyArg; //vetor de string para conter argumentos que estão separados por vírgula
             vector<string> maisAux; //vetor de string para conter argumentos que estão separados por +
             int mais;
+            int qtdArg = 0;
 
+            //cout << "token:--" << token << "--" << endl;
             i = pegaInstrucao(instrucao, token);
+            g = pegaGramatica(gramatica, token);
 
             out << i.op << " ";
             //cout << i.op << " ";
 
-            if(i.tamanho > 1){ //se tamanho for maior que 1, então no mínimo tem argumentos
+            if(i.tamanho > 1 && !arg.empty()){ //se tamanho for maior que 1 e argumento != vazio, então no mínimo tem argumentos
                 aux.append(arg); //Supõe formato INSTR   ARG
                 //cout << "arg: " << arg << endl;
                 explode(copyArg, aux, ","); //procura se na string aux tem copy
                 do{
                     mais = 0;
+                    qtdArg++;
                     if(!copyArg.empty()){ //enquanto copyArg tiver argumentos
                         aux.clear();
                         aux.append(copyArg.front());
@@ -63,6 +68,17 @@ void escreveOp(ofstream& out, vector<tipoInstrucao>& instrucao, vector<tipoDiret
                     }
 
                 }while(copyArg.size() > 0);
+
+                //cout << "g.nome: " << g.nome << " g.qtdOperandos: " << g.qtdOperandos << endl;
+                //cout << "qtdArgs: " << qtdArg << endl;
+                if(qtdArg != g.qtdOperandos)
+                    imprimeErro(ERRO_QTD_ARG, linha);
+            }
+            else{
+                if(i.op == 14 && !arg.empty()) //se for STOP e tiver argumentos
+                    imprimeErro(ERRO_QTD_ARG, linha); //erro
+                else
+                    imprimeErro(ERRO_QTD_ARG, linha); //não é STOP e não tinha argumentos
             }
             break;
         }
@@ -111,31 +127,31 @@ void separaOp(ofstream& out, vector<tipoInstrucao>& instrucao,vector<tipoGramati
         if(vTab.size() > 1){
             if(vTab.size() == 3) //COPY ARG,    ARG
                 vTab[1].append(vTab[2]);
-            escreveOp(out, instrucao, diretiva, simbolo, vTab[0], vTab[1], 0, linha);
+            escreveOp(out, gramatica, instrucao, diretiva, simbolo, vTab[0], vTab[1], 0, linha);
         }else
-            escreveOp(out, instrucao, diretiva, simbolo, vTab[0], vTab[0], 0, linha); //STOP
+            escreveOp(out, gramatica, instrucao, diretiva, simbolo, vTab[0], "", 0, linha); //STOP
     }
     else if(isDiretiva(diretiva, vTab[0])){
         if(vTab.size() > 1)
-            escreveOp(out, instrucao, diretiva, simbolo, vTab[0], vTab[1], 1, linha);
+            escreveOp(out, gramatica, instrucao, diretiva, simbolo, vTab[0], vTab[1], 1, linha);
         else
-            escreveOp(out, instrucao, diretiva, simbolo, vTab[0], "00", 1, linha); //SPACE SEM ARGUMENTO
+            escreveOp(out, gramatica, instrucao, diretiva, simbolo, vTab[0], "00", 1, linha); //SPACE SEM ARGUMENTO
     }else{//é rótulo
             if(isInstrucao(instrucao, vTab[1])){
                 detectarErrosInstrucao(simbolo, vTab, gramatica,  linha);
                 if(vTab.size() > 2){
                     if(vTab.size() == 4) //LABEL:   COPY ARG,    ARG
                         vTab[2].append(vTab[3]);
-                    escreveOp(out, instrucao, diretiva, simbolo, vTab[1], vTab[2], 0, linha);
+                    escreveOp(out, gramatica, instrucao, diretiva, simbolo, vTab[1], vTab[2], 0, linha);
                 }
                 else
-                    escreveOp(out, instrucao, diretiva, simbolo, vTab[1], vTab[1], 0, linha); //LABEL: STOP
+                    escreveOp(out, gramatica, instrucao, diretiva, simbolo, vTab[1], "", 0, linha); //LABEL: STOP
             }
             else if(isDiretiva(diretiva, vTab[1])){
                 if(vTab.size() > 2)
-                escreveOp(out, instrucao, diretiva, simbolo, vTab[1], vTab[2], 1, linha);
+                escreveOp(out, gramatica, instrucao, diretiva, simbolo, vTab[1], vTab[2], 1, linha);
             else
-                escreveOp(out, instrucao, diretiva, simbolo, vTab[1], "00", 1, linha); //SPACE SEM ARGUMENTO
+                escreveOp(out, gramatica, instrucao, diretiva, simbolo, vTab[1], "00", 1, linha); //SPACE SEM ARGUMENTO
             }
     }
 }

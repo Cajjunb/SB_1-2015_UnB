@@ -66,8 +66,8 @@ void imprimeErro(tipoErro e, int linha){
         case ERRO_DEF_LABELS_MESMA_LINHA:
             cout << "Sintatico: definicao de mais de um simbolo na mesma linha";
         break;
-        case ERRO_SEGFAULT:
-            cout << "Semantico: Segmetation fault";
+        case ERRO_QTD_ARG:
+            cout << "Sintatico: instrucao com argumentos invalidos";
         break;
         default:
             cout << "Erro Indefinido";
