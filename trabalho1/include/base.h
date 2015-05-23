@@ -80,16 +80,13 @@ typedef enum{
     ERRO_DIVISAO_POR_ZERO,
     ERRO_ALTERANDO_CONSTANTE,
     ERRO_SECTION_DATA_ANTES,
-<<<<<<< HEAD
     ERRO_ACESSO_ENDERECO_NAO_RESERVADO,
-    ERRO_JMP_INVALIDO
-=======
+    ERRO_JMP_INVALIDO,
     ERRO_OP_INVALIDO,
     ERRO_DEF_LABELS_MESMA_LINHA,
     ERRO_QTD_ARG,
     ERRO_ARG_INVALIDO,
     ERRO_ENCERRA_PROGRAMA
->>>>>>> 35ea0f460e193c67054e5a90ed2b81311e0540bd
 }tipoErro;
 
 void explode(vector<string>& destino, string& fonte, const char* delimitador);

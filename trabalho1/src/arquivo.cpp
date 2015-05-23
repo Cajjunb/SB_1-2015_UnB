@@ -119,6 +119,7 @@ bool preProcessaArq2(string nomeArquivo){
                 stringCplusplus = retiraComentarios(stringCplusplus);
                 stringCplusplus = formataTabs(stringCplusplus);
                 stringCplusplus = retiraNL(stringCplusplus);
+                stringCplusplus = retiraLF(stringCplusplus);
                 if(!stringCplusplus.empty() && stringCplusplus.size() > 1 ){
                     stringCplusplus =  stringCplusplus +"\t" +std::to_string(linha);
                     stringCplusplus = formataTabs(stringCplusplus);
@@ -141,6 +142,17 @@ std::string retiraNL(std::string formatada){
     while(achado != std::string::npos){
         formatada.erase(achado,1);
         achado  = formatada.find("\n");
+    }
+    return formatada;
+}
+
+std::string retiraLF(std::string formatada){
+    std::size_t achado;
+    achado  = formatada.find("\r");
+    while(achado != std::string::npos){
+        cout << "achei LF";
+        formatada.erase(achado,1);
+        achado  = formatada.find("\r");
     }
     return formatada;
 }

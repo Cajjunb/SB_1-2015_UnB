@@ -42,3 +42,8 @@ std::string transformaEspacoEmBranco(std::string formatada);
 //	Funcao Auxiliar retira NL de um objeto string
 //	Retorna a string sem ele
 std::string retiraNL(std::string formatada);
+
+
+//	Funcao Auxiliar retira LF de um objeto string
+//	Retorna a string sem ele
+std::string retiraLF(std::string formatada);
