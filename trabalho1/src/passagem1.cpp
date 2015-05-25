@@ -14,7 +14,10 @@ void insereSimbolo(map<string, tipoTS>& simbolo, string& token, tipoTS s, int li
     }
     else{
         it->second.posicao = -1 ;           //  -1 indica que teve erro de redefinicao nesse simbolo
-         imprimeErro(ERRO_REDEFINICAO, linha);
+        if(getSectionAtual() == 'd' && (it->second).section == 'd')
+            imprimeErro(ERRO_REDEFINICAO, linha);
+        else
+            imprimeErro(ERRO_ROTULO_REPETIDO, linha);
     }
 }
 
@@ -116,6 +119,10 @@ int calculaPC(vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, 
         if(d.tamanho == -1){ //se tamanho == -1, então deve ter argumento dizendo o tamanho
             //LABEL:    SPACE   N
             //vTab[0]   vTab[1] vTab[2]
+            if(getSectionAtual() == 't'){ //se space estiver na seção texto
+                imprimeErro(ERRO_LOCAL_INCORRETO, linha);
+            }
+
             if(vTab.size() == 3){
                 long int n;
                 if(vTab[2].find("x") != string::npos) //Número está em hexadecimal
@@ -150,13 +157,16 @@ int calculaPC(vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, 
                 imprimeErro(ERRO_BEGIN_AUSENTE, linha);
             setEnd(true);
         }
-        else if(strcasecmp(d.nome.c_str(), "const") == 0){
+        else if(strcasecmp(d.nome.c_str(), "CONST") == 0){
             //cout << "CONST - bit 0" << endl;
             bits.push_back(0); //endereço absoluto
+            if(getSectionAtual() == 't') //se const estiver na seção texto
+                imprimeErro(ERRO_LOCAL_INCORRETO, linha);
         }
-        if(getSectionAtual() == 't'){ //e estiver na seção texto
-            //if
-        }
+        else if(strcasecmp(d.nome.c_str(), "EXTERN") == 0 || strcasecmp(d.nome.c_str(), "PUBLIC") == 0)
+            if(getSectionAtual() == 'd') //se const estiver na seção texto
+                imprimeErro(ERRO_LOCAL_INCORRETO, linha);
+
         return d.tamanho;
     }
     else if(isInstrucao(instrucao, token)){
@@ -247,8 +257,9 @@ int calculaPC(vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, 
         }
         return i.tamanho;
     }
-
-    imprimeErro(ERRO_COMANDO_NAO_ENCONTRADO, linha);
+    else if(token.find(':') == string::npos){
+        imprimeErro(ERRO_COMANDO_NAO_ENCONTRADO, linha);
+    }
     return 0;
 }
 

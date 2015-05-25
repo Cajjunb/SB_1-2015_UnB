@@ -2,6 +2,7 @@
 
 #include <string>
 #include <iostream>
+#include <algorithm>
 #include "string.h"
 #include <vector>
 #include <map>
@@ -44,7 +45,7 @@ bool isDivisaoPorZero(string& token,map<string, tipoTS>& simbolo);
 bool isMudancaDeValorConstante(vector<string> tokens, map<string, tipoTS>& simbolo,  vector<tipoGramatica>& gramatica );
 
 //  Funcao que verifica dado um vector de tokens, se é uma instrucao do tipo jmp e afins e se está pulando para um endereco
-//  nao alocado, Caso sim retorna true, caso contrario retorna false 
+//  nao alocado, Caso sim retorna true, caso contrario retorna false
 bool isJMPEnderecoInvalido(vector<string> tokens,map<string, tipoTS>& simbolo);
 
 //  Funcao que verifica dado um vector de tokens, se uma instrucao ao tentar calcular o endereco acessa uma posicao na memoria que

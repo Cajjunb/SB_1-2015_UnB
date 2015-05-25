@@ -8,7 +8,7 @@ LOAD VAL	; Loada o valor para a divisao com zero
 MULT 		VAL 		
 STORE		RESULT
 load VAL
-DIV ZERO
+DIV ZERO ;<-- ERROS
 
 	OUTPUT	          RESULT
 

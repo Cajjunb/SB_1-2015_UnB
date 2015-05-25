@@ -1,4 +1,4 @@
-
+;<-- ERRO
 INPUT	Y
 COPY	Y, RESULT_FAT
 LOAD	Y
