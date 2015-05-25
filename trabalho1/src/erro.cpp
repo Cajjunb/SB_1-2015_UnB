@@ -16,13 +16,13 @@ void imprimeErro(tipoErro e, int linha){
             cout << "Semantico: Redefinicao de simbolos";
         break;
         case ERRO_NAO_ENCONTRADO:
-            cout << "Semantico: Label nao encontrado";
+            cout << "Semantico: Rotulo nao encontrado";
         break;
         case ERRO_COMANDO_NAO_ENCONTRADO:
             cout << "Lexico: Instrucao ou diretiva nao encontrada";
         break;
         case ERRO_INVALIDO:
-            cout << "Lexico: token invalido";
+            cout << "Lexico: Token invalido";
         break;
         case ERRO_TEXT_AUSENTE:
             cout << "Semantico: SECTION TEXT ausente";
@@ -31,49 +31,49 @@ void imprimeErro(tipoErro e, int linha){
             cout << "Semantico: SECTION DATA necessaria";
         break;
         case ERRO_BEGIN_AUSENTE:
-            cout << "Semantico: existe definicao de diretiva END, mas nao de LABEL: BEGIN";
+            cout << "Semantico: Existe definicao de diretiva END, mas nao de LABEL: BEGIN";
         break;
         case ERRO_STOP_AUSENTE:
-            cout << "Semantico: instrucao STOP ausente";
+            cout << "Semantico: Instrucao STOP ausente";
         break;
         case ERRO_USO_INCORRETO:
-            cout << "Sintatico: uso incorreto de token";
+            cout << "Sintatico: Uso incorreto de token";
         break;
         case ERRO_LOCAL_INCORRETO:
-            cout << "Semantico: token utilizado na secao incorreta";
+            cout << "Semantico: Token utilizado na secao incorreta";
         break;
         case ERRO_FALTA_DEFINICAO_EXTERN:
-            cout << "Semantico: falta de definicoes de simbolos externos";
+            cout << "Semantico: Falta de definicoes de simbolos externos";
         break;
         case ERRO_FALTA_ARQUIVO:
             cout << "Necessario passar outro arquivo para finalizacao do processo de ligacao";
         break;
         case ERRO_DIVISAO_POR_ZERO:
-            cout << "Semantico: nao e permitido divisao por zero";
+            cout << "Semantico: Nao e permitido divisao por zero";
         break;
         case ERRO_ALTERANDO_CONSTANTE:
-            cout << "Semantico: nao e permitido alterar valor de constante";
+            cout << "Semantico: Nao e permitido alterar valor de constante";
         break;
         case ERRO_SIMBOLO_NAO_DEFINIDO:
-            cout << "Sintatico: simbolo nao definido";
+            cout << "Sintatico: Simbolo nao definido";
         break;
         case ERRO_SECTION_DATA_ANTES:
             cout << "Semantico: SECTION DATA definido antes de SECTION TEXT";
         break;
         case ERRO_OP_INVALIDO:
-            cout << "Semantico: operacao com rotulo invalido";
+            cout << "Semantico: Operacao com rotulo invalidado";
         break;
         case ERRO_DEF_LABELS_MESMA_LINHA:
-            cout << "Sintatico: definicao de mais de um simbolo na mesma linha";
+            cout << "Sintatico: Definicao de mais de um simbolo na mesma linha";
         break;
         case ERRO_ARG_INVALIDO:
-            cout << "Sintatico: instrucao com argumentos invalidos";
+            cout << "Sintatico: Instrucao com argumentos invalidos";
         break;
         case ERRO_QTD_ARG:
-            cout << "Sintatico: instrucao com quantidade de argumentos invalidos";
+            cout << "Sintatico: Instrucao com quantidade de argumentos invalidos";
         break;
         case ERRO_ENCERRA_PROGRAMA:
-            cout << "Semantico: nao e permitido instrucao apos STOP";
+            cout << "Semantico: Nao e permitido instrucao apos STOP";
         break;
         case ERRO_ACESSO_ENDERECO_NAO_RESERVADO:
             cout << "Semantico: A instrucao tenta acessar um endereco nao reservado!";
@@ -182,6 +182,8 @@ bool isMudancaDeValorConstante(vector<string> tokens, map<string, tipoTS>& simbo
     tipoGramatica gramaticaInstrucao = pegaGramatica(gramatica ,tokens[0]);                            // pega gramatica
     bool args[3] = {false,false,false};
     for(unsigned int i = 0;  i < tokens.size(); i++){
+        locale loc;
+        toUpper(tokens[i],loc);
         map<string, tipoTS>::iterator it = simbolo.find(tokens[i]);
         if(it != simbolo.end()){
             args[i] = it->second.tipoConstante;
@@ -197,10 +199,10 @@ bool isMudancaDeValorConstante(vector<string> tokens, map<string, tipoTS>& simbo
 
 bool isJMPEnderecoInvalido(vector<string> tokens,map<string, tipoTS>& simbolo){
     string instrucao = tokens[0];
-    if( (instrucao == "JMP")    ||
-        (instrucao == "JMPP")   ||
-        (instrucao == "JMPZ")   ||
-        (instrucao == "JMPN")
+    if( (strcasecmp(instrucao.c_str(), "JMP") == 0)    ||
+        (strcasecmp(instrucao.c_str(), "JMPP") == 0)   ||
+        (strcasecmp(instrucao.c_str(), "JMZ") == 0)   ||
+        (strcasecmp(instrucao.c_str(), "JMPN") == 0)
         ){
         tipoTS simboloConstante = simbolo[";END"];
         int endereco_maximo = simboloConstante.valorConstante;
@@ -221,6 +223,8 @@ bool isAcessoMemoriaNaoReservado(vector<string> tokens,map<string, tipoTS>& simb
     for(int i = 1 ; i < tamanho; i++){
         explode(operandoSoma,tokens[i],"+");
         if(operandoSoma.size() > 1){
+            locale loc;
+            toUpper(operandoSoma[0],loc);
             map<string, tipoTS>::iterator it = simbolo.find(operandoSoma[0]);
             if(it != simbolo.end()){
                 if((unsigned)std::stoi(operandoSoma[1])  > it->second.tamanhoMemoria -1)

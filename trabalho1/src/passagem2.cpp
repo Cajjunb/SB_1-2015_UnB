@@ -42,6 +42,9 @@ void escreveOp(ofstream& out, vector<tipoGramatica>& gramatica, vector<tipoInstr
                             mais = (int)strtol(maisAux[1].c_str(), NULL, 10);
                     }
                     if(!simbolo.empty()){
+                        locale loc;
+                        toUpper(token,loc);
+
                         map<string, tipoTS>::iterator it = simbolo.find(aux);
                         if(it != simbolo.end()){
                             tipoTS s = it->second;
@@ -92,7 +95,7 @@ void escreveOp(ofstream& out, vector<tipoGramatica>& gramatica, vector<tipoInstr
             if(d.formato == 'N'){
                 if(isNumber(arg)){
                     if(arg.find("x") != string::npos){ //Número está em hexadecimal
-                        if(d.nome.compare("SPACE") == 0){
+                        if(strcasecmp(d.nome.c_str(), "SPACE") == 0){
                             long int space = strtol(arg.c_str(), NULL, 16);
                             do{
                                 //cout << "00 ";
@@ -106,7 +109,7 @@ void escreveOp(ofstream& out, vector<tipoGramatica>& gramatica, vector<tipoInstr
                         }
                     }
                     else{ //É um número em decimal
-                        if(d.nome.compare("SPACE") == 0){
+                        if(strcasecmp(d.nome.c_str(), "SPACE") == 0){
                             long int space = strtol(arg.c_str(), NULL, 10);
                             do{
                                 //cout << "00 ";
@@ -130,6 +133,14 @@ void escreveOp(ofstream& out, vector<tipoGramatica>& gramatica, vector<tipoInstr
 }
 
 void separaOp(ofstream& out, vector<tipoInstrucao>& instrucao,vector<tipoGramatica>& gramatica, vector<tipoDiretiva>& diretiva, map<string, tipoTS>& simbolo, vector<string> vTab, int linha){
+    locale loc;
+    for(vector<string>::iterator it = vTab.begin(); it != vTab.end(); ++it){
+
+        cout << "antes: " << *it << endl;
+        toUpper(*it, loc);
+        cout << "depois: " << *it << endl << endl;
+    }
+
     if(isInstrucao(instrucao, vTab[0])){ //INSTRUÇÃO A
         detectarErrosInstrucao(simbolo, vTab, gramatica,  linha);
         if(vTab.size() > 1){
@@ -207,12 +218,15 @@ bool criaArqObj(ifstream& in, ofstream& out, vector<tipoGramatica>& gramatica, v
         explode(vTab, linha, "\t");
         i = (int)strtol(vTab.back().c_str(), NULL, 10); //último elemento desta linha informa a linha no arquivo anterior
         vTab.pop_back(); //retira esse elemento8
+
         tamanho = vTab[0].size();
         if(vTab[0][tamanho - 1] == ':'){
             vTab[0] = vTab[0].substr(0, tamanho - 1); //eliminando :
             if(!simbolo.empty()){
+                locale loc;
+                toUpper(vTab[0],loc);
                 map<string, tipoTS>::iterator it = simbolo.find(vTab[0]);
-                if(it == simbolo.end())
+                if(it == simbolo.end() && isTokenValido(vTab[0]))
                     imprimeErro(ERRO_NAO_ENCONTRADO, i);
             }
         }
@@ -243,7 +257,7 @@ bool detectarErrosInstrucao(map<string, tipoTS>& simbolo , vector<string> vTab, 
             }
             if(isMudancaDeValorConstante(vTab, simbolo, gramatica )){
                 imprimeErro(ERRO_ALTERANDO_CONSTANTE, linha);
-                erro_encontrado = true;                
+                erro_encontrado = true;
             }
             if(isAcessoMemoriaNaoReservado(vTab,simbolo)){
                 imprimeErro(ERRO_ACESSO_ENDERECO_NAO_RESERVADO,linha);

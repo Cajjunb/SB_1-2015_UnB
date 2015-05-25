@@ -89,5 +89,6 @@ typedef enum{
     ERRO_ENCERRA_PROGRAMA
 }tipoErro;
 
-void explode(vector<string>& destino, string& fonte, const char* delimitador);
-bool isNumber(string token);
+void explode(vector<string>& destino, string& fonte, const char* delimitador); //separa fonte por delimitador
+bool isNumber(string token); //verifica se é número (inclui negativo, positivo e hexadecimal)
+void toUpper(string& str,locale loc); //converte string para tudo maiúsculo
