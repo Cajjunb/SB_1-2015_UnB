@@ -1,5 +1,6 @@
 #include "../include/passagem2.h"
 
+bool precisaData = false; //global que indica necessidade de section data
 
 void escreveOp(ofstream& out, vector<tipoGramatica>& gramatica, vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, map<string, tipoTS>& simbolo, string token, string arg, int tipo, int linha){ //tipo é INSTRUÇÃO = 0 ou DIRETIVA = 1
 
@@ -41,32 +42,32 @@ void escreveOp(ofstream& out, vector<tipoGramatica>& gramatica, vector<tipoInstr
                         else //Número está em decimal
                             mais = (int)strtol(maisAux[1].c_str(), NULL, 10);
                     }
-                    if(!simbolo.empty()){
-                        map<string, tipoTS>::iterator it = simbolo.find(aux);
-                        if(it != simbolo.end()){
-                            tipoTS s = it->second;
+                    locale loc;
+                    toUpper(token,loc);
 
-                            if(s.posicao == -1)
-                                imprimeErro(ERRO_OP_INVALIDO, linha);
+                    map<string, tipoTS>::iterator it = simbolo.find(aux);
+                    if(it != simbolo.end()){
+                        tipoTS s = it->second;
 
-                            mais += s.posicao;
-                            //cout << " aux: " << aux << " s.posicao: " << s.posicao << " mais final: " << mais << endl;
-                            //cin.get();
+                        if(s.posicao == -1)
+                            imprimeErro(ERRO_OP_INVALIDO, linha);
 
-                            out << mais;
-                            //cout << mais;
-                            //cout << endl;
-                            out << " ";
-                        }
-                        else{
-                            imprimeErro(ERRO_SIMBOLO_NAO_DEFINIDO, linha);
-                            imprimeErro(ERRO_ARG_INVALIDO, linha);
-                        }
+                        mais += s.posicao;
+                        //cout << " aux: " << aux << " s.posicao: " << s.posicao << " mais final: " << mais << endl;
+                        //cin.get();
+
+                        out << mais;
+                        //cout << mais;
+                        //cout << endl;
+                        out << " ";
                     }
                     else{
                         if(!getData())
-                            imprimeErro(ERRO_DATA_AUSENTE);
+                            precisaData = true;
+                        imprimeErro(ERRO_SIMBOLO_NAO_DEFINIDO, linha);
+                        imprimeErro(ERRO_ARG_INVALIDO, linha);
                     }
+
 
                 }while(copyArg.size() > 0);
 
@@ -92,7 +93,7 @@ void escreveOp(ofstream& out, vector<tipoGramatica>& gramatica, vector<tipoInstr
             if(d.formato == 'N'){
                 if(isNumber(arg)){
                     if(arg.find("x") != string::npos){ //Número está em hexadecimal
-                        if(d.nome.compare("SPACE") == 0){
+                        if(strcasecmp(d.nome.c_str(), "SPACE") == 0){
                             long int space = strtol(arg.c_str(), NULL, 16);
                             do{
                                 //cout << "00 ";
@@ -106,7 +107,7 @@ void escreveOp(ofstream& out, vector<tipoGramatica>& gramatica, vector<tipoInstr
                         }
                     }
                     else{ //É um número em decimal
-                        if(d.nome.compare("SPACE") == 0){
+                        if(strcasecmp(d.nome.c_str(), "SPACE") == 0){
                             long int space = strtol(arg.c_str(), NULL, 10);
                             do{
                                 //cout << "00 ";
@@ -127,9 +128,15 @@ void escreveOp(ofstream& out, vector<tipoGramatica>& gramatica, vector<tipoInstr
             break;
         }
     }
+
+
 }
 
 void separaOp(ofstream& out, vector<tipoInstrucao>& instrucao,vector<tipoGramatica>& gramatica, vector<tipoDiretiva>& diretiva, map<string, tipoTS>& simbolo, vector<string> vTab, int linha){
+    locale loc;
+    for(vector<string>::iterator it = vTab.begin(); it != vTab.end(); ++it)
+        toUpper(*it, loc);
+
     if(isInstrucao(instrucao, vTab[0])){ //INSTRUÇÃO A
         detectarErrosInstrucao(simbolo, vTab, gramatica,  linha);
         if(vTab.size() > 1){
@@ -207,12 +214,15 @@ bool criaArqObj(ifstream& in, ofstream& out, vector<tipoGramatica>& gramatica, v
         explode(vTab, linha, "\t");
         i = (int)strtol(vTab.back().c_str(), NULL, 10); //último elemento desta linha informa a linha no arquivo anterior
         vTab.pop_back(); //retira esse elemento8
+
         tamanho = vTab[0].size();
         if(vTab[0][tamanho - 1] == ':'){
             vTab[0] = vTab[0].substr(0, tamanho - 1); //eliminando :
             if(!simbolo.empty()){
+                locale loc;
+                toUpper(vTab[0],loc);
                 map<string, tipoTS>::iterator it = simbolo.find(vTab[0]);
-                if(it == simbolo.end())
+                if(it == simbolo.end() && isTokenValido(vTab[0]))
                     imprimeErro(ERRO_NAO_ENCONTRADO, i);
             }
         }
@@ -223,6 +233,9 @@ bool criaArqObj(ifstream& in, ofstream& out, vector<tipoGramatica>& gramatica, v
 
     if((!getBegin() && !getEnd()) && !getStop()) //se não tiver begin/end e não tiver stop
         imprimeErro(ERRO_STOP_AUSENTE); //imprima erro
+
+    if(precisaData)
+        imprimeErro(ERRO_DATA_AUSENTE);
 
     return liga;
 }
@@ -235,23 +248,20 @@ bool detectarErrosInstrucao(map<string, tipoTS>& simbolo , vector<string> vTab, 
         erro_encontrado = 1;
     }
     if(vTab.size() > 1){
-        if(!simbolo.empty()){
-            if( (vTab[0] == "DIV" && isDivisaoPorZero(vTab[1], simbolo)) ||
-               (vTab[1] == "DIV" && isDivisaoPorZero(vTab[2], simbolo))){
-                imprimeErro(ERRO_DIVISAO_POR_ZERO,linha);
-                erro_encontrado = true;
-            }
-            if(isMudancaDeValorConstante(vTab, simbolo, gramatica )){
-                imprimeErro(ERRO_ALTERANDO_CONSTANTE, linha);
-                erro_encontrado = true;                
-            }
-            if(isAcessoMemoriaNaoReservado(vTab,simbolo)){
-                imprimeErro(ERRO_ACESSO_ENDERECO_NAO_RESERVADO,linha);
-                erro_encontrado = true;
-            }
+        if( (vTab[0] == "DIV" && isDivisaoPorZero(vTab[1], simbolo)) ||
+           (vTab[1] == "DIV" && isDivisaoPorZero(vTab[2], simbolo))){
+            imprimeErro(ERRO_DIVISAO_POR_ZERO,linha);
+            erro_encontrado = true;
         }
-        else
-            imprimeErro(ERRO_DATA_AUSENTE);
+        if(isMudancaDeValorConstante(vTab, simbolo, gramatica )){
+            imprimeErro(ERRO_ALTERANDO_CONSTANTE, linha);
+            erro_encontrado = true;
+        }
+        if(isAcessoMemoriaNaoReservado(vTab,simbolo)){
+            imprimeErro(ERRO_ACESSO_ENDERECO_NAO_RESERVADO,linha);
+            erro_encontrado = true;
+        }
+
     }
     if(erro_encontrado)
         return true;

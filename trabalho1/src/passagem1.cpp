@@ -3,24 +3,38 @@
 void insereSimbolo(map<string, tipoTS>& simbolo, string& token, tipoTS s, int linha){
 
     map<string, tipoTS>::iterator it;
+    locale loc;
+    toUpper(token,loc);
     it = simbolo.find(token);
     if(it == simbolo.end()){ //se não existe símbolo na tabela
-        simbolo.insert(pair<string, tipoTS>(token, s)); //insere no map
+        if(isTokenValido(token))
+            simbolo.insert(pair<string, tipoTS>(token, s)); //insere no map
+        else
+            imprimeErro(ERRO_INVALIDO, linha);
     }
     else{
         it->second.posicao = -1 ;           //  -1 indica que teve erro de redefinicao nesse simbolo
-         imprimeErro(ERRO_REDEFINICAO, linha);
+        if(getSectionAtual() == 'd' && (it->second).section == 'd')
+            imprimeErro(ERRO_REDEFINICAO, linha);
+        else
+            imprimeErro(ERRO_ROTULO_REPETIDO, linha);
     }
 }
 
 void editaTamanhoSimbolo(map<string, tipoTS>& simbolo, string& token, unsigned int tamanhoMemoria){
-    std::map<string, tipoTS>::iterator it = simbolo.find(token);
+    std::map<string, tipoTS>::iterator it;
+    locale loc;
+    toUpper(token,loc);
+
+    it = simbolo.find(token);
     if(it != simbolo.end()){  //se  existe símbolo na tabela
         it->second.tamanhoMemoria = tamanhoMemoria;        //Coloca nova definicao do simbolo.
     }
 }
 
 bool isSimbolo(map<string, tipoTS>& simbolo, string& token){
+    locale loc;
+    toUpper(token,loc);
     if(simbolo.find(token) == simbolo.end())
         return true;
     else
@@ -29,6 +43,8 @@ bool isSimbolo(map<string, tipoTS>& simbolo, string& token){
 
 void insereUso(map<string, vector<int>>& uso, string& token, int linha){
     vector<int> fim;
+    locale loc;
+    toUpper(token,loc);
 
     fim.clear();
     if(uso.find(token) == uso.end()){
@@ -39,6 +55,9 @@ void insereUso(map<string, vector<int>>& uso, string& token, int linha){
 }
 
 void insereDefinicao(map<string, int>& definicao, string& token, int endereco, int linha){
+    locale loc;
+    toUpper(token,loc);
+
     if(definicao.find(token) == definicao.end()){
         definicao.insert(pair<string, int>(token, endereco)); //se endereco  = -1, então ainda nao foi definido endereco
     }
@@ -47,6 +66,8 @@ void insereDefinicao(map<string, int>& definicao, string& token, int endereco, i
 }
 
 void editaDefinicao(map<string, int>& definicao, string token, int endereco){
+    locale loc;
+    toUpper(token,loc);
 
     for (map<string, int>::iterator it = definicao.begin(); it != definicao.end(); ++it){
         if(strcasecmp(it->first.c_str(), token.c_str()) == 0){
@@ -98,6 +119,10 @@ int calculaPC(vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, 
         if(d.tamanho == -1){ //se tamanho == -1, então deve ter argumento dizendo o tamanho
             //LABEL:    SPACE   N
             //vTab[0]   vTab[1] vTab[2]
+            if(getSectionAtual() == 't'){ //se space estiver na seção texto
+                imprimeErro(ERRO_LOCAL_INCORRETO, linha);
+            }
+
             if(vTab.size() == 3){
                 long int n;
                 if(vTab[2].find("x") != string::npos) //Número está em hexadecimal
@@ -117,25 +142,31 @@ int calculaPC(vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, 
             }
         }
 
-        if(d.nome.compare("SECTION") == 0)
+        if(strcasecmp(d.nome.c_str(), "SECTION") == 0)
             separaSectionArgs(instrucao, diretiva, vTab, linha);
-        else if(d.nome.compare("BEGIN") == 0){ //se for diretiva BEGIN
+        else if(strcasecmp(d.nome.c_str(), "BEGIN") == 0){ //se for diretiva BEGIN
             if(getSectionAtual() == 'd') //e estiver na seção dados
                 imprimeErro(ERRO_LOCAL_INCORRETO, linha); //ERRO
             setBegin(true);
             setEnd(false);
         }
-        else if(d.nome.compare("END") == 0){ //se for diretiva END
+        else if(strcasecmp(d.nome.c_str(), "END") == 0){ //se for diretiva END
             if(getBegin())
                 setBegin(false);
             else
                 imprimeErro(ERRO_BEGIN_AUSENTE, linha);
             setEnd(true);
         }
-        else if(d.nome.compare("CONST") == 0){
+        else if(strcasecmp(d.nome.c_str(), "CONST") == 0){
             //cout << "CONST - bit 0" << endl;
             bits.push_back(0); //endereço absoluto
+            if(getSectionAtual() == 't') //se const estiver na seção texto
+                imprimeErro(ERRO_LOCAL_INCORRETO, linha);
         }
+        else if(strcasecmp(d.nome.c_str(), "EXTERN") == 0 || strcasecmp(d.nome.c_str(), "PUBLIC") == 0)
+            if(getSectionAtual() == 'd') //se const estiver na seção texto
+                imprimeErro(ERRO_LOCAL_INCORRETO, linha);
+
         return d.tamanho;
     }
     else if(isInstrucao(instrucao, token)){
@@ -146,7 +177,7 @@ int calculaPC(vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, 
         if(getSectionAtual() == 'd' || getEnd())
             imprimeErro(ERRO_LOCAL_INCORRETO, linha);
         i = pegaInstrucao(instrucao, token);
-        if(i.nome.compare("STOP") == 0 && !getStop()){
+        if((strcasecmp(i.nome.c_str(), "STOP") == 0) && !getStop()){
             setStop(true);
         }
         else{
@@ -159,7 +190,7 @@ int calculaPC(vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, 
             aux.append(vTab[1]); //Supõe formato INSTR   ARG
             //cout << "Aux velho: " << aux << endl;
             if(vTab.size() >= 3){ //está no formato: LABEL:  INSTR   ARG
-                if(i.nome.compare("COPY") == 0){ //se for COPY
+                if(strcasecmp(i.nome.c_str(), "COPY") == 0){ //se for COPY
                     if(vTab.size() == 3) //COPY ARG ARG
                         aux.append(vTab[2]);
                     else if(vTab.size() == 4){ //LABEL:  COPY    ARG ARG
@@ -182,6 +213,8 @@ int calculaPC(vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, 
                     aux.append(copyArg.front());
                     copyArg.erase(copyArg.begin());
                 }
+                locale loc;
+                toUpper(aux,loc);
                 map<string, vector<int>>::iterator it = uso.find(aux);
                 if(it == uso.end()){
                     //NAO DESISTE, AINDA PODE ESTAR: INSTR LABEL + NÚMERO
@@ -190,6 +223,8 @@ int calculaPC(vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, 
                         //subdivide a string de alguma forma
                         vector<string> somaEndereco;
                         explode(somaEndereco, aux, "+");
+                        locale loc;
+                        toUpper(somaEndereco[0],loc);
                         it = uso.find(somaEndereco[0]);
                         //cout << somaEndereco[0];
                         //cin.get();
@@ -222,8 +257,9 @@ int calculaPC(vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, 
         }
         return i.tamanho;
     }
-
-    imprimeErro(ERRO_COMANDO_NAO_ENCONTRADO, linha);
+    else if(token.find(':') == string::npos){
+        imprimeErro(ERRO_COMANDO_NAO_ENCONTRADO, linha);
+    }
     return 0;
 }
 

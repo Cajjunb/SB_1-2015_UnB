@@ -86,8 +86,10 @@ typedef enum{
     ERRO_DEF_LABELS_MESMA_LINHA,
     ERRO_QTD_ARG,
     ERRO_ARG_INVALIDO,
-    ERRO_ENCERRA_PROGRAMA
+    ERRO_ENCERRA_PROGRAMA,
+    ERRO_ROTULO_REPETIDO
 }tipoErro;
 
-void explode(vector<string>& destino, string& fonte, const char* delimitador);
-bool isNumber(string token);
+void explode(vector<string>& destino, string& fonte, const char* delimitador); //separa fonte por delimitador
+bool isNumber(string token); //verifica se é número (inclui negativo, positivo e hexadecimal)
+void toUpper(string& str,locale loc); //converte string para tudo maiúsculo

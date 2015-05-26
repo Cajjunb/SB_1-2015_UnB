@@ -5,6 +5,7 @@
 #include <string>
 #include <map>
 #include <iostream>
+#include <locale>
 #include "tabela.h"
 #include <stdlib.h>
 #include <string.h>

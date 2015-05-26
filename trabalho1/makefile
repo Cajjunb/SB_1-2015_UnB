@@ -1,18 +1,20 @@
 
-CFLAG= -std=c++11 
+CFLAG= -std=c++11 -O2 
 PATHSRC ='.\src\'
-INCLUDE = arquivo.o base.o erro.o passagem1.o passagem2.o tabela.o 
+INCLUDE = arquivo.o base.o erro.o tabela.o 
+PASSAGEM = passagem1.o passagem2.o
 
-clean:	-rm -f *.o
+montador:	montadorCompleto
+	rm -f *.o
 
-montador:	montadorCompleto 
-ligador:	ligadorCompleto clean
+ligador:	ligadorCompleto
+	rm -f *.o
 
-montadorCompleto:	$(INCLUDE) montador.o
-	g++ $(CFLAG) $(INCLUDE) montador.o  -o montador
+montadorCompleto:	$(INCLUDE) $(PASSAGEM) montador.o
+	g++ $(CFLAG) $(INCLUDE) $(PASSAGEM) montador.o  -o montador
 
 ligadorCompleto:	$(INCLUDE) ligador.o
-	g++ $(CFLAG) ligador.o $(INCLUDE) -o montador
+	g++ $(CFLAG) $(INCLUDE) ligador.o  -o ligador
 
 arquivo.o:	src/arquivo.cpp
 	g++ -c $(CFLAG) src/arquivo.cpp

@@ -7,85 +7,94 @@ bool modBegin = false; //global que diz quando um módulo começa
 bool modEnd = false; //global que diz quando um módulo termina
 bool deuErro = false; //global que indica se deu erro em algum lugar
 bool instrStop = false; //global que indica se tem stop
+vector<int> linhasDefeito;
 
 void imprimeErro(tipoErro e, int linha){
     deuErro = true;
-    cout << ">>>>>ERRO: ";
-    switch(e){
-        case ERRO_REDEFINICAO:
-            cout << "Semantico: Redefinicao de simbolos";
-        break;
-        case ERRO_NAO_ENCONTRADO:
-            cout << "Semantico: Label nao encontrado";
-        break;
-        case ERRO_COMANDO_NAO_ENCONTRADO:
-            cout << "Lexico: Instrucao ou diretiva nao encontrada";
-        break;
-        case ERRO_INVALIDO:
-            cout << "Lexico: token invalido";
-        break;
-        case ERRO_TEXT_AUSENTE:
-            cout << "Semantico: SECTION TEXT ausente";
-        break;
-        case ERRO_DATA_AUSENTE:
-            cout << "Semantico: SECTION DATA necessaria";
-        break;
-        case ERRO_BEGIN_AUSENTE:
-            cout << "Semantico: existe definicao de diretiva END, mas nao de LABEL: BEGIN";
-        break;
-        case ERRO_STOP_AUSENTE:
-            cout << "Semantico: instrucao STOP ausente";
-        break;
-        case ERRO_USO_INCORRETO:
-            cout << "Sintatico: uso incorreto de token";
-        break;
-        case ERRO_LOCAL_INCORRETO:
-            cout << "Semantico: token utilizado na secao incorreta";
-        break;
-        case ERRO_FALTA_DEFINICAO_EXTERN:
-            cout << "Semantico: falta de definicoes de simbolos externos";
-        break;
-        case ERRO_FALTA_ARQUIVO:
-            cout << "Necessario passar outro arquivo para finalizacao do processo de ligacao";
-        break;
-        case ERRO_DIVISAO_POR_ZERO:
-            cout << "Semantico: nao e permitido divisao por zero";
-        break;
-        case ERRO_ALTERANDO_CONSTANTE:
-            cout << "Semantico: nao e permitido alterar valor de constante";
-        break;
-        case ERRO_SIMBOLO_NAO_DEFINIDO:
-            cout << "Sintatico: simbolo nao definido";
-        break;
-        case ERRO_SECTION_DATA_ANTES:
-            cout << "Semantico: SECTION DATA definido antes de SECTION TEXT";
-        break;
-        case ERRO_OP_INVALIDO:
-            cout << "Semantico: operacao com rotulo invalido";
-        break;
-        case ERRO_DEF_LABELS_MESMA_LINHA:
-            cout << "Sintatico: definicao de mais de um simbolo na mesma linha";
-        break;
-        case ERRO_ARG_INVALIDO:
-            cout << "Sintatico: instrucao com argumentos invalidos";
-        break;
-        case ERRO_QTD_ARG:
-            cout << "Sintatico: instrucao com quantidade de argumentos invalidos";
-        break;
-        case ERRO_ENCERRA_PROGRAMA:
-            cout << "Semantico: nao e permitido instrucao apos STOP";
-        break;
-        case ERRO_ACESSO_ENDERECO_NAO_RESERVADO:
-            cout << "Semantico: A instrucao tenta acessar um endereco nao reservado!";
-        break;
-        default:
-            cout << "Erro Indefinido";
-        break;
-    }
 
-    if(linha > -1)
-        cout << "\t linha: " << linha;
-    cout << "<<<<<" << endl;
+    if(find(linhasDefeito.begin(), linhasDefeito.end(), linha) == linhasDefeito.end()){ //imprima somente um erro por linha
+        linhasDefeito.push_back(linha);
+        cout << ">>>>>ERRO: ";
+        switch(e){
+            case ERRO_REDEFINICAO:
+                cout << "Semantico: Redefinicao de simbolos";
+            break;
+            case ERRO_ROTULO_REPETIDO:
+                cout << "Semantico: Rotulo repetido";
+            break;
+            case ERRO_NAO_ENCONTRADO:
+                cout << "Semantico: Rotulo nao encontrado";
+            break;
+            case ERRO_COMANDO_NAO_ENCONTRADO:
+                cout << "Lexico: Instrucao ou diretiva nao encontrada";
+            break;
+            case ERRO_INVALIDO:
+                cout << "Lexico: Token invalido";
+            break;
+            case ERRO_TEXT_AUSENTE:
+                cout << "Semantico: SECTION TEXT ausente";
+            break;
+            case ERRO_DATA_AUSENTE:
+                cout << "Semantico: SECTION DATA necessaria";
+            break;
+            case ERRO_BEGIN_AUSENTE:
+                cout << "Semantico: Existe definicao de diretiva END, mas nao de LABEL: BEGIN";
+            break;
+            case ERRO_STOP_AUSENTE:
+                cout << "Semantico: Instrucao STOP ausente";
+            break;
+            case ERRO_USO_INCORRETO:
+                cout << "Sintatico: Uso incorreto de token";
+            break;
+            case ERRO_LOCAL_INCORRETO:
+                cout << "Semantico: Token utilizado na secao incorreta";
+            break;
+            case ERRO_FALTA_DEFINICAO_EXTERN:
+                cout << "Semantico: Falta de definicoes de simbolos externos";
+            break;
+            case ERRO_FALTA_ARQUIVO:
+                cout << "Necessario passar outro arquivo para finalizacao do processo de ligacao";
+            break;
+            case ERRO_DIVISAO_POR_ZERO:
+                cout << "Semantico: Nao e permitido divisao por zero";
+            break;
+            case ERRO_ALTERANDO_CONSTANTE:
+                cout << "Semantico: Nao e permitido alterar valor de constante";
+            break;
+            case ERRO_SIMBOLO_NAO_DEFINIDO:
+                cout << "Sintatico: Simbolo nao definido";
+            break;
+            case ERRO_SECTION_DATA_ANTES:
+                cout << "Semantico: SECTION DATA definido antes de SECTION TEXT";
+            break;
+            case ERRO_OP_INVALIDO:
+                cout << "Semantico: Operacao com rotulo invalidado";
+            break;
+            case ERRO_DEF_LABELS_MESMA_LINHA:
+                cout << "Sintatico: Definicao de mais de um simbolo na mesma linha";
+            break;
+            case ERRO_ARG_INVALIDO:
+                cout << "Sintatico: Instrucao com argumentos invalidados";
+            break;
+            case ERRO_QTD_ARG:
+                cout << "Sintatico: Instrucao com quantidade de argumentos invalidos";
+            break;
+            case ERRO_ENCERRA_PROGRAMA:
+                cout << "Semantico: Nao e permitido instrucao apos STOP";
+            break;
+            case ERRO_ACESSO_ENDERECO_NAO_RESERVADO:
+                cout << "Semantico: A instrucao tenta acessar um endereco nao reservado!";
+            break;
+            default:
+                cout << "Erro Indefinido";
+            break;
+        }
+
+        if(linha > -1)
+            cout << "\t linha: " << linha;
+        cout << "<<<<<" << endl;
+
+    }
 }
 
 bool teveErro(){
@@ -182,6 +191,8 @@ bool isMudancaDeValorConstante(vector<string> tokens, map<string, tipoTS>& simbo
     tipoGramatica gramaticaInstrucao = pegaGramatica(gramatica ,tokens[0]);                            // pega gramatica
     bool args[3] = {false,false,false};
     for(unsigned int i = 0;  i < tokens.size(); i++){
+        locale loc;
+        toUpper(tokens[i],loc);
         map<string, tipoTS>::iterator it = simbolo.find(tokens[i]);
         if(it != simbolo.end()){
             args[i] = it->second.tipoConstante;
@@ -197,10 +208,10 @@ bool isMudancaDeValorConstante(vector<string> tokens, map<string, tipoTS>& simbo
 
 bool isJMPEnderecoInvalido(vector<string> tokens,map<string, tipoTS>& simbolo){
     string instrucao = tokens[0];
-    if( (instrucao == "JMP")    ||
-        (instrucao == "JMPP")   ||
-        (instrucao == "JMPZ")   ||
-        (instrucao == "JMPN")
+    if( (strcasecmp(instrucao.c_str(), "JMP") == 0)    ||
+        (strcasecmp(instrucao.c_str(), "JMPP") == 0)   ||
+        (strcasecmp(instrucao.c_str(), "JMZ") == 0)   ||
+        (strcasecmp(instrucao.c_str(), "JMPN") == 0)
         ){
         tipoTS simboloConstante = simbolo[";END"];
         int endereco_maximo = simboloConstante.valorConstante;
@@ -221,6 +232,8 @@ bool isAcessoMemoriaNaoReservado(vector<string> tokens,map<string, tipoTS>& simb
     for(int i = 1 ; i < tamanho; i++){
         explode(operandoSoma,tokens[i],"+");
         if(operandoSoma.size() > 1){
+            locale loc;
+            toUpper(operandoSoma[0],loc);
             map<string, tipoTS>::iterator it = simbolo.find(operandoSoma[0]);
             if(it != simbolo.end()){
                 if((unsigned)std::stoi(operandoSoma[1])  > it->second.tamanhoMemoria -1)

@@ -32,8 +32,8 @@ void explode(vector<string>& destino, string& fonte, const char* delimitador){
 
 bool isNumber(string token){
         //positivo                                  negativo
-    if((token[0] == '0' && token[1] == 'x') || (token[1] == '0' && token[2] == 'x')){ //É um número hexadecimal
-        if(0L != strtol(token.c_str(), NULL, 16)) //se pode ser convertido em um número
+    if((token[0] == '0' && token[1] == 'X') || (token[1] == '0' && token[2] == 'X')){ //É um número hexadecimal
+        if( (token.size() == 3 && token.back() == '0') || 0L != strtol(token.c_str(), NULL, 16)) //se pode ser convertido em um número
             return true;
         else
             return false;
@@ -44,5 +44,10 @@ bool isNumber(string token){
     }
 
     return false;
+}
+
+void toUpper(string& str,locale loc){
+    for (string::size_type i=0; i<str.length(); ++i)
+        str[i] = toupper(str[i],loc);
 }
 
