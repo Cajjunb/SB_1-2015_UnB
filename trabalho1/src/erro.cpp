@@ -171,7 +171,7 @@ bool isTokenValido(string token){
 }
 
 int analisaLexico(vector<string> tokens){
-    unsigned int tamanho = tokens.size();
+   unsigned int tamanho = tokens.size();
     for ( unsigned int i = 0; i < tamanho; ++i){
         if(!isTokenValido(tokens[i]) )
             return i;
