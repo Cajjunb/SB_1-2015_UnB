@@ -150,7 +150,6 @@ std::string retiraLF(std::string formatada){
     std::size_t achado;
     achado  = formatada.find("\r");
     while(achado != std::string::npos){
-        cout << "achei LF";
         formatada.erase(achado,1);
         achado  = formatada.find("\r");
     }
