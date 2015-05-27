@@ -32,14 +32,18 @@ void explode(vector<string>& destino, string& fonte, const char* delimitador){
 
 bool isNumber(string token){
         //positivo                                  negativo
-    if((token[0] == '0' && token[1] == 'X') || (token[1] == '0' && token[2] == 'X')){ //É um número hexadecimal
+    std::string tokenAux = token;
+    if(token[0] == '-'){
+        tokenAux.erase(0,1);
+    }
+    if((tokenAux[0] == '0' && tokenAux[1] == 'X') || (tokenAux[1] == '0' && tokenAux[2] == 'X')){ //É um número hexadecimal
         if( (token.size() == 3 && token.back() == '0') || 0L != strtol(token.c_str(), NULL, 16)) //se pode ser convertido em um número
             return true;
         else
             return false;
     }
     else{
-        if(token.find_first_not_of("0123456789") == std::string::npos) //se string só possui números
+        if(tokenAux.find_first_not_of("0123456789") == std::string::npos) //se string só possui números
             return true;
     }
 

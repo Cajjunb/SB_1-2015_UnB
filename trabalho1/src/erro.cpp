@@ -160,6 +160,8 @@ bool getData(){
 }
 
 bool isTokenValido(string token){
+    if(token.size() > 100)
+        return false;
     if(isNumber(token))
         return true;
     else{
@@ -171,7 +173,7 @@ bool isTokenValido(string token){
 }
 
 int analisaLexico(vector<string> tokens){
-    unsigned int tamanho = tokens.size();
+   unsigned int tamanho = tokens.size();
     for ( unsigned int i = 0; i < tamanho; ++i){
         if(!isTokenValido(tokens[i]) )
             return i;
