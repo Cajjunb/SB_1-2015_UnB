@@ -30,6 +30,25 @@ void explode(vector<string>& destino, string& fonte, const char* delimitador){
     }
 }
 
+bool isAlfanumericoUnderscore(string token){
+    for(int i = 0; i < (int)token.size(); i++){
+        if(!isalnum(token[i])){ //se não for letra ou número
+            if(token[i] != '_') //se não for _
+                return false; //não é alfanumerico
+        }
+    }
+    return true;
+}
+
+bool isAlfabeto(string token){
+    for(int i = 0; i < (int)token.size(); i++){
+        if(!isalpha(token[i])){ //se não for letra
+                return false; //não é alfanumerico
+        }
+    }
+    return true;
+}
+
 bool isNumber(string token){
         //positivo                                  negativo
     std::string tokenAux = token;

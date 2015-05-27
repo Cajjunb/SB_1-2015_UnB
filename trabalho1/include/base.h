@@ -64,6 +64,7 @@ typedef enum{
     ERRO_LEXICO,
     ERRO_SINTATICO,
     ERRO_SEMANTICO,
+    ERRO_DESCONHECIDO,
     ERRO_REDEFINICAO,
     ERRO_INVALIDO,
     ERRO_SIMBOLO_NAO_DEFINIDO ,
@@ -91,6 +92,13 @@ typedef enum{
     ERRO_ARG_INCORRETO
 }tipoErro;
 
+typedef struct{
+    int linha;
+    tipoErro e;
+}tipoLinhaErro;
+
 void explode(vector<string>& destino, string& fonte, const char* delimitador); //separa fonte por delimitador
 bool isNumber(string token); //verifica se é número (inclui negativo, positivo e hexadecimal)
+bool isAlfabeto(string token); //verifica se é letra
+bool isAlfanumericoUnderscore(string token); //verifica se é alfanumérico (incluindo underscore e inclui negativo, positivo e hexadecimal)
 void toUpper(string& str,locale loc); //converte string para tudo maiúsculo

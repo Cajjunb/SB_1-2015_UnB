@@ -65,10 +65,12 @@ void escreveOp(ofstream& out, vector<tipoGramatica>& gramatica, vector<tipoInstr
                         if(!getData())
                             precisaData = true;
 
-                        if(isNumber(aux) && (g.formato.compare("R") == 0))
+                        if(isNumber(aux) && g.formato.compare("R") == 0)
                             imprimeErro(ERRO_ARG_INCORRETO, linha);
-                        else
+                        else if(isAlfanumericoUnderscore(aux))
                             imprimeErro(ERRO_SIMBOLO_NAO_DEFINIDO, linha);
+                        else
+                            imprimeErro(ERRO_INVALIDO, linha);
                         imprimeErro(ERRO_ARG_INVALIDO, linha);
                     }
 
@@ -147,34 +149,70 @@ void separaOp(ofstream& out, vector<tipoInstrucao>& instrucao,vector<tipoGramati
 
     if(isInstrucao(instrucao, vTab[0])){ //INSTRUÇÃO A
         detectarErrosInstrucao(simbolo, vTab, gramatica,  linha);
-        if(vTab.size() > 1){
-            if(vTab.size() == 3) //COPY ARG,    ARG
-                vTab[1].append(vTab[2]);
-            escreveOp(out, gramatica, instrucao, diretiva, simbolo, vTab[0], vTab[1], 0, linha);
-        }else
-            escreveOp(out, gramatica, instrucao, diretiva, simbolo, vTab[0], "", 0, linha); //STOP
+
+        if(isAlfabeto(vTab[0])){
+            if(vTab.size() > 1){
+                if(vTab.size() == 3) //COPY ARG,    ARG
+                    vTab[1].append(vTab[2]);
+                escreveOp(out, gramatica, instrucao, diretiva, simbolo, vTab[0], vTab[1], 0, linha);
+            }else
+                escreveOp(out, gramatica, instrucao, diretiva, simbolo, vTab[0], "", 0, linha); //STOP
+        }
+        else{
+            if(!isTokenValido(vTab[0]))
+                imprimeErro(ERRO_INVALIDO, linha);
+            else
+                imprimeErro(ERRO_DESCONHECIDO, linha);
+        }
     }
     else if(isDiretiva(diretiva, vTab[0])){
-        if(vTab.size() > 1)
-            escreveOp(out, gramatica, instrucao, diretiva, simbolo, vTab[0], vTab[1], 1, linha);
-        else
-            escreveOp(out, gramatica, instrucao, diretiva, simbolo, vTab[0], "00", 1, linha); //SPACE SEM ARGUMENTO
+        if(isAlfabeto(vTab[0])){
+            if(vTab.size() > 1)
+                escreveOp(out, gramatica, instrucao, diretiva, simbolo, vTab[0], vTab[1], 1, linha);
+            else
+                escreveOp(out, gramatica, instrucao, diretiva, simbolo, vTab[0], "00", 1, linha); //SPACE SEM ARGUMENTO
+        }
+        else{
+            if(!isTokenValido(vTab[0]))
+                imprimeErro(ERRO_INVALIDO, linha);
+            else
+                imprimeErro(ERRO_DESCONHECIDO, linha);
+        }
     }else{//é rótulo
+            if(!isAlfanumericoUnderscore(vTab[0]) || !isTokenValido(vTab[0]))
+                imprimeErro(ERRO_INVALIDO, linha);
+
             if(isInstrucao(instrucao, vTab[1])){
                 detectarErrosInstrucao(simbolo, vTab, gramatica,  linha);
-                if(vTab.size() > 2){
-                    if(vTab.size() == 4) //LABEL:   COPY ARG,    ARG
-                        vTab[2].append(vTab[3]);
-                    escreveOp(out, gramatica, instrucao, diretiva, simbolo, vTab[1], vTab[2], 0, linha);
+                if(isAlfabeto(vTab[1])){
+                    if(vTab.size() > 2){
+                        if(vTab.size() == 4) //LABEL:   COPY ARG,    ARG
+                            vTab[2].append(vTab[3]);
+                        escreveOp(out, gramatica, instrucao, diretiva, simbolo, vTab[1], vTab[2], 0, linha);
+                    }
+                    else
+                        escreveOp(out, gramatica, instrucao, diretiva, simbolo, vTab[1], "", 0, linha); //LABEL: STOP
                 }
-                else
-                    escreveOp(out, gramatica, instrucao, diretiva, simbolo, vTab[1], "", 0, linha); //LABEL: STOP
+                else{
+                    if(!isTokenValido(vTab[1]))
+                        imprimeErro(ERRO_INVALIDO, linha);
+                    else
+                        imprimeErro(ERRO_DESCONHECIDO, linha);
+                }
             }
             else if(isDiretiva(diretiva, vTab[1])){
-                if(vTab.size() > 2)
-                escreveOp(out, gramatica, instrucao, diretiva, simbolo, vTab[1], vTab[2], 1, linha);
-            else
-                escreveOp(out, gramatica, instrucao, diretiva, simbolo, vTab[1], "00", 1, linha); //SPACE SEM ARGUMENTO
+                if(isAlfabeto(vTab[1])){
+                    if(vTab.size() > 2)
+                        escreveOp(out, gramatica, instrucao, diretiva, simbolo, vTab[1], vTab[2], 1, linha);
+                    else
+                        escreveOp(out, gramatica, instrucao, diretiva, simbolo, vTab[1], "00", 1, linha); //SPACE SEM ARGUMENTO
+                }
+                else{
+                    if(!isTokenValido(vTab[1]))
+                        imprimeErro(ERRO_INVALIDO, linha);
+                    else
+                        imprimeErro(ERRO_DESCONHECIDO, linha);
+                }
             }
     }
 }
