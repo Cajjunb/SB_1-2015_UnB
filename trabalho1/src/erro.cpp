@@ -83,7 +83,10 @@ void imprimeErro(tipoErro e, int linha){
                 cout << "Semantico: Nao e permitido instrucao apos STOP";
             break;
             case ERRO_ACESSO_ENDERECO_NAO_RESERVADO:
-                cout << "Semantico: A instrucao tenta acessar um endereco nao reservado!";
+                cout << "Semantico: Segmetation fault";
+            break;
+            case ERRO_ARG_INCORRETO:
+                cout << "Sintatico: Instrucao ou diretiva com tipo de argumento incorreto";
             break;
             default:
                 cout << "Erro Indefinido";
@@ -173,7 +176,7 @@ bool isTokenValido(string token){
 }
 
 int analisaLexico(vector<string> tokens){
-   unsigned int tamanho = tokens.size();
+    unsigned int tamanho = tokens.size();
     for ( unsigned int i = 0; i < tamanho; ++i){
         if(!isTokenValido(tokens[i]) )
             return i;

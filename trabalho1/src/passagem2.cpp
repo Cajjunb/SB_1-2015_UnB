@@ -64,7 +64,11 @@ void escreveOp(ofstream& out, vector<tipoGramatica>& gramatica, vector<tipoInstr
                     else{
                         if(!getData())
                             precisaData = true;
-                        imprimeErro(ERRO_SIMBOLO_NAO_DEFINIDO, linha);
+
+                        if(isNumber(aux) && (g.formato.compare("R") == 0))
+                            imprimeErro(ERRO_ARG_INCORRETO, linha);
+                        else
+                            imprimeErro(ERRO_SIMBOLO_NAO_DEFINIDO, linha);
                         imprimeErro(ERRO_ARG_INVALIDO, linha);
                     }
 
@@ -122,8 +126,12 @@ void escreveOp(ofstream& out, vector<tipoGramatica>& gramatica, vector<tipoInstr
                     }
                 }
                 else{
-                    imprimeErro(ERRO_INVALIDO, linha);
+                    imprimeErro(ERRO_ARG_INCORRETO, linha);
                 }
+            }
+            else if(d.formato == 'S'){
+                if(isNumber(arg))
+                    imprimeErro(ERRO_ARG_INCORRETO, linha);
             }
             break;
         }

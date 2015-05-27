@@ -87,7 +87,8 @@ typedef enum{
     ERRO_QTD_ARG,
     ERRO_ARG_INVALIDO,
     ERRO_ENCERRA_PROGRAMA,
-    ERRO_ROTULO_REPETIDO
+    ERRO_ROTULO_REPETIDO,
+    ERRO_ARG_INCORRETO
 }tipoErro;
 
 void explode(vector<string>& destino, string& fonte, const char* delimitador); //separa fonte por delimitador

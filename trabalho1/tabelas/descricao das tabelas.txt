@@ -1,0 +1,22 @@
+TABELAS:
+	gramatica.txt: tabela que dita instruções definidas na gramática.
+		Formato:<nome_instrucao>	<nro_argumentos>	<comportamento_const>	<sintaxe>
+		nome_instrucao:		Auto explicativo
+		nro_argumentos:		Auto explicativo
+		comportamento_constante: 	T = aceita constante como argumento
+									F = Não aceita constante como argumento
+									S = Somente aceita constante como argumento de source e não destino.
+		sintaxe:			formato da instrucao
+
+	instrucoes.txt: tabela que dita as relações codigo máquina e o assembly
+		Formato:<nome_instrucao>	<opcode>			<tamanho_words>
+			nome_instrucao:		Auto explicativo
+			opcode:				Auto explicativo
+			tamanho_words:	indica o tamanho de words no .o
+
+	diretiva.txt: tabela que dita diretivas e informações sobre ela
+		Formato:<nome_diretiva>		<nro_operandos>		<formato_diretivas>		<tamanho_em_word>
+			nome_diretiva:		Auto explicativo
+			nro_operandos:		Auto explicativo
+			Tamanho_em_word: 	que será alocado no arquivo objeto
+			formato_diretivas:	se diretiva aceita label ou número
