@@ -39,7 +39,6 @@ void criaTabelaGlobalDefinicao(ifstream& in, map<string, int>& definicao, int fa
         if(!linha.empty()){ //se não for vazia
             explode(vTab, linha, " "); //separa seus argumentos
             it = definicao.find(vTab[0]);
-            //cout << vTab[0] << "--" << vTab[1] << endl;
             if(it == definicao.end()){
                 int valor = strtol(vTab[1].c_str(), NULL, 10);
                 valor += fator;
@@ -74,7 +73,7 @@ int calculaFatorCorrecao(ifstream& arq){
         tamanho++;
         //cout << linha << " tamanho:" << tamanho <<endl;
     }
-    tamanho++; //mais um para indicar pŕoximo espaço vazio
+    //tamanho++; //mais um para indicar pŕoximo espaço vazio
 
     //cout << "fator de correção: " << tamanho << endl;
     arq.clear();
