@@ -33,7 +33,8 @@ void explode(vector<string>& destino, string& fonte, const char* delimitador){
 bool isAlfanumericoUnderscore(string token){
     for(int i = 0; i < (int)token.size(); i++){
         if(!isalnum(token[i])){ //se não for letra ou número
-            if(token[i] != '_') //se não for _
+            if( token[i] != '_' &&
+                token[i] != '+') //se não for _
                 return false; //não é alfanumerico
         }
     }
