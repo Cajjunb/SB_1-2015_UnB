@@ -8,6 +8,7 @@
 #include "include/erro.h"
 
 using namespace std;
+bool deuErroLigador = false;
 
 bool temExtensao(string aux){
 
@@ -28,7 +29,9 @@ void criaTabelaGlobalDefinicao(ifstream& in, map<string, int>& definicao, int fa
     }
     if(in.eof()){
         cout << "Arquivo no formato incorreto. Encerrando";
-        exit(EXIT_FAILURE);
+        //exit(EXIT_FAILURE);
+        deuErroLigador = true;
+        return ;
     }
 
     do{
@@ -66,7 +69,9 @@ int calculaFatorCorrecao(ifstream& arq){
     if(arq.eof()){
         arq.close();
         cout << "Arquivo nao precisa ser ligado. Encerrando";
-        exit(EXIT_SUCCESS);
+        //exit(EXIT_SUCCESS);
+        deuErroLigador = true;
+        return -1;
     }
 
     while(getline(arq,linha, ' ')){
@@ -129,11 +134,16 @@ void escreveExe(ifstream& in, ofstream& out, map<string, int>& definicao, int fa
                     label.clear();
                     label.append(it->second);
                     def = definicao.find(label);
-                    //out << (def->second + fator + strtol((*codigo).c_str(), NULL, 10)) << " ";
-                    soma = def->second - fator; //subtrai o valor de fator porque este endereço está na tabela geral de definição, logo o fator já foi calculado
+                    if(def != definicao.end()){
+                        //out << (def->second + fator + strtol((*codigo).c_str(), NULL, 10)) << " ";
+                        soma = def->second - fator; //subtrai o valor de fator porque este endereço está na tabela geral de definição, logo o fator já foi calculado
+                    }
+                    else{
+                        imprimeErro(ERRO_NAO_ENCONTRADO);
+                        deuErroLigador = true;
+                    }
 
                     uso.erase(it); //free
-
                 }
             }
             out << (soma + fator + strtol((*codigo).c_str(), NULL, 10)) << " ";
@@ -154,7 +164,8 @@ int main(int argc, char *argv[]){
     ofstream out;
     int fatorCorrecao = 0;
     map<string, int> definicao;
-    map<string, vector<int>> uso;
+    map<string, vector<int> > uso;
+
 
     //Verifica passagem de argumentos
     if(argc != 4){
@@ -168,7 +179,7 @@ int main(int argc, char *argv[]){
         input1.append(".o");
 
     input2.append(argv[2]);
-    if(!temExtensao(input1))
+    if(!temExtensao(input2))
         input2.append(".o");
 
     output.append(argv[3]);
@@ -179,11 +190,13 @@ int main(int argc, char *argv[]){
     in.open(input1);
     if(!in.is_open()){
         cout << "Erro ao abrir o arquivo " << input1 << ". Encerrando";
-        exit(EXIT_FAILURE);
+        deuErroLigador = true;
+        //exit(EXIT_FAILURE);
     }
 
     fatorCorrecao = calculaFatorCorrecao(in);
     if(input2.empty()){
+        deuErroLigador = true;
         imprimeErro(ERRO_FALTA_ARQUIVO);
     }
     else{
@@ -195,7 +208,8 @@ int main(int argc, char *argv[]){
         in.open(input2);
          if(!in.is_open()){
             cout << "Erro ao abrir o arquivo " << input2 << ". Encerrando";
-            exit(EXIT_FAILURE);
+            deuErroLigador = true;
+            //exit(EXIT_FAILURE);
         }
         criaTabelaGlobalDefinicao(in, definicao, fatorCorrecao);
         in.close();
@@ -213,5 +227,9 @@ int main(int argc, char *argv[]){
 
     in.close();
 
+    if(deuErroLigador){
+        cout << "Erro no processo de ligacao. Encerrando." << endl;
+        remove(output.c_str());
+    }
     return 0;
 }

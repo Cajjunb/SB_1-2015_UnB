@@ -217,14 +217,14 @@ void separaOp(ofstream& out, vector<tipoInstrucao>& instrucao,vector<tipoGramati
     }
 }
 
-bool criaArqObj(ifstream& in, ofstream& out, vector<tipoGramatica>& gramatica, vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, map<string, tipoTS>& simbolo, map<string, vector<int>>& uso, map<string, int>& definicao, vector<int>& bits){
+bool criaArqObj(ifstream& in, ofstream& out, vector<tipoGramatica>& gramatica, vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, map<string, tipoTS>& simbolo, map<string, vector<int> >& uso, map<string, int>& definicao, vector<int>& bits){
     string linha;
     bool liga = false;
     int i = 0;
     if(!definicao.empty() || !uso.empty()){
         out << "TABLE USE" << endl;
         //cout << "TABLE USE" << endl;
-        for (map<string, vector<int>>::iterator it = uso.begin(); it != uso.end(); ++it){
+        for (map<string, vector<int> >::iterator it = uso.begin(); it != uso.end(); ++it){
             for(vector<int>::iterator it2 = it->second.begin(); it2 != it->second.end(); ++ it2){
                 out << it->first << " " << *it2 << endl;
                 //cout << it->first << " " << *it2 << endl;

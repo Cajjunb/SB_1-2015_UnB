@@ -25,7 +25,7 @@ int main(int argc, char *argv[]){
     vector<tipoDiretiva> diretiva;
     map<string, tipoTS> simbolo; //Tabela de símbolos
     map<string, int> definicao; //Tabela de definição <nome, endereço>
-    map<string, vector<int>> uso; //Tabela de uso <nome, endereços>
+    map<string, vector<int> > uso; //Tabela de uso <nome, endereços>
     vector<int> bits; //mapa de bits: indica endereços absolutos e relativos
     ifstream arq1;
     ofstream arq2;

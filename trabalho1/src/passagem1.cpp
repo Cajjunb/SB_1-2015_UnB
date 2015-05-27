@@ -41,14 +41,14 @@ bool isSimbolo(map<string, tipoTS>& simbolo, string& token){
         return false;
 }
 
-void insereUso(map<string, vector<int>>& uso, string& token, int linha){
+void insereUso(map<string, vector<int> >& uso, string& token, int linha){
     vector<int> fim;
     locale loc;
     toUpper(token,loc);
 
     fim.clear();
     if(uso.find(token) == uso.end()){
-        uso.insert(pair<string, vector<int>>(token, fim)); //se endereco  = -1, então chegou a última chamada deste rótulo
+        uso.insert(pair<string, vector<int> >(token, fim)); //se endereco  = -1, então chegou a última chamada deste rótulo
     }
     else
         imprimeErro(ERRO_REDEFINICAO,linha);
@@ -78,9 +78,9 @@ void editaDefinicao(map<string, int>& definicao, string token, int endereco){
 
 }
 
-void editaUso(map<string, vector<int>>& uso, string token, int endereco){
+void editaUso(map<string, vector<int> >& uso, string token, int endereco){
 
-    for (map<string, vector<int>>::iterator it = uso.begin(); it != uso.end(); ++it){
+    for (map<string, vector<int> >::iterator it = uso.begin(); it != uso.end(); ++it){
         if(strcasecmp(it->first.c_str(), token.c_str()) == 0){
             it->second.push_back(endereco);
             break;
@@ -110,7 +110,7 @@ void separaSectionArgs(vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& d
     }
 }
 
-int calculaPC(vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, map<string, vector<int>>& uso, string token, int linha, vector<string>& vTab, int endereco, vector<int>& bits){
+int calculaPC(vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, map<string, vector<int> >& uso, string token, int linha, vector<string>& vTab, int endereco, vector<int>& bits){
     if(isDiretiva(diretiva, token)){
         tipoDiretiva d;
         d = pegaDiretiva(diretiva, token);
@@ -215,7 +215,7 @@ int calculaPC(vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, 
                 }
                 locale loc;
                 toUpper(aux,loc);
-                map<string, vector<int>>::iterator it = uso.find(aux);
+                map<string, vector<int> >::iterator it = uso.find(aux);
                 if(it == uso.end()){
                     //NAO DESISTE, AINDA PODE ESTAR: INSTR LABEL + NÚMERO
                     size_t found = aux.find("+");
@@ -263,7 +263,7 @@ int calculaPC(vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, 
     return 0;
 }
 
-void criaTabelas(ifstream& arq, vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, map<string, tipoTS>& simbolo, map<string, vector<int>>& uso, map<string, int>& definicao, vector<int>& bits){
+void criaTabelas(ifstream& arq, vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, map<string, tipoTS>& simbolo, map<string, vector<int> >& uso, map<string, int>& definicao, vector<int>& bits){
     int pc = 0,incremento = 0;
     int i; //contador de linhas
     string linha;
