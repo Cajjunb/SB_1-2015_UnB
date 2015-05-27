@@ -12,26 +12,27 @@ Resumo:
 É necessário que o arquivo montador.cpp e ligador.cpp estejam um nível acima das pastas "src", "include" e "tabelas.
 
 	O processo de montagem escolhido foi o de duas passagens, com vericação dos seguintes erros listados:
-	1- Declaração ausente
-	2- Declaração de símbolos (na sessão de dados) repetida
-	3- Instrução com operandos invalidados
-	4- Diretivas ou instruções na seção incorreta
-	5- Instruções ou diretivas inválidas
-	6- Divisão por constante com valor 0
-	7- Instruções com quantidade de operandos incorretas
-	8- Detecção de erros léxicos
-		8.a) Números só podem ser escritos da forma decimal ou hexadecimal (indicado por 0x)
-		8.b) Símbolos/Rótulos não podem começar com número
-	9- Definição de rótulos (na sessão de texto) repetida
-	10- Dois ou mais rótulos na mesma linha
-		Nota: Não foram considerados os casos de rótulos ou símbolos separados por uma linha, levando em conta somente os casos em que instruções ou diretivas estiverem na mesma linha do rótulo ou símbolo
-	11- Seção TEXT ausente
-		11.a) Caso haja símbolos não definidos no código e não há seção de dados, também é indicado seção DATA ausente
-	12- Seção inválida
-	13- Segmetation Fault
-	14- Modificação de valor de constante
+	1- 	Declaração ausente
+	2- 	Declaração de símbolos (na sessão de dados) repetida
+	3- 	Instrução com operandos invalidados
+	4- 	Diretivas ou instruções na seção incorreta
+	5- 	Instruções ou diretivas inválidas
+	6- 	Divisão por constante com valor 0
+	7- 	Instruções com quantidade de operandos incorretas
+	8- 	Detecção de erros léxicos
+			8.a) Números só podem ser escritos da forma decimal ou hexadecimal (indicado por 0x)
+			8.b) Símbolos/Rótulos não podem começar com número
+	9- 	Definição de rótulos (na sessão de texto) repetida
+	10-	Dois ou mais rótulos na mesma linha
+			Nota: Não foram considerados os casos de rótulos ou símbolos separados por uma linha, levando em conta somente os casos em que instruções ou diretivas estiverem na mesma linha do rótulo ou símbolo
+	11- 	Seção TEXT ausente
+			11.a) Caso haja símbolos não definidos no código e não há seção de dados, também é indicado seção DATA ausente
+	12- 	Seção inválida
+	13- 	Segmetation Fault
+	14- 	Modificação de valor de constante
 		Nota: Foram considerados o caso das instruções STORE e COPY para modificação de valor de um endereço
-	
+	15- 	Instrução ou diretiva com tipo de argumento incorreto
+
 	Caso ocorra algum desses erros, é exibido a mensagem de erro e a linha correspondente do arquivo original. Caso haja mais de um erro na mesma linha, é mostrado somente um único erro por linha.
 	
 	O ligador irá ligar dois arquivos somente quando necessário, indicando uma mensagem de erro quando um dos arquivos não precisar.
@@ -46,7 +47,7 @@ Para executar este trabalho:
 
 	Para executar o montador, execute o comando:
 		./montador arq1 arq2
-		Nota: caso não sejam passados extensões, o montador irá supor que para "arq1", a extensão seja ".asm" e para "arq2" seja a extensão ".o". Caso o arquivo não precise ser ligado, "arq2" terá a extensão ".e" caso não seja passado extensão.
+		Nota: caso não sejam passados extensões, o montador irá supor que para "arq1" a extensão seja ".asm" e para "arq2" seja a extensão ".o". Caso o arquivo não precise ser ligado, "arq2" terá a extensão ".e".
 	
 	Para executar o ligador, execute o comando:
 		./ligador arq 1 arq2 arq3
