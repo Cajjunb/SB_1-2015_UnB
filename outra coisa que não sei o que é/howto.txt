@@ -1,0 +1,4 @@
+Compilando no linux 64 bits nativo
+	nasm -f elf -o teste.o ARQUIVO.asm
+Ligando
+	ld -m elf_i386 -o teste teste.o
