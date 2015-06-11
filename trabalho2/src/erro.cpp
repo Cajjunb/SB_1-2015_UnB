@@ -167,8 +167,6 @@ void atualizaSection(string arg, int linha){
     }
     else if(strcasecmp("TEXT", arg.c_str()) == 0){
         if(!sectionText){
-            if(sectionData) //se seção data estiver definida antes de texto
-                imprimeErro(ERRO_SECTION_DATA_ANTES);
             sectionText = true;
             sectionAtual = 't';
         }
