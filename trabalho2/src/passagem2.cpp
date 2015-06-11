@@ -1,6 +1,9 @@
 #include "../include/passagem2.h"
 
 bool precisaData = false; //global que indica necessidade de section data
+char indicaSection = 0; //global que indica qual sessão que está
+//t: text
+//d: data
 
 void escreveOp(ofstream& out, vector<tipoGramatica>& gramatica, vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, map<string, tipoTS>& simbolo, string token, string arg, int tipo, int linha){ //tipo é INSTRUÇÃO = 0 ou DIRETIVA = 1
 
@@ -13,6 +16,12 @@ void escreveOp(ofstream& out, vector<tipoGramatica>& gramatica, vector<tipoInstr
             vector<string> maisAux; //vetor de string para conter argumentos que estão separados por +
             int mais;
             int qtdArg = 0;
+
+            if(indicaSection != 't'){
+                out << endl << "t" << endl;
+                indicaSection = 't';
+            }
+
 
             //cout << "token:--" << token << "--" << endl;
             i = pegaInstrucao(instrucao, token);
@@ -96,6 +105,12 @@ void escreveOp(ofstream& out, vector<tipoGramatica>& gramatica, vector<tipoInstr
         case 1:{
             tipoDiretiva d;
             d = pegaDiretiva(diretiva, token);
+
+            if(indicaSection != 'd' && (strcasecmp(d.nome.c_str(), "SPACE") == 0 || strcasecmp(d.nome.c_str(), "CONST") == 0)){
+                out << endl << "d" << endl;
+                indicaSection = 'd';
+            }
+
             if(d.formato == 'N'){
                 if(isNumber(arg)){
                     if(arg.find("X") != string::npos){ //Número está em hexadecimal
