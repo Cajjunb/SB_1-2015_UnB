@@ -10,7 +10,6 @@ using namespace std;
 //externo: diz se rótulo é externo ou não
 //section: diz em qual seção o rótulo percente. Aceita somente 't', SECTION TEXT, e 'd', SECTION DATA
 typedef struct{
-    string simbolo;
     int posicao;
     bool externo;
     int  valorConstante;

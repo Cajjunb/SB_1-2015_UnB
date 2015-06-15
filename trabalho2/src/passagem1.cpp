@@ -3,8 +3,7 @@
 void insereSimbolo(map<string, tipoTS>& simbolo, string& token, tipoTS s, int linha){
 
     map<string, tipoTS>::iterator it;
-    locale loc;
-    toUpper(token,loc);
+
     it = simbolo.find(token);
     if(it == simbolo.end()){ //se não existe símbolo na tabela
         if(isTokenValido(token))
@@ -23,8 +22,6 @@ void insereSimbolo(map<string, tipoTS>& simbolo, string& token, tipoTS s, int li
 
 void editaTamanhoSimbolo(map<string, tipoTS>& simbolo, string& token, unsigned int tamanhoMemoria){
     std::map<string, tipoTS>::iterator it;
-    locale loc;
-    toUpper(token,loc);
 
     it = simbolo.find(token);
     if(it != simbolo.end()){  //se  existe símbolo na tabela
@@ -33,8 +30,7 @@ void editaTamanhoSimbolo(map<string, tipoTS>& simbolo, string& token, unsigned i
 }
 
 bool isSimbolo(map<string, tipoTS>& simbolo, string& token){
-    locale loc;
-    toUpper(token,loc);
+
     if(simbolo.find(token) == simbolo.end())
         return true;
     else
@@ -43,8 +39,6 @@ bool isSimbolo(map<string, tipoTS>& simbolo, string& token){
 
 void insereUso(map<string, vector<int> >& uso, string& token, int linha){
     vector<int> fim;
-    locale loc;
-    toUpper(token,loc);
 
     fim.clear();
     if(uso.find(token) == uso.end()){
@@ -55,8 +49,6 @@ void insereUso(map<string, vector<int> >& uso, string& token, int linha){
 }
 
 void insereDefinicao(map<string, int>& definicao, string& token, int endereco, int linha){
-    locale loc;
-    toUpper(token,loc);
 
     if(definicao.find(token) == definicao.end()){
         definicao.insert(pair<string, int>(token, endereco)); //se endereco  = -1, então ainda nao foi definido endereco
@@ -66,8 +58,6 @@ void insereDefinicao(map<string, int>& definicao, string& token, int endereco, i
 }
 
 void editaDefinicao(map<string, int>& definicao, string token, int endereco){
-    locale loc;
-    toUpper(token,loc);
 
     for (map<string, int>::iterator it = definicao.begin(); it != definicao.end(); ++it){
         if(strcasecmp(it->first.c_str(), token.c_str()) == 0){
@@ -213,8 +203,7 @@ int calculaPC(vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, 
                     aux.append(copyArg.front());
                     copyArg.erase(copyArg.begin());
                 }
-                locale loc;
-                toUpper(aux,loc);
+
                 map<string, vector<int> >::iterator it = uso.find(aux);
                 if(it == uso.end()){
                     //NAO DESISTE, AINDA PODE ESTAR: INSTR LABEL + NÚMERO
@@ -223,8 +212,7 @@ int calculaPC(vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, 
                         //subdivide a string de alguma forma
                         vector<string> somaEndereco;
                         explode(somaEndereco, aux, "+");
-                        locale loc;
-                        toUpper(somaEndereco[0],loc);
+
                         it = uso.find(somaEndereco[0]);
                         //cout << somaEndereco[0];
                         //cin.get();
@@ -284,7 +272,6 @@ void criaTabelas(ifstream& arq, vector<tipoInstrucao>& instrucao, vector<tipoDir
         if(vTab[0][tamanho - 1] == ':'){
             tipoTS s;
             vTab[0] = vTab[0].substr(0, tamanho - 1); //eliminando :
-            s.simbolo = vTab[0];
 
             if(strcasecmp(vTab[1].c_str(), "EXTERN") == 0){ //Se a próxima string for extern, então insere na tabela de uso
                 if(!getBegin() || getEnd()) //se begin não tiver sido definido
@@ -337,13 +324,7 @@ void criaTabelas(ifstream& arq, vector<tipoInstrucao>& instrucao, vector<tipoDir
         }
         verificaLabels(vTab, i);
     }
-    /*tipoTS endereco_limite;                               //CRIA UM SIMBOLO QUE INDICA O ENDERECO DO FINAL DO ARQUIVO, UMA CONSTANTE, NOME UM TOKEN INVALIDO
-    endereco_limite.simbolo =";END";
-    endereco_limite.posicao = pc;
-    endereco_limite.tipoConstante = true ;
-    endereco_limite.valorConstante = pc ;
-    insereSimbolo(simbolo,endereco_limite.simbolo, endereco_limite, i );        // INSERE O SIMBOLO DE FINAL DE ARQUIVO
-    */
+
     verificaSectionText(); //verifica se o arquivo terminou declarando uma seção text
     arq.clear();
     arq.seekg(0, arq.beg); //rewind

@@ -211,8 +211,12 @@ bool isTokenValido(string token){
     else{
         if(isdigit(token[0]))
             return false;
-        else
-            return true;
+        else{
+            if(!isAlfanumericoUnderscore(token))
+                return false;
+            else
+                return true;
+        }
     }
 }
 
@@ -237,8 +241,7 @@ bool isMudancaDeValorConstante(vector<string> tokens, map<string, tipoTS>& simbo
     tipoGramatica gramaticaInstrucao = pegaGramatica(gramatica ,tokens[0]);                            // pega gramatica
     bool args[3] = {false,false,false};
     for(unsigned int i = 0;  i < tokens.size(); i++){
-        locale loc;
-        toUpper(tokens[i],loc);
+
         map<string, tipoTS>::iterator it = simbolo.find(tokens[i]);
         if(it != simbolo.end()){
             args[i] = it->second.tipoConstante;
@@ -278,8 +281,7 @@ bool isAcessoMemoriaNaoReservado(vector<string> tokens,map<string, tipoTS>& simb
     for(int i = 1 ; i < tamanho; i++){
         explode(operandoSoma,tokens[i],"+");
         if(operandoSoma.size() > 1){
-            locale loc;
-            toUpper(operandoSoma[0],loc);
+
             map<string, tipoTS>::iterator it = simbolo.find(operandoSoma[0]);
             if(it != simbolo.end()){
                 if((unsigned)std::stoi(operandoSoma[1])  > it->second.tamanhoMemoria -1)

@@ -47,66 +47,83 @@ void criaVetorTab(ifstream& arq, vector<vector<string> >& mTab){
     arq.seekg(0, arq.beg); //rewind
 }
 
-/*
-bool preProcessaArq(char nomeArquivo[] , vector<tipoGramatica>& gramatica){
->>>>>>> 040aa10c825027567891a8deab7899cad2aaead2
-    FILE *ponteiroLeitura, *ponteiroEscrita ;
-    ponteiroLeitura = fopen(nomeArquivo, "r");
-    tipoGramatica instrucaoBuffer, instrucaoAux;                                      // Variavel String
-    char    streamValor[301];                                           // NUMERO MÁXIMO DE CHARS POR IDENTIFICADOR
-    std::size_t zero = 0;
-    string stringCplusplus ;
-    int linha = 1;
+bool verificaNotEQUIF(string linha, map<string, tipoTS>& simbolo, bool *prox){
+    vector<string> vTab;
+    int tamanho;
 
-    instrucaoBuffer.qtdOperandos = 0;                                           // INICIALIZA O BUFFER
-    if(ponteiroLeitura == NULL ){
-        printf("ERRO NA leitura do teste");
-        exit(EXIT_FAILURE);
-    }else{
-        ponteiroEscrita = fopen("pre_processado.txt","w");
-        int i ;
-        if(ponteiroEscrita == NULL)
-            exit(EXIT_FAILURE);
-        while( feof(ponteiroLeitura) == false){
-            fscanf(ponteiroLeitura,"%s",streamValor);
-            stringCplusplus = streamValor;                                  // Convertendo C* para Strings CPLUPLUS
-            instrucaoAux = pegaGramatica(gramatica,streamValor);
-            if(instrucaoAux.qtdOperandos <  0 ){                                 // NAO ACHOU UMA COM O BUFFER STRING ATUAL INSTRUCAO NA GRAMATICA?
-                if(instrucaoBuffer.qtdOperandos > 0){
-                    fprintf(ponteiroEscrita, "%s\t",streamValor);
-                    instrucaoBuffer.qtdOperandos-- ;
-                }else{
-                    if( stringCplusplus.find(';') == zero ){                         // CASO COMECE UM COMENTARIO LE ATE O FINAL DA LINHA
-                        cout << "\n\tCOMECOU O COMENTARIO!!";
-                        fscanf(ponteiroLeitura,"%*[^\n]");                          // PULA ATE O \n!
-                    }else{
-                    cout << "\n\tErro SINTATICO 2 esperado argumentos da instrucao = " << instrucaoBuffer.nome << "Linha = " << linha;
+    //cout << linha << endl;
+    explode(vTab, linha, "\t");
+
+    tamanho = vTab[0].size();
+
+    if(vTab[0][tamanho - 1] == ':'){ //LABEL, PODE SER EQU
+
+        if(strcasecmp(vTab[1].c_str(), "EQU") == 0){ //É EQU, então pode processar
+            vTab[0] = vTab[0].substr(0, tamanho - 1); //eliminando :
+
+            map<string, tipoTS>::iterator it = simbolo.find(vTab[0]);
+            if(it == simbolo.end() && isTokenValido(vTab[0])){ //É token válido
+                if(vTab.size() == 4){
+                    if(isNumber(vTab[2])){
+                        tipoTS s;
+                        if(vTab[2].find("X") != string::npos) //hexadecimal
+                            s.valorConstante = (int) strtol(vTab[2].c_str(),NULL, 16);
+                        else //decimal
+                            s.valorConstante = (int) strtol(vTab[2].c_str(),NULL, 10);
+                        s.externo = false;
+                        s.posicao = 0;
+                        s.section = '0';
+                        s.tamanhoMemoria = 0;
+                        s.tipoConstante = false;
+                        simbolo.insert(pair<string, tipoTS>(vTab[0], s));
+                        return false;
                     }
-                }
-            }else{                                                              // ACHOU  COM O BUFFER STRING ATUAL INSTRUCAO NA GRAMATICA!
-                if(instrucaoBuffer.qtdOperandos > 0){
-                    cout << "\n\tErro SINTATICO 2 esperado argumentos da instrucao = " << instrucaoBuffer.nome << "Linha = " << linha;
-                }else{
-                    instrucaoBuffer = instrucaoAux;                         // GUARDA NO BUFFER A MEMORIA
-                    fprintf(ponteiroEscrita, "\n%s\t",streamValor);
-                    linha++;
                 }
             }
         }
-        fclose(ponteiroEscrita);
-        fclose(ponteiroLeitura);
+
+    }
+    else{
+        if(strcasecmp(vTab[0].c_str(), "IF") == 0){
+            int aux = (int) strtol(vTab.back().c_str(),NULL, 10);
+            map<string, tipoTS>::iterator it = simbolo.find(vTab[1]);
+
+            if(!isTokenValido(vTab[1]))
+                imprimeErro(ERRO_INVALIDO, aux);
+
+            if(it != simbolo.end()){ //achou
+
+                if(vTab.size() != 3)
+                    imprimeErro(ERRO_QTD_ARG, aux);
+
+                tipoTS s = it->second;
+                if(s.valorConstante != 0)
+                    *prox = true; //a próxima instrução pode ser escrita
+                else
+                    *prox = false; //a próxima instrução não pode ser escrita
+
+                return false;
+            }
+            else
+                imprimeErro(ERRO_SIMBOLO_NAO_DEFINIDO, aux);
+
+        }
     }
 
+    return true;
 }
-*/
-bool preProcessaArq2(string nomeArquivo){
+
+
+void preProcessaArq2(string nomeArquivo, map<string, tipoTS>& simbolo){
     std::ifstream  ponteiroLeitura(nomeArquivo) ;
     FILE *ponteiroEscrita ;
     string stringCplusplus ;
     unsigned int linha = 1;
+
+    bool instAtual = true;
                                                        // INICIALIZA O BUFFER
     if(!ponteiroLeitura.is_open() ){
-        printf("ERRO NA leitura do teste");
+        printf("Erro ao abrir o arquivo. Encerrando.");
         exit(EXIT_FAILURE);
     }else{
         ponteiroEscrita = fopen("pre_processado.txt","w");
@@ -121,11 +138,20 @@ bool preProcessaArq2(string nomeArquivo){
                 stringCplusplus = retiraNL(stringCplusplus);
                 stringCplusplus = retiraLF(stringCplusplus);
                 if(!stringCplusplus.empty() && stringCplusplus.size() > 1 ){
+
                     stringCplusplus =  stringCplusplus +"\t" +std::to_string(linha);
+
                     locale loc;
-                    toUpper(stringCplusplus,loc);
+                    toUpper(stringCplusplus,loc); //passa tudo para uppercase
+
                     stringCplusplus = formataTabs(stringCplusplus);
-                    fprintf(ponteiroEscrita,"%s\n",stringCplusplus.c_str());
+                    if(verificaNotEQUIF(stringCplusplus, simbolo, &instAtual)){
+                        if(instAtual) //se instrução atual pode ser escrita
+                            fprintf(ponteiroEscrita,"%s\n",stringCplusplus.c_str());
+                        else
+                            instAtual = true; //seta flag como verdadeiro para próxima instrução ter a possibilidade de ser escrita
+                    }
+
                 }
             }
             linha++;
@@ -133,7 +159,6 @@ bool preProcessaArq2(string nomeArquivo){
     }
     fclose(ponteiroEscrita);
     ponteiroLeitura.close();
-
 }
 
 

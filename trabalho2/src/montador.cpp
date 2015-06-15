@@ -39,7 +39,7 @@ void monta(vector<string> asmInventado){
     criaDiretiva(arq1, diretiva);
     arq1.close();
 
-    preProcessaArq2(input);
+    preProcessaArq2(input, simbolo);
 
     arq1.open("pre_processado.txt");
     arq2.open(output);
@@ -67,5 +67,5 @@ void monta(vector<string> asmInventado){
         cout << "Erro na geração de " << output << endl;
         remove(output.c_str()); //apague arquivo de saída
     }
-    remove("pre_processado.txt"); //remoção do arquivo pré-processado temporário
+    //remove("pre_processado.txt"); //remoção do arquivo pré-processado temporário
 }

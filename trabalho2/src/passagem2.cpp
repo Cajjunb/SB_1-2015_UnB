@@ -1,9 +1,6 @@
 #include "../include/passagem2.h"
 
 bool precisaData = false; //global que indica necessidade de section data
-char indicaSection = 0; //global que indica qual sessão que está
-//t: text
-//d: data
 
 void escreveOp(ofstream& out, vector<tipoGramatica>& gramatica, vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, map<string, tipoTS>& simbolo, string token, string arg, int tipo, int linha){ //tipo é INSTRUÇÃO = 0 ou DIRETIVA = 1
 
@@ -17,12 +14,6 @@ void escreveOp(ofstream& out, vector<tipoGramatica>& gramatica, vector<tipoInstr
             int mais;
             int qtdArg = 0;
 
-            if(indicaSection != 't'){
-                out << endl << "t" << endl;
-                indicaSection = 't';
-            }
-
-
             //cout << "token:--" << token << "--" << endl;
             i = pegaInstrucao(instrucao, token);
             g = pegaGramatica(gramatica, token);
@@ -32,7 +23,7 @@ void escreveOp(ofstream& out, vector<tipoGramatica>& gramatica, vector<tipoInstr
 
             if(g.qtdOperandos > 0 && !arg.empty()){ //se qtdOperandos > 0 e argumento != vazio
                 aux.append(arg); //Supõe formato INSTR   ARG
-                //cout << "arg: " << arg << endl;
+                cout << "arg: " << arg << endl;
                 explode(copyArg, aux, ","); //procura se na string aux tem copy
                 do{
                     mais = 0;
@@ -51,8 +42,7 @@ void escreveOp(ofstream& out, vector<tipoGramatica>& gramatica, vector<tipoInstr
                         else //Número está em decimal
                             mais = (int)strtol(maisAux[1].c_str(), NULL, 10);
                     }
-                    locale loc;
-                    toUpper(token,loc);
+                    cout << "Aux: " << aux << endl;
 
                     map<string, tipoTS>::iterator it = simbolo.find(aux);
                     if(it != simbolo.end()){
@@ -106,11 +96,6 @@ void escreveOp(ofstream& out, vector<tipoGramatica>& gramatica, vector<tipoInstr
             tipoDiretiva d;
             d = pegaDiretiva(diretiva, token);
 
-            if(indicaSection != 'd' && (strcasecmp(d.nome.c_str(), "SPACE") == 0 || strcasecmp(d.nome.c_str(), "CONST") == 0)){
-                out << endl << "d" << endl;
-                indicaSection = 'd';
-            }
-
             if(d.formato == 'N'){
                 if(isNumber(arg)){
                     if(arg.find("X") != string::npos){ //Número está em hexadecimal
@@ -158,9 +143,6 @@ void escreveOp(ofstream& out, vector<tipoGramatica>& gramatica, vector<tipoInstr
 }
 
 void separaOp(ofstream& out, vector<tipoInstrucao>& instrucao,vector<tipoGramatica>& gramatica, vector<tipoDiretiva>& diretiva, map<string, tipoTS>& simbolo, vector<string> vTab, int linha){
-    locale loc;
-    for(vector<string>::iterator it = vTab.begin(); it != vTab.end(); ++it)
-        toUpper(*it, loc);
 
     if(isInstrucao(instrucao, vTab[0])){ //INSTRUÇÃO A
         detectarErrosInstrucao(simbolo, vTab, gramatica,  linha);
@@ -230,6 +212,8 @@ void separaOp(ofstream& out, vector<tipoInstrucao>& instrucao,vector<tipoGramati
                 }
             }
     }
+
+    cout << "FIM DE SEPARA" << endl;
 }
 
 bool criaArqObj(ifstream& in, ofstream& out, vector<tipoGramatica>& gramatica, vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, map<string, tipoTS>& simbolo, map<string, vector<int> >& uso, map<string, int>& definicao, vector<int>& bits){
@@ -274,14 +258,13 @@ bool criaArqObj(ifstream& in, ofstream& out, vector<tipoGramatica>& gramatica, v
         //cout << linha << endl;
         explode(vTab, linha, "\t");
         i = (int)strtol(vTab.back().c_str(), NULL, 10); //último elemento desta linha informa a linha no arquivo anterior
-        vTab.pop_back(); //retira esse elemento8
+        vTab.pop_back(); //retira esse elemento
 
         tamanho = vTab[0].size();
         if(vTab[0][tamanho - 1] == ':'){
             vTab[0] = vTab[0].substr(0, tamanho - 1); //eliminando :
             if(!simbolo.empty()){
-                locale loc;
-                toUpper(vTab[0],loc);
+
                 map<string, tipoTS>::iterator it = simbolo.find(vTab[0]);
                 if(it == simbolo.end() && isTokenValido(vTab[0]))
                     imprimeErro(ERRO_NAO_ENCONTRADO, i);
