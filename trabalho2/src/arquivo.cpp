@@ -48,11 +48,44 @@ void criaVetorTab(ifstream& arq, vector<vector<string> >& mTab){
     arq.seekg(0, arq.beg); //rewind
 }
 
+void trocaEQU(string op, string arg, map<string, tipoTS>& simbolo){
+    vector<string> vTab, vArg;
+    string argAux;
+    int tamanho;
+    int aux;
+    //cout << linha << endl;
+    explode(vTab, arg, ",");
+    argAux.clear();
+
+    for(vector<string>::iterator it = vTab.begin(); it != vTab.end(); it++){ //para cada argumento separado por vírgula
+        string aux;
+        vector<string> maisAux;
+        aux.clear();
+        maisAux.clear();
+        aux.append(*it);
+
+        if(aux.find("+") != string::npos){ //se tiver +
+
+            explode(maisAux, aux, "+");
+            aux.clear();
+            aux.append(maisAux[0]); //o primeiro troço antes do + é label
+        }
+        vArg.push_back(aux);
+    }
+
+    for(vector<string>::iterator it = vArg.begin(); it != vArg.end(); it++){ //para cada argumento separado por vírgula
+        cout << *it << endl;
+        cin.get();
+    }
+}
+
 bool verificaNotEQUIF(string linha, map<string, tipoTS>& simbolo, bool *prox){
     vector<string> vTab;
     int tamanho;
     int aux;
-    //cout << linha << endl;
+
+    cout << linha << endl;
+
     explode(vTab, linha, "\t");
     aux = (int) strtol(vTab.back().c_str(),NULL, 10);
 
@@ -86,30 +119,42 @@ bool verificaNotEQUIF(string linha, map<string, tipoTS>& simbolo, bool *prox){
                 }
             }
         }
+        else{ //É uma label qualquer
+            string args;
+            for(vector<string>::iterator it = vTab.begin() + 2; it != vTab.end() - 1; it++){
+                args.append(*it);
+                args.append(",");
+            }
+
+            trocaEQU(vTab[1], args, simbolo);
+        }
 
     }
     else{
         if(strcasecmp(vTab[0].c_str(), "IF") == 0){
-            map<string, tipoTS>::iterator it = simbolo.find(vTab[1]);
 
             if(!isTokenValido(vTab[1]))
                 imprimeErro(ERRO_INVALIDO, aux);
 
-            if(it != simbolo.end()){ //achou
-
+            if(!isNumber(vTab[1]))
+                imprimeErro(ERRO_ARG_INCORRETO, aux);
+            else{
                 if(vTab.size() != 3)
                     imprimeErro(ERRO_QTD_ARG, aux);
 
-                tipoTS s = it->second;
-                if(s.valorConstante != 0)
+                long int n;
+                if(vTab[2].find("X") != string::npos) //Número está em hexadecimal
+                        n = strtol(vTab[1].c_str(), NULL, 16);
+                else
+                    n = strtol(vTab[1].c_str(), NULL, 10);
+
+                if(n != 0)
                     *prox = true; //a próxima instrução pode ser escrita
                 else
                     *prox = false; //a próxima instrução não pode ser escrita
 
                 return false;
             }
-            else
-                imprimeErro(ERRO_SIMBOLO_NAO_DEFINIDO, aux);
 
         }
     }

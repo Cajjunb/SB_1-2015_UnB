@@ -34,6 +34,10 @@ void preProcessaArq2(string nomeArquivo, map<string, tipoTS>& simbolo);
 //  Se linha atual é um IF, edita
 bool verificaNotEQUIF(string linha, map<string, int>& valorEQU, int *prox);
 
+//Se a linha não for de definição de EQU, troca labels que são EQUs por seu respectivo valor
+//retorna a linha certa para ser escrita
+void trocaEQU(string op, string arg, map<string, tipoTS>& simbolo);
+
 //	Funcao auxiliar retira tabs duplos desnecessarios
 //	Retorna a string formatada ja
 string formataTabs(string formatada);
