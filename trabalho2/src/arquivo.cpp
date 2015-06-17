@@ -1,5 +1,6 @@
 #include "../include/arquivo.h"
 
+bool comecaCodigo = false; //global que indica se o programa que será escrito definitivamente no arquivo começou
 
 bool buscaTokenArq(ifstream& arq, string token){
 
@@ -50,15 +51,19 @@ void criaVetorTab(ifstream& arq, vector<vector<string> >& mTab){
 bool verificaNotEQUIF(string linha, map<string, tipoTS>& simbolo, bool *prox){
     vector<string> vTab;
     int tamanho;
-
+    int aux;
     //cout << linha << endl;
     explode(vTab, linha, "\t");
+    aux = (int) strtol(vTab.back().c_str(),NULL, 10);
 
     tamanho = vTab[0].size();
 
     if(vTab[0][tamanho - 1] == ':'){ //LABEL, PODE SER EQU
 
         if(strcasecmp(vTab[1].c_str(), "EQU") == 0){ //É EQU, então pode processar
+            if(comecaCodigo)
+                imprimeErro(ERRO_EQU_DEPOIS, aux);
+
             vTab[0] = vTab[0].substr(0, tamanho - 1); //eliminando :
 
             map<string, tipoTS>::iterator it = simbolo.find(vTab[0]);
@@ -85,7 +90,6 @@ bool verificaNotEQUIF(string linha, map<string, tipoTS>& simbolo, bool *prox){
     }
     else{
         if(strcasecmp(vTab[0].c_str(), "IF") == 0){
-            int aux = (int) strtol(vTab.back().c_str(),NULL, 10);
             map<string, tipoTS>::iterator it = simbolo.find(vTab[1]);
 
             if(!isTokenValido(vTab[1]))
@@ -146,6 +150,7 @@ void preProcessaArq2(string nomeArquivo, map<string, tipoTS>& simbolo){
 
                     stringCplusplus = formataTabs(stringCplusplus);
                     if(verificaNotEQUIF(stringCplusplus, simbolo, &instAtual)){
+                        comecaCodigo = true;
                         if(instAtual) //se instrução atual pode ser escrita
                             fprintf(ponteiroEscrita,"%s\n",stringCplusplus.c_str());
                         else

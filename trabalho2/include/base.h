@@ -88,7 +88,8 @@ typedef enum{
     ERRO_ARG_INVALIDO,
     ERRO_ENCERRA_PROGRAMA,
     ERRO_ROTULO_REPETIDO,
-    ERRO_ARG_INCORRETO
+    ERRO_ARG_INCORRETO,
+    ERRO_EQU_DEPOIS
 }tipoErro;
 
 typedef struct{

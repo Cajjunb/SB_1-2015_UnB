@@ -23,7 +23,7 @@ void escreveOp(ofstream& out, vector<tipoGramatica>& gramatica, vector<tipoInstr
 
             if(g.qtdOperandos > 0 && !arg.empty()){ //se qtdOperandos > 0 e argumento != vazio
                 aux.append(arg); //Supõe formato INSTR   ARG
-                cout << "arg: " << arg << endl;
+                //cout << "arg: " << arg << endl;
                 explode(copyArg, aux, ","); //procura se na string aux tem copy
                 do{
                     mais = 0;
@@ -42,7 +42,7 @@ void escreveOp(ofstream& out, vector<tipoGramatica>& gramatica, vector<tipoInstr
                         else //Número está em decimal
                             mais = (int)strtol(maisAux[1].c_str(), NULL, 10);
                     }
-                    cout << "Aux: " << aux << endl;
+                    //cout << "Aux: " << aux << endl;
 
                     map<string, tipoTS>::iterator it = simbolo.find(aux);
                     if(it != simbolo.end()){
@@ -145,7 +145,7 @@ void escreveOp(ofstream& out, vector<tipoGramatica>& gramatica, vector<tipoInstr
 void separaOp(ofstream& out, vector<tipoInstrucao>& instrucao,vector<tipoGramatica>& gramatica, vector<tipoDiretiva>& diretiva, map<string, tipoTS>& simbolo, vector<string> vTab, int linha){
 
     if(isInstrucao(instrucao, vTab[0])){ //INSTRUÇÃO A
-        detectarErrosInstrucao(simbolo, vTab, gramatica,  linha);
+        //detectarErrosInstrucao(simbolo, vTab, gramatica,  linha);
 
         if(isAlfabeto(vTab[0])){
             if(vTab.size() > 1){
@@ -213,7 +213,7 @@ void separaOp(ofstream& out, vector<tipoInstrucao>& instrucao,vector<tipoGramati
             }
     }
 
-    cout << "FIM DE SEPARA" << endl;
+    //cout << "FIM DE SEPARA" << endl;
 }
 
 bool criaArqObj(ifstream& in, ofstream& out, vector<tipoGramatica>& gramatica, vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, map<string, tipoTS>& simbolo, map<string, vector<int> >& uso, map<string, int>& definicao, vector<int>& bits){
@@ -255,7 +255,9 @@ bool criaArqObj(ifstream& in, ofstream& out, vector<tipoGramatica>& gramatica, v
     while(getline(in, linha)){
         vector<string> vTab;
         int tamanho;
+
         //cout << linha << endl;
+
         explode(vTab, linha, "\t");
         i = (int)strtol(vTab.back().c_str(), NULL, 10); //último elemento desta linha informa a linha no arquivo anterior
         vTab.pop_back(); //retira esse elemento

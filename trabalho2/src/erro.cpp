@@ -118,6 +118,10 @@ void imprimeErro(tipoErro e, int linha){
             msg << "Sintatico: Instrucao ou diretiva com tipo de argumento incorreto";
             l.e = ERRO_SINTATICO;
         break;
+        case ERRO_EQU_DEPOIS:
+            msg << "Semantico: Variaveis do tipo EQU devem ser definidas antes do comeco do codigo";
+            l.e = ERRO_SEMANTICO;
+        break;
         default:
             msg << "Erro Indefinido";
             l.e = ERRO_DESCONHECIDO;
