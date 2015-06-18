@@ -122,6 +122,10 @@ void imprimeErro(tipoErro e, int linha){
             msg << "Semantico: Variaveis do tipo EQU devem ser definidas antes do comeco do codigo";
             l.e = ERRO_SEMANTICO;
         break;
+        case ERRO_JMP_INVALIDO:
+            msg << "Semantico: Pulo para um rotulo invalido";
+            l.e = ERRO_SEMANTICO;
+        break;
         default:
             msg << "Erro Indefinido";
             l.e = ERRO_DESCONHECIDO;
@@ -260,35 +264,50 @@ bool isMudancaDeValorConstante(vector<string> tokens, map<string, tipoTS>& simbo
 }
 
 bool isJMPEnderecoInvalido(vector<string> tokens,map<string, tipoTS>& simbolo){
-    string instrucao = tokens[0];
+    string instrucao;
+
+    if(tokens[0][tokens[0].size() - 1] == ':')
+        instrucao.append(tokens[1]);
+    else
+        instrucao.append(tokens[0]);
+
     if( (strcasecmp(instrucao.c_str(), "JMP") == 0)    ||
         (strcasecmp(instrucao.c_str(), "JMPP") == 0)   ||
         (strcasecmp(instrucao.c_str(), "JMZ") == 0)   ||
         (strcasecmp(instrucao.c_str(), "JMPN") == 0)
         ){
-        tipoTS simboloConstante = simbolo[";END"];
-        int endereco_maximo = simboloConstante.valorConstante;
-        simboloConstante = simbolo[tokens[1]];
-        if(endereco_maximo < simboloConstante.valorConstante){
-            return true;
+        map<string, tipoTS>::iterator it = simbolo.find(tokens.back());
+        if(it != simbolo.end()){
+            if(it->second.section == 'd')
+                return true;
         }
-        else
-            return false;
     }
-    else
-        return false;
+
+    return false;
 }
 
 bool isAcessoMemoriaNaoReservado(vector<string> tokens,map<string, tipoTS>& simbolo){
     int tamanho = tokens.size();
     std::vector<string> operandoSoma;
-    for(int i = 1 ; i < tamanho; i++){
+    for(int i = 0 ; i < tamanho; i++){
+        operandoSoma.clear();
+        //cout << "token" << tokens[i] << endl;
+
         explode(operandoSoma,tokens[i],"+");
+        //cout << "qtd: " << operandoSoma.size() << endl;
+
         if(operandoSoma.size() > 1){
+            int tamanho2 = operandoSoma[0].size();
+            if(operandoSoma[0][tamanho2 - 1] == ',') //se tiver ,
+                operandoSoma[0] = operandoSoma[i].substr(0, tamanho - 1);
 
             map<string, tipoTS>::iterator it = simbolo.find(operandoSoma[0]);
             if(it != simbolo.end()){
-                if((unsigned)std::stoi(operandoSoma[1])  > it->second.tamanhoMemoria -1)
+                //cout << "simbolo: " << operandoSoma[0] << endl;
+                //cout << "tamanho memória: " << it->second.tamanhoMemoria -1 << endl;
+                //cout << "valor: " << operandoSoma[1] << endl;
+
+                if((unsigned)atoi(operandoSoma[1].c_str())  > it->second.tamanhoMemoria -1)
                     return true;
             }
         }

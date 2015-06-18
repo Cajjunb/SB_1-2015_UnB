@@ -37,10 +37,18 @@ void escreveOp(ofstream& out, vector<tipoGramatica>& gramatica, vector<tipoInstr
                         explode(maisAux, aux, "+");
                         aux.clear();
                         aux.append(maisAux[0]);
-                        if(maisAux[1].find("X") != string::npos) //Número está em hexadecimal
-                            mais = (int)strtol(maisAux[1].c_str(), NULL, 16);
-                        else //Número está em decimal
-                            mais = (int)strtol(maisAux[1].c_str(), NULL, 10);
+                        //cout << "MaisAux[1]" << maisAux[1] << endl;
+
+                        if(!isNumber(maisAux[1]))
+                            imprimeErro(ERRO_ARG_INCORRETO, linha);
+                        else{
+                            if(maisAux[1].find("X") != string::npos) //Número está em hexadecimal
+                                mais = (int)strtol(maisAux[1].c_str(), NULL, 16);
+                            else{ //Número está em decimal
+                                mais = (int)strtol(maisAux[1].c_str(), NULL, 10);
+
+                            }
+                        }
                     }
                     //cout << "Aux: " << aux << endl;
 
@@ -145,7 +153,7 @@ void escreveOp(ofstream& out, vector<tipoGramatica>& gramatica, vector<tipoInstr
 void separaOp(ofstream& out, vector<tipoInstrucao>& instrucao,vector<tipoGramatica>& gramatica, vector<tipoDiretiva>& diretiva, map<string, tipoTS>& simbolo, vector<string> vTab, int linha){
 
     if(isInstrucao(instrucao, vTab[0])){ //INSTRUÇÃO A
-        //detectarErrosInstrucao(simbolo, vTab, gramatica,  linha);
+        detectarErrosInstrucao(simbolo, vTab, gramatica,  linha);
 
         if(isAlfabeto(vTab[0])){
             if(vTab.size() > 1){
@@ -256,7 +264,6 @@ bool criaArqObj(ifstream& in, ofstream& out, vector<tipoGramatica>& gramatica, v
         vector<string> vTab;
         int tamanho;
 
-        //cout << linha << endl;
 
         explode(vTab, linha, "\t");
         i = (int)strtol(vTab.back().c_str(), NULL, 10); //último elemento desta linha informa a linha no arquivo anterior
@@ -272,6 +279,9 @@ bool criaArqObj(ifstream& in, ofstream& out, vector<tipoGramatica>& gramatica, v
                     imprimeErro(ERRO_NAO_ENCONTRADO, i);
             }
         }
+
+        //cout << linha << endl;
+        //cin.get();
         separaOp(out, instrucao,gramatica, diretiva, simbolo, vTab,i);
     }
     in.clear();
@@ -289,10 +299,10 @@ bool criaArqObj(ifstream& in, ofstream& out, vector<tipoGramatica>& gramatica, v
 
 bool detectarErrosInstrucao(map<string, tipoTS>& simbolo , vector<string> vTab, vector<tipoGramatica>& gramatica, int linha){
     bool erro_encontrado = false;
-    if( analisaLexico(vTab) != ERRO_LEXICO ){                        // ANALISE LEXICA DE TODA A LINHA
+    /*if( analisaLexico(vTab) != ERRO_LEXICO ){                        // ANALISE LEXICA DE TODA A LINHA
         imprimeErro(ERRO_INVALIDO,linha);                   // IMPRIME O ERRO
         erro_encontrado = 1;
-    }
+    }*/
     if(vTab.size() > 1){
         if( (vTab[0] == "DIV" && isDivisaoPorZero(vTab[1], simbolo)) ||
            (vTab[1] == "DIV" && isDivisaoPorZero(vTab[2], simbolo))){
@@ -305,6 +315,11 @@ bool detectarErrosInstrucao(map<string, tipoTS>& simbolo , vector<string> vTab, 
         }
         if(isAcessoMemoriaNaoReservado(vTab,simbolo)){
             imprimeErro(ERRO_ACESSO_ENDERECO_NAO_RESERVADO,linha);
+            erro_encontrado = true;
+        }
+
+        if(isJMPEnderecoInvalido(vTab, simbolo)){
+            imprimeErro(ERRO_JMP_INVALIDO, linha);
             erro_encontrado = true;
         }
 

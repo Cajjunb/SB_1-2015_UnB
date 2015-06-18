@@ -101,6 +101,7 @@ void separaSectionArgs(vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& d
 }
 
 int calculaPC(vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, map<string, vector<int> >& uso, string token, int linha, vector<string>& vTab, int endereco, vector<int>& bits){
+    //cout << "token: " << token << endl;
     if(isDiretiva(diretiva, token)){
         tipoDiretiva d;
         d = pegaDiretiva(diretiva, token);
@@ -127,6 +128,8 @@ int calculaPC(vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, 
                 return n;
             }
             else{
+                if(strcasecmp(token.c_str(), "SPACE") == 0)
+                    imprimeErro(ERRO_QTD_ARG, linha);
                 bits.push_back(0); //endereço absoluto
                 return 1; //Não tem argumentos
             }
@@ -170,10 +173,7 @@ int calculaPC(vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, 
         if((strcasecmp(i.nome.c_str(), "STOP") == 0) && !getStop()){
             setStop(true);
         }
-        else{
-            if(getStop())
-                imprimeErro(ERRO_ENCERRA_PROGRAMA, linha);
-        }
+
         bits.push_back(0);
         //cout << endl << "INSTR - bit 0" << endl;
         if(i.tamanho > 1){

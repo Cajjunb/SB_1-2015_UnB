@@ -51,12 +51,13 @@ bool isAlfabeto(string token){
 
 bool isNumber(string token){
         //positivo                                  negativo
+    char *t;
     std::string tokenAux = token;
     if(token[0] == '-'){
         tokenAux.erase(0,1);
     }
     if((tokenAux[0] == '0' && tokenAux[1] == 'X') || (tokenAux[1] == '0' && tokenAux[2] == 'X')){ //É um número hexadecimal
-        if( (token.size() == 3 && token.back() == '0') || 0L != strtol(token.c_str(), NULL, 16)) //se pode ser convertido em um número
+        if( (token.size() == 3 && token.back() == '0') || 0L != strtol(token.c_str(), &t, 16)) //se pode ser convertido em um número
             return true;
         else
             return false;
