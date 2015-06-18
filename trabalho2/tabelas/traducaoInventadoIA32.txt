@@ -1,22 +1,25 @@
 tabela de tradução:
 
-ADD A 	->	add dword	eax , A 		-> 0x 05 XX XX 00 00
 
-SUB A 	->	sub dword	eax , A 		-> 0x 2d XX XX 00 00
+ADD A 		->	add dword	eax , [A+X] 	-> 0x 03 05 XX XX 00
 
-DIV A 	->	mov edx, 0					->
-			mov dword	ebx, C 			-> 0x bb XX XX 00 00
-			div dword 	ebx				-> 0x f7 f3
+SUB A 		->	sub dword	eax , [A+X] 	-> 0x 2b 05 XX XX 00
 
-MUL A 	->	mov edx, 0					->
-			mov dword	ebx, C 			-> 0x bb XX XX 00 00
-			imul dword  ebx				-> 0x f7 eb
+DIV A 		->	mov dword	ebx, C 		-> 0x 8b 1d XX XX 00
+			div dword 	ebx	-> 0x f7 f3
+MUL A 		->	mov dword	ebx, C 		-> 0x 8b 1d XX XX 00
+			imul dword  ebx		-> 0x f7 eb
+LOAD  A 	->	mov	 dword  eax, [C+X]	-> 0x A1 XX XX 00 00
 
-LOAD  A ->	mov	 dword  eax, [C+X]		-> 0x A1 XX XX 00 00
+STORE A 	->	mov  dword  [C+X], eax		-> 0x A3 XX XX 00 00
 
-STORE A ->	mov  dword  [C+X], eax		-> 0x A3 XX XX 00 00
+COPY A, B	-> mov  dword  ebx, [F+1]		-> 0x 8b 1d XX XX 00 
+			mov  dword  [G+1], ebx		-> 0x 89 1d XX XX 00
+JMP A 		->	jmp a 				-> 0x eb XX <- XX = pc - <label>
 
-COPY A, B-> mov  dword  ebx, [F+1]		-> 0x A1 XX XX 00 00 
-			mov  dword  [G+1], ebx		-> 0x A3 XX XX 00 00
-
-JMP A 	->	jmp a 				-> 
+JMPP A 		->	jns a 				-> 	0x 39 c0
+								0x 78 XX <- XX = pc -<label>
+JMPN A 		->	jns a 				-> 	0x 39 c0
+								0x 79 XX <- XX = pc -<label>
+JMPZ A 		->	jz  a 				->	0x 39 c0
+								0x 74 XX <- XX = pc -<label>
