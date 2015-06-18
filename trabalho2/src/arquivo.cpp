@@ -48,12 +48,13 @@ void criaVetorTab(ifstream& arq, vector<vector<string> >& mTab){
     arq.seekg(0, arq.beg); //rewind
 }
 
+
 void trocaEQU(string op, string arg, map<string, tipoTS>& simbolo, stringstream& definitivo){
     vector<string> vTab;
     string argAux;
 
-    //cout << linha << endl;
-    explode(vTab, arg, ",");
+    //cout << arg << endl;
+    explode(vTab, arg, ".");
     argAux.clear();
 
     //cout << "op: " << op << endl;
@@ -62,15 +63,23 @@ void trocaEQU(string op, string arg, map<string, tipoTS>& simbolo, stringstream&
     for(vector<string>::iterator it = vTab.begin(); it != vTab.end(); it++){ //para cada argumento separado por vírgula
         string aux;
         vector<string> maisAux;
+        vector<string> virgulaAux;
         aux.clear();
         maisAux.clear();
         aux.append(*it);
+        bool virgula = false;
 
         if(aux.find("+") != string::npos){ //se tiver +
 
             explode(maisAux, aux, "+");
             aux.clear();
             aux.append(maisAux[0]); //o primeiro troço antes do + é label
+            //cout << "aux1: " << aux << endl;
+        }
+        if(aux[aux.size() - 1] == ','){ //se tiver +
+            aux = aux.substr(0, aux.size() - 1);
+            virgula = true;
+            //cout << "aux2 :" << aux << endl;
         }
 
         map<string, tipoTS>::iterator it2 = simbolo.find(aux);
@@ -81,8 +90,29 @@ void trocaEQU(string op, string arg, map<string, tipoTS>& simbolo, stringstream&
          }
 
          definitivo << aux;
-         if(!maisAux.empty())
-            definitivo << "+\t" << maisAux[1];
+
+         if(!maisAux.empty()){
+            definitivo << "+";
+
+            aux.clear();
+            aux.append(maisAux[1]);
+            //cout << "aux3: " << aux << endl;
+            if(aux[aux.size() - 1] == ','){ //se tiver +
+                aux = aux.substr(0, aux.size() - 1);
+                virgula = true;
+                //cout << "aux4 :" << aux << endl;
+            }
+
+            it2 = simbolo.find(aux);
+            if(it2 != simbolo.end()){
+                aux.clear();
+                tipoTS s = it2->second;
+                aux.append(to_string(s.valorConstante));
+             }
+             definitivo << aux;
+        }
+        if(virgula)
+            definitivo << ",";
         definitivo << "\t";
     }
 }
@@ -99,7 +129,7 @@ bool verificaNotEQUIF(string linha, map<string, tipoTS>& simbolo, bool *prox, st
 
     for(vector<string>::iterator it = vTab.begin() + 1; it != vTab.end() - 1; it++){
         args.append(*it);
-        args.append(",");
+        args.append(".");
     }
 
     trocaEQU(vTab[0], args, simbolo, definitivo); //substitui valores de EQU's já anteriormente definidos
