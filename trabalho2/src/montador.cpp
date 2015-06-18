@@ -67,5 +67,5 @@ void monta(vector<string> asmInventado){
         cout << "Erro na geração de " << output << endl;
         remove(output.c_str()); //apague arquivo de saída
     }
-    //remove("pre_processado.txt"); //remoção do arquivo pré-processado temporário
+    remove("pre_processado.txt"); //remoção do arquivo pré-processado temporário
 }
