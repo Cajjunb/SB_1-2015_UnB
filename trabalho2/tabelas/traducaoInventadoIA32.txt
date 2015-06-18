@@ -4,10 +4,12 @@ ADD A 	->	add dword	eax , A 		-> 0x 05 XX XX 00 00
 
 SUB A 	->	sub dword	eax , A 		-> 0x 2d XX XX 00 00
 
-DIV A 	->	mov dword	ebx, C 			-> 0x bb XX XX 00 00
+DIV A 	->	mov edx, 0					->
+			mov dword	ebx, C 			-> 0x bb XX XX 00 00
 			div dword 	ebx				-> 0x f7 f3
 
-MUL A 	->	mov dword	ebx, C 			-> 0x bb XX XX 00 00
+MUL A 	->	mov edx, 0					->
+			mov dword	ebx, C 			-> 0x bb XX XX 00 00
 			imul dword  ebx				-> 0x f7 eb
 
 LOAD  A ->	mov	 dword  eax, [C+X]		-> 0x A1 XX XX 00 00
