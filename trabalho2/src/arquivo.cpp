@@ -48,14 +48,16 @@ void criaVetorTab(ifstream& arq, vector<vector<string> >& mTab){
     arq.seekg(0, arq.beg); //rewind
 }
 
-void trocaEQU(string op, string arg, map<string, tipoTS>& simbolo){
-    vector<string> vTab, vArg;
+void trocaEQU(string op, string arg, map<string, tipoTS>& simbolo, stringstream& definitivo){
+    vector<string> vTab;
     string argAux;
-    int tamanho;
-    int aux;
+
     //cout << linha << endl;
     explode(vTab, arg, ",");
     argAux.clear();
+
+    //cout << "op: " << op << endl;
+    definitivo << op << "\t";
 
     for(vector<string>::iterator it = vTab.begin(); it != vTab.end(); it++){ //para cada argumento separado por vírgula
         string aux;
@@ -70,25 +72,48 @@ void trocaEQU(string op, string arg, map<string, tipoTS>& simbolo){
             aux.clear();
             aux.append(maisAux[0]); //o primeiro troço antes do + é label
         }
-        vArg.push_back(aux);
-    }
 
-    for(vector<string>::iterator it = vArg.begin(); it != vArg.end(); it++){ //para cada argumento separado por vírgula
-        cout << *it << endl;
-        cin.get();
+        map<string, tipoTS>::iterator it2 = simbolo.find(aux);
+        if(it2 != simbolo.end()){
+            aux.clear();
+            tipoTS s = it2->second;
+            aux.append(to_string(s.valorConstante));
+         }
+
+         definitivo << aux;
+         if(!maisAux.empty())
+            definitivo << "+\t" << maisAux[1];
+        definitivo << "\t";
     }
 }
 
-bool verificaNotEQUIF(string linha, map<string, tipoTS>& simbolo, bool *prox){
+bool verificaNotEQUIF(string linha, map<string, tipoTS>& simbolo, bool *prox, stringstream& definitivo){
     vector<string> vTab;
+    string args;
     int tamanho;
     int aux;
 
-    cout << linha << endl;
+    //cout << linha << endl;
 
     explode(vTab, linha, "\t");
-    aux = (int) strtol(vTab.back().c_str(),NULL, 10);
 
+    for(vector<string>::iterator it = vTab.begin() + 1; it != vTab.end() - 1; it++){
+        args.append(*it);
+        args.append(",");
+    }
+
+    trocaEQU(vTab[0], args, simbolo, definitivo); //substitui valores de EQU's já anteriormente definidos
+    definitivo << vTab.back(); //coloca número da linha
+
+    linha.clear();
+    linha.append(definitivo.str());
+    //cout << linha << endl;
+    //cin.get();
+
+    vTab.clear();
+    explode(vTab, linha, "\t");
+
+    aux = (int) strtol(vTab.back().c_str(),NULL, 10);
     tamanho = vTab[0].size();
 
     if(vTab[0][tamanho - 1] == ':'){ //LABEL, PODE SER EQU
@@ -119,18 +144,11 @@ bool verificaNotEQUIF(string linha, map<string, tipoTS>& simbolo, bool *prox){
                 }
             }
         }
-        else{ //É uma label qualquer
-            string args;
-            for(vector<string>::iterator it = vTab.begin() + 2; it != vTab.end() - 1; it++){
-                args.append(*it);
-                args.append(",");
-            }
 
-            trocaEQU(vTab[1], args, simbolo);
-        }
 
     }
     else{
+
         if(strcasecmp(vTab[0].c_str(), "IF") == 0){
 
             if(!isTokenValido(vTab[1]))
@@ -187,17 +205,17 @@ void preProcessaArq2(string nomeArquivo, map<string, tipoTS>& simbolo){
                 stringCplusplus = retiraNL(stringCplusplus);
                 stringCplusplus = retiraLF(stringCplusplus);
                 if(!stringCplusplus.empty() && stringCplusplus.size() > 1 ){
-
+                    stringstream definitivo;
                     stringCplusplus =  stringCplusplus +"\t" +std::to_string(linha);
 
                     locale loc;
                     toUpper(stringCplusplus,loc); //passa tudo para uppercase
 
                     stringCplusplus = formataTabs(stringCplusplus);
-                    if(verificaNotEQUIF(stringCplusplus, simbolo, &instAtual)){
+                    if(verificaNotEQUIF(stringCplusplus, simbolo, &instAtual, definitivo)){
                         comecaCodigo = true;
                         if(instAtual) //se instrução atual pode ser escrita
-                            fprintf(ponteiroEscrita,"%s\n",stringCplusplus.c_str());
+                            fprintf(ponteiroEscrita,"%s\n",definitivo.str().c_str());
                         else
                             instAtual = true; //seta flag como verdadeiro para próxima instrução ter a possibilidade de ser escrita
                     }

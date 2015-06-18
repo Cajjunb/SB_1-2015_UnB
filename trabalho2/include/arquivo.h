@@ -3,6 +3,7 @@
 #include <fstream>
 #include <iostream>
 #include <stdlib.h>
+#include <sstream>
 #include <string>
 #include <string.h>
 #include <vector>
@@ -32,11 +33,11 @@ void preProcessaArq2(string nomeArquivo, map<string, tipoTS>& simbolo);
 //  Retorna TRUE se pode imprimir a linha atual, ou seja, não tem nem EQU nem IF, ou FALSE se não pode, ou seja, se tem EQU ou IF
 //  Nota: sempre retorna false se EQU ou IF estiverem corretos
 //  Se linha atual é um IF, edita
-bool verificaNotEQUIF(string linha, map<string, int>& valorEQU, int *prox);
+bool verificaNotEQUIF(string linha, map<string, int>& valorEQU, int *prox, stringstream& definitivo);
 
 //Se a linha não for de definição de EQU, troca labels que são EQUs por seu respectivo valor
-//retorna a linha certa para ser escrita
-void trocaEQU(string op, string arg, map<string, tipoTS>& simbolo);
+//retorna a linha certa para ser escrita em "definitivo"
+void trocaEQU(string op, string arg, map<string, tipoTS>& simbolo, stringstream& definitivo);
 
 //	Funcao auxiliar retira tabs duplos desnecessarios
 //	Retorna a string formatada ja
