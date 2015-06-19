@@ -1,0 +1,11 @@
+	ADD;	S;	add dword	eax,	LABEL;	03	05	XX	XX	00;	6;
+	SUB;	S;	sub dword	eax,	LABEL;	2b	05	XX	XX	00;	6;
+	DIV;	T;	mov	edx,	0;mov	dword	ebx,	LABEL;	div dword 	ebx;	ba	00	00	00	00;	8b	1d	XX	XX	00	00;	f7	f3;	5;	6;	2;
+	MUL;	T;	mov	edx,	0;	mov	edx,	0;	mov	dword	ebx,	LABEL;	imul	dword	ebx;	ba	00	00	00	00;	8b	1d	XX	XX	00	00;	0x	f7	eb;	5;	6;	2;
+	LOAD;	S;	mov	dword	eax,	LABEL;	A1	XX	XX	00	00;	5;
+	STORE;	S;	mov	dword	LABEL,	eax;	A3	XX	XX	00	00;	5;
+	COPY;	D;	mov	dword	ebx,	A;	mov	dword	B,	ebx;	8b	1d	XX	XX	00	00;	89	1d	XX	XX	00	00;	6;	6;
+	JMP	;	S;	jmp LABEL;	eb	XX;	2;
+	JMPP;	D;	cmp	eax,	eax;	jns	LABEL;	39	c0;	78	XX;	2;2;
+	JMPN;	D;	cmp	eax,	eax;	js	LABEL;	39	c0;	79	XX;	2;2;
+	JMPZ;	D;	cmp	eax,	eax;	jz	LABEL;	39	c0;	74	XX;	2;2;
