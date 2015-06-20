@@ -26,6 +26,15 @@ typedef enum{
 }tipoComportamento;
 
 
+// Enumeracao para comportamento na traducao de inventado para ia32
+typedef enum{
+    SINGLE = 'S',
+    DOUBLE = 'D',
+    TRIPLE = 'T',
+    QUADRUPLE = 'Q'
+}tipoComportamentoTraducao;
+
+
 //nome: nome da instrução
 //op: código da instrução
 //tamanho: quanto que aquela instrução ocupada na memória (decimal)
@@ -33,6 +42,21 @@ typedef struct{
     string nome;
     int op, tamanho;
 }tipoInstrucao;
+
+//nome:             nome da instrução
+//intrucaoAssembly: vetor com as strings das instrucoes correspondente
+//argumentos:       vetor com o valor dos argumentos para as intrucoes correspondentes 
+//tamanho: quanto que aquela instrução ocupada na memória (decimal)
+typedef struct{
+    string nome;
+    std::vector<string> instrucaoAssembly;
+    std::vector<string> instrucaoCodigoMaquina;
+    tipoComportamentoTraducao tipo;
+    int argumento1;
+    int argumento2;
+    int nroInstrucoes;
+    int tamanhoTotal;
+}tipoInstrucaoIA32;
 
 //nome: nome da diretiva
 //formato: como que a diretiva deve ser usada

@@ -26,6 +26,50 @@ void criaGramatica(ifstream& arq, vector<tipoGramatica>& gramatica){
     arq.seekg(0, arq.beg); //rewind
 }
 
+void  criaInstrucaoIa32(ifstream& arq, vector<tipoInstrucaoIA32>& instrucaoIA32){
+    if(!arq.is_open()){
+        cout << "ERRO: O arquivo de tabelas nao foi encontrado. Encerrando" << endl;
+        exit(EXIT_FAILURE);
+    }
+    while(!arq.eof()){
+        tipoInstrucaoIA32 instrucaoNova;
+        string bufferDoArquivo ; 
+        std::vector<string> bufferSegmentado;
+        std::vector<string>::iterator it;
+        int i ;
+        int nro_argumentos;
+        int tamanhoTotal = 0;
+        getline(arq,bufferDoArquivo,'\n');
+        explode(bufferSegmentado,bufferDoArquivo,";");
+        instrucaoNova.nome = bufferSegmentado[0].c_str();
+        instrucaoNova.tipo = (tipoComportamentoTraducao) bufferSegmentado[1].c_str()[0];
+        if(instrucaoNova.tipo == tipoComportamentoTraducao::SINGLE)
+            instrucaoNova.nroInstrucoes = 1;
+        else if(instrucaoNova.tipo == tipoComportamentoTraducao::DOUBLE)
+            instrucaoNova.nroInstrucoes = 2;
+        else if(instrucaoNova.tipo == tipoComportamentoTraducao::TRIPLE)
+            instrucaoNova.nroInstrucoes = 3;
+        else if(instrucaoNova.tipo == tipoComportamentoTraducao::QUADRUPLE)
+            instrucaoNova.nroInstrucoes = 4;
+        nro_argumentos = instrucaoNova.nroInstrucoes;
+        for (i = 0;i < nro_argumentos;i++){
+            instrucaoNova.instrucaoAssembly.push_back(bufferSegmentado[i+2].c_str());
+        }
+        for ( i = 0; i < nro_argumentos; i++){
+            instrucaoNova.instrucaoCodigoMaquina.push_back(bufferSegmentado[nro_argumentos+2+i].c_str());
+            printf("%s\n",instrucaoNova.instrucaoCodigoMaquina[i].c_str() );
+        }
+        for ( i = nro_argumentos+2+i; i < bufferSegmentado.size(); ++i){
+            tamanhoTotal += std::stoi( bufferSegmentado[i].c_str());
+        }
+        instrucaoNova.tamanhoTotal = tamanhoTotal;
+        instrucaoIA32.push_back(instrucaoNova);
+    }
+    arq.clear();
+    arq.seekg(0, arq.beg); //rewind
+}
+
+
 void criaDiretiva(ifstream& arq, vector<tipoDiretiva>& diretiva){
 
     if(!arq.is_open()){
@@ -135,6 +179,18 @@ tipoInstrucao pegaInstrucaoOpcode(vector<tipoInstrucao>& instrucao, int op){
     return nulo; //não achou
 }
 
+tipoInstrucaoIA32 pegaInstrucaoIA32(vector<tipoInstrucaoIA32>& instrucao, string token){
+    tipoInstrucaoIA32 nulo;
+
+    for(int i = 0; i < (int)instrucao.size(); i++){
+        if(strcasecmp(instrucao[i].nome.c_str(), token.c_str()) == 0)
+            return instrucao[i]; //achou
+    }
+    nulo.nome = "";
+    nulo.tamanhoTotal = -1;
+    return nulo; //não achou
+}
+
 bool isGramatica(vector<tipoGramatica>& gramatica, string token){
 
     for(int i = 0; i < (int)gramatica.size(); i++){
@@ -156,6 +212,15 @@ bool isDiretiva(vector<tipoDiretiva>& diretiva, string token){
 
 bool isInstrucao(vector<tipoInstrucao>& instrucao, string token){
 
+    for(int i = 0; i < (int)instrucao.size(); i++){
+        if(strcasecmp(instrucao[i].nome.c_str(), token.c_str()) == 0)
+            return true; //achou
+    }
+    return false; //não achou
+}
+
+
+bool isInstrucaoIA32(vector<tipoInstrucaoIA32>& instrucao, string token){
     for(int i = 0; i < (int)instrucao.size(); i++){
         if(strcasecmp(instrucao[i].nome.c_str(), token.c_str()) == 0)
             return true; //achou
