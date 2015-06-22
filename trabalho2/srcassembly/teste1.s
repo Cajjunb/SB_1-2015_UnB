@@ -115,17 +115,18 @@ global _start
 
 			add edx, 0x30		;edx tem o resto, então coloque na forma ascii
 			mov ecx, [ebx]	;pego o valor do endereço
-			shl ecx, 8			;shifto 8 para esquerda os bits que estão em [valor]
+			;shr ecx, 8			;shifto 8 para esquerda os bits que estão em [valor]   ********************AQUI QUE FALTA, WUUU
 			or ecx, edx		;adiciono edx à ecx na posição menos significativa, sem interferir no que tinha antes
 			mov [ebx], ecx	;coloco o resultado em [ebx]
+			add ebx, 1
 
 			jmp loopEscreverInteiro		;volto pro loop
 
 			fimEscreverInteiro:
-
+				add ebx, 1
 				add eax, 0x30	;eax é menor que 10, então coloque ele na posição menos significativa, sem interferir os outros bits
 				mov ecx, [ebx]
-				shl ecx, 8
+				;shr ecx, 8  ; ********************AQUI QUE FALTA, WUUU
 				or ecx, eax
 				mov [ebx], ecx
 
