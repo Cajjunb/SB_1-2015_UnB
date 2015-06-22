@@ -18,6 +18,16 @@ typedef struct{
     unsigned int tamanhoMemoria;
 }tipoTS; //tabela de símbolos
 
+//tamanho: indica tamanho ocupado pelo símbolo em bytes
+//section: indica em qual seção o rótulo pertence. Aceita somente 'b' para SECTION .BSS, 'd' para SECTION .DATA e 't' para SECTION .TEXT
+//valorConstante: indica valor da constante se símbolo pertencer a SECTION .DATA
+typedef struct{
+    int tamanho;
+    char section;
+    int valorConstante;
+    bool tipoConstante;
+}tipoTSIA32; //tabela de símbolos de IA32
+
 // Enumeracao para comportamento em relacao a constantes na gramatica
 typedef enum{
 	NAO_ACEITA = 'F',
@@ -45,7 +55,7 @@ typedef struct{
 
 //nome:             nome da instrução
 //intrucaoAssembly: vetor com as strings das instrucoes correspondente
-//argumentos:       vetor com o valor dos argumentos para as intrucoes correspondentes 
+//argumentos:       vetor com o valor dos argumentos para as intrucoes correspondentes
 //tamanho: quanto que aquela instrução ocupada na memória (decimal)
 typedef struct{
     string nome;

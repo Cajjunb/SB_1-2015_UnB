@@ -1,0 +1,19 @@
+push eax
+push ebx
+push ecx
+push edx
+				mov eax, 4
+				mov ebx, 1
+				mov ecx, msg_debug1
+				mov edx, DEBUG1SIZE
+				int 80h
+
+				mov eax, 4
+				mov ebx, 1
+				mov ecx, numero
+				mov edx, 1
+				int 80h
+pop edx
+pop ecx
+pop ebx
+pop eax
