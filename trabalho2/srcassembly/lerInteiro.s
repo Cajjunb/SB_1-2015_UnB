@@ -62,6 +62,8 @@ pop eax
 		int 80h
 
 
+
+
 ;*****************************************************
 ;			Ler inteiro
 ;	
@@ -80,13 +82,23 @@ pop eax
 		cmp ebx, 0x0A		;compara se é igual a enter
 		jz fimLerInteiro
 			
-		;sub ebx, 0x30		; tiro a parte ascii
-		add ebx, 0x01
+		sub ebx, 0x30		; tiro a parte ascii
 		mov eax, [valor]	;pego o que tiver em [valor]
+		mov ecx, [casas]
+		mul ecx
 		add eax, ebx		;adiciono
 		mov [valor], eax	;retorno para [valor]
+		mov eax, [digitos]
+		inc eax
+		mov [digitos], eax
+
+		mov eax, [casas]
+		mov ecx, 10
+		mul ecx
+		mov [casas], eax
 
 		jmp lerInteiro	
 		
 		fimLerInteiro:
+
 			ret
