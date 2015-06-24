@@ -1,13 +1,10 @@
-;**********************************
-; 			IA32
-;**********************************
 ;Este programa pega o que o usuário digitou, A, e soma mais 10, B, imprimindo resultado na tela
 
 section .data
-	B	EQU	10			;usuário
-	
-	newline			db 0dh, 0ah
-	NEWLINESIZE		EQU $-newline
+	B	EQU	10
+
+newline			db 0dh, 0ah
+NEWLINESIZE		EQU $-newline
 
 section .bss
 	RESPOSTA	resb	4		;Usuário determinou que o tamanho da resposta terá no máximo 4 bytes
@@ -30,70 +27,22 @@ global _start
 		mov [digitos], eax	;valor neutro
 		mov eax, 1
 		mov [casas], eax	;valor neutro
-		;******************** FIM DE ZERANDO VARIÁVEIS ********************
-
-		;******************** LER INTEIRO ********************
-		call lerInteiro
-		mov eax, [valor]
-		mov [A], eax		;INPUT A
-		;******************** FIM DE LER INTEIRO:	INPUT A ********************
-
-		mov eax, [A]						;STORE	A
-		add eax, B							;ADD		B
-		mov [RESPOSTA], eax				;LOAD		RESPOSTA
-
-		;******************** ESCREVER INTEIRO:	OUTPUT RESPOSTA ********************
-		mov eax, [RESPOSTA]	
+		;******************** FIM DE ZERANDO VARIÁVEIS ********************	
+		
+		mov eax, 1234567899
+		mov ebx, 9
+		mov [digitos], ebx
+		;******************** ESCREVER INTEIRO ********************
 		call escreverInteiro
+		
 		;******************** FIM DE ESCREVER INTEIRO ********************
 
-		;******************** ENCERRA PROGRAMA: 	STOP ********************
+		;******************** ENCERRA PROGRAMA ********************
 		mov eax, 1
 		mov ebx, 0
 		int 80h
 		;******************** FIM DE ENCERRA PROGRAMA ********************
 
-;*****************************************************
-;			Ler inteiro
-;	
-;*	 retorna no endereço "valor" o número que o usuário digitou (em inteiro)
-;**********************************************************
-
-	lerInteiro:
-		mov eax, 0
-		mov [numero], eax
-
-		mov eax, 3
-		mov ebx, 0
-		mov ecx, numero		;Leio um byte em ascii
-		mov edx, 1
-		int 80h
-			
-		mov ebx, [numero]		;transfere para variável ebx o que está em numero
-		cmp ebx, 0x0A		;compara se é igual a enter
-		jz fimLerInteiro
-			
-		sub ebx, 0x30		; tiro a parte ascii
-		mov eax, [valor]	;pego o que tiver em [valor]
-		mov ecx, [casas]
-		mul ecx
-		add eax, ebx		;adiciono
-		mov [valor], eax	;retorno para [valor]
-		mov eax, [digitos]
-		inc eax
-		mov [digitos], eax
-
-		mov eax, 10
-		mov [casas], eax
-
-		jmp lerInteiro	
-		
-		fimLerInteiro:
-			mov eax, [digitos]
-			dec eax
-			mov [digitos], eax
-
-			ret
 
 ;*****************************************************
 ;			Escreve Inteiro
