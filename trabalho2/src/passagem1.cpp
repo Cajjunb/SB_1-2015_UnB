@@ -100,7 +100,7 @@ void separaSectionArgs(vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& d
     }
 }
 
-int calculaPC(vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, map<string, vector<int> >& uso, string token, int linha, vector<string>& vTab, int endereco, vector<int>& bits){
+int calculaPC(vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, map<string, vector<int> >& uso, string token, int linha, vector<string>& vTab, int endereco, vector<int>& bits, int *pcia32, vector<tipoInstrucaoIA32>& instrucoesIA32){
     //cout << "token: " << token << endl;
     if(isDiretiva(diretiva, token)){
         tipoDiretiva d;
@@ -243,6 +243,8 @@ int calculaPC(vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, 
                 //cin.get();
             }while(copyArg.size() > 0);
         }
+        tipoInstrucaoIA32 iia32 = pegaInstrucaoIA32(instrucoesIA32, token);
+        (*pcia32) = (*pcia32) + iia32.tamanhoTotal;
         return i.tamanho;
     }
     else if(token.find(':') == string::npos){
@@ -251,8 +253,8 @@ int calculaPC(vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, 
     return 0;
 }
 
-void criaTabelas(ifstream& arq, vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, map<string, tipoTS>& simbolo, map<string, vector<int> >& uso, map<string, int>& definicao, vector<int>& bits){
-    int pc = 0,incremento = 0;
+void criaTabelas(ifstream& arq, vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, map<string, tipoTS>& simbolo, map<string, vector<int> >& uso, map<string, int>& definicao, vector<int>& bits, vector<tipoInstrucaoIA32>& instrucoesIA32, map<string, tipoTSIA32>& simboloIA32){
+    int pc = 0,incremento = 0, pcia32 = 0;
     int i; //contador de linhas
     string linha;
 
@@ -306,9 +308,10 @@ void criaTabelas(ifstream& arq, vector<tipoInstrucao>& instrucao, vector<tipoDir
 
             //inserido rótulo, calcula PC
             aux.append(vTab[1]);
-            incremento = calculaPC(instrucao, diretiva, uso, aux, i, vTab, pc, bits);
+            incremento = calculaPC(instrucao, diretiva, uso, aux, i, vTab, pc, bits, &pcia32, instrucoesIA32);
             pc += incremento;
             editaTamanhoSimbolo(simbolo,vTab[0],incremento);                            //ALOCA A MEMORIA NA TABELA DE SIMBOLOS
+            insereTabelaSimbolosIA32(vTab[0], simbolo, &pcia32, simboloIA32);
         }
         else{ //somente calcula o pc
             if(strcasecmp(vTab[0].c_str(), "PUBLIC") == 0){ //Se diretiva for PUBLIC, insere na tabela de definição
@@ -319,7 +322,7 @@ void criaTabelas(ifstream& arq, vector<tipoInstrucao>& instrucao, vector<tipoDir
             if(strcasecmp(vTab[0].c_str(), "BEGIN") == 0) //Begin DEVE ter um rótulo
                 imprimeErro(ERRO_USO_INCORRETO, i);
             aux.append(vTab[0]);
-            incremento = calculaPC(instrucao, diretiva, uso, aux, i, vTab, pc, bits);
+            incremento = calculaPC(instrucao, diretiva, uso, aux, i, vTab, pc, bits, &pcia32, instrucoesIA32);
             pc += incremento;
         }
         verificaLabels(vTab, i);

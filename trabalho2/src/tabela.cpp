@@ -33,7 +33,7 @@ void  criaInstrucaoIa32(ifstream& arq, vector<tipoInstrucaoIA32>& instrucaoIA32)
     }
     while(!arq.eof()){
         tipoInstrucaoIA32 instrucaoNova;
-        string bufferDoArquivo ; 
+        string bufferDoArquivo ;
         std::vector<string> bufferSegmentado;
         std::vector<string>::iterator it;
         int i ;
@@ -57,9 +57,9 @@ void  criaInstrucaoIa32(ifstream& arq, vector<tipoInstrucaoIA32>& instrucaoIA32)
         }
         for ( i = 0; i < nro_argumentos; i++){
             instrucaoNova.instrucaoCodigoMaquina.push_back(bufferSegmentado[nro_argumentos+2+i].c_str());
-            printf("%s\n",instrucaoNova.instrucaoCodigoMaquina[i].c_str() );
+            //printf("%s\n",instrucaoNova.instrucaoCodigoMaquina[i].c_str() );
         }
-        for ( i = nro_argumentos+2+i; i < bufferSegmentado.size(); ++i){
+        for ( i = nro_argumentos+2+i; i < (int)bufferSegmentado.size(); ++i){
             tamanhoTotal += std::stoi( bufferSegmentado[i].c_str());
         }
         instrucaoNova.tamanhoTotal = tamanhoTotal;

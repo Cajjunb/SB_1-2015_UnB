@@ -31,23 +31,15 @@ int main(int argc, char *argv[]){ //recebe arquivo .asm do assembly inventado e 
             break; //encontrou extensao, saia do loop
     }
 
-    std::vector<tipoInstrucaoIA32> instrucoesIA32;
 
-    arq1.open("tabelas/inv_ia32_intrucoes.txt");
-    criaInstrucaoIa32( arq1, instrucoesIA32);
-    arq1.close();
-
-/*
     tamanho = asmInventado[0].size();
     nome = asmInventado[0].substr(0, tamanho - extensao); //eliminando .asm para pegar somente o nome
 
     asmInventado.push_back(nome + ".s");
+    asmInventado.push_back(nome + ".cod");
 
 
     monta(asmInventado);
-    asmInventado.push_back(nome + ".cod");
-*/
-
 
 
     return 0;

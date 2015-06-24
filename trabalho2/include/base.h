@@ -18,11 +18,11 @@ typedef struct{
     unsigned int tamanhoMemoria;
 }tipoTS; //tabela de símbolos
 
-//tamanho: indica tamanho ocupado pelo símbolo em bytes
+//endereco: indica o endereço relativo em decimal ocupado pela label
 //section: indica em qual seção o rótulo pertence. Aceita somente 'b' para SECTION .BSS, 'd' para SECTION .DATA e 't' para SECTION .TEXT
 //valorConstante: indica valor da constante se símbolo pertencer a SECTION .DATA
 typedef struct{
-    int tamanho;
+    int endereco;
     char section;
     int valorConstante;
     bool tipoConstante;
