@@ -51,4 +51,3 @@ void insereTabelaSimbolosIA32(string token, map<string, tipoTS>& simbolo, int *p
 
     simboloIA32.insert(pair<string, tipoTSIA32>(rot->first, s32));
 }
-
