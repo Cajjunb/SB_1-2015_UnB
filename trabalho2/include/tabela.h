@@ -9,6 +9,8 @@
 
 using namespace std;
 
+
+
 void criaGramatica(ifstream& arq, vector<tipoGramatica>& gramatica); //"Retorna" vetor com as regras da gramática a partir de um txt
 void criaDiretiva(ifstream& arq, vector<tipoDiretiva>& diretiva); //"Retorna" vetor com regras das diretivas a partir de um txt
 void criaInstrucao(ifstream& arq, vector<tipoInstrucao>& instrucao); //"Retorna" vetor de instruções válidas a partir de um txt
@@ -20,6 +22,12 @@ tipoInstrucao pegaInstrucao(vector<tipoInstrucao>& instrucao, string token); //R
 tipoInstrucaoIA32 pegaInstrucaoIA32(vector<tipoInstrucaoIA32>& instrucao, string token); //Retorna struct instrucao correspondente ao token. Retorna struct nula se não achar
 tipoInstrucao pegaInstrucaoOpcode(vector<tipoInstrucao>& instrucao, int op); //Retorna struct instrucao correspondente ao opcode. Retorna struct nula se não achar
 
+
+
+//  AQUI VEM UM COMENTÁRIO DO LEANDRO, YAY
+string inventadoParaIA32(vector<tipoInstrucaoIA32>& instrucoes,string operacao,std::vector<int> argumentos);
+//
+string inventadoParaMaquina(std::vector<tipoInstrucaoIA32>& instrucoesia32 ,string operacao);
 
 
 bool isGramatica(vector<tipoGramatica>& gramatica, string token); //Retorna se token é gramatica

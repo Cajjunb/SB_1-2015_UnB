@@ -36,7 +36,26 @@ int main(int argc, char *argv[]){ //recebe arquivo .asm do assembly inventado e 
     arq1.open("tabelas/inv_ia32_intrucoes.txt");
     criaInstrucaoIa32( arq1, instrucoesIA32);
     arq1.close();
-
+    string divi = "COPY";
+    std::vector<int> argumentos(4) ;
+    argumentos[0] = 41241;
+    argumentos[1] = 213231;
+    divi = "ADD";
+    cout << inventadoParaIA32(instrucoesIA32,divi,argumentos);
+    divi = "SUB";
+    cout << inventadoParaIA32(instrucoesIA32,divi,argumentos);
+    divi = "DIV";
+    cout << inventadoParaIA32(instrucoesIA32,divi,argumentos);
+    divi = "MUL";
+    cout << inventadoParaIA32(instrucoesIA32,divi,argumentos);
+    divi = "LOAD";
+    cout << inventadoParaIA32(instrucoesIA32,divi,argumentos);
+    divi = "STORE";
+    cout << inventadoParaIA32(instrucoesIA32,divi,argumentos);
+    divi = "COPY";
+    cout << inventadoParaIA32(instrucoesIA32,divi,argumentos);
+    divi = "STORE";
+    cout << inventadoParaIA32(instrucoesIA32,divi,argumentos);
 /*
     tamanho = asmInventado[0].size();
     nome = asmInventado[0].substr(0, tamanho - extensao); //eliminando .asm para pegar somente o nome

@@ -1,5 +1,69 @@
 #include "../include/tabela.h"
 
+string inventadoParaIA32(std::vector<tipoInstrucaoIA32>& instrucoesia32 ,string operacao,std::vector<int> argumentos){
+    tipoInstrucaoIA32 instrucaoia32 = pegaInstrucaoIA32( instrucoesia32,operacao);
+    std::string result;
+    int i = 0;
+    if(instrucaoia32.tamanhoTotal != -1){            // ACHOU
+        int count;
+        size_t found[3] ;
+        if(instrucaoia32.tipo == tipoComportamentoTraducao::TRIPLE)
+            count = 3;
+        else if(instrucaoia32.tipo == tipoComportamentoTraducao::DOUBLE)
+            count = 2;
+        else if(instrucaoia32.tipo == tipoComportamentoTraducao::SINGLE)
+            count = 1;
+        int  j = 0;                                         // O indice dos argumentos 
+        for ( i = 0; i < count; i++){
+            found[0] = instrucaoia32.instrucaoAssembly[i].find("LABEL");
+            found[1] = instrucaoia32.instrucaoAssembly[i].find("A");
+            found[2] = instrucaoia32.instrucaoAssembly[i].find("B");
+            if(found[0] != std::string::npos){        // "this is a test string."
+                instrucaoia32.instrucaoAssembly[i].erase(found[0],5);
+                instrucaoia32.instrucaoAssembly[i].insert(found[0],std::to_string(argumentos[j++]));
+            }
+            else if( found[1] != std::string::npos ){
+                instrucaoia32.instrucaoAssembly[i].erase(found[1],1);
+                instrucaoia32.instrucaoAssembly[i].insert(found[1],std::to_string(argumentos[j++]));
+            }
+            else if(found[2] != std::string::npos ){
+                instrucaoia32.instrucaoAssembly[i].erase(found[2],1);
+                instrucaoia32.instrucaoAssembly[i].insert(found[2],std::to_string(argumentos[j++]));
+            }
+            result = result+"\n"+instrucaoia32.instrucaoAssembly[i];
+        }
+        result[result.size()+1] = '\0';
+    }
+    else
+        result = "null";
+    return result;
+}
+
+string inventadoParaMaquina(std::vector<tipoInstrucaoIA32>& instrucoesia32 ,string operacao){
+    tipoInstrucaoIA32 instrucaoia32 = pegaInstrucaoIA32( instrucoesia32,operacao);
+    std::string result;
+    if(instrucaoia32.tamanhoTotal != -1){            // ACHOU
+        int count;
+        if(instrucaoia32.tipo == tipoComportamentoTraducao::TRIPLE)
+            count = 3;
+        if(instrucaoia32.tipo == tipoComportamentoTraducao::DOUBLE)
+            count = 2;
+        if(instrucaoia32.tipo == tipoComportamentoTraducao::SINGLE)
+            count = 1;
+        for (int i = 0; i < count; i++){
+            cout << instrucaoia32.instrucaoCodigoMaquina[i];
+            result = result+"\n"+instrucaoia32.instrucaoCodigoMaquina[i];
+        }
+        result[result.size()+1] = '\0';
+
+        cout << "RESULT=\n"<< result;
+    }
+    else
+        result = "null";
+    return result;
+}
+
+
 void criaGramatica(ifstream& arq, vector<tipoGramatica>& gramatica){
 
     if(!arq.is_open()){
@@ -57,7 +121,6 @@ void  criaInstrucaoIa32(ifstream& arq, vector<tipoInstrucaoIA32>& instrucaoIA32)
         }
         for ( i = 0; i < nro_argumentos; i++){
             instrucaoNova.instrucaoCodigoMaquina.push_back(bufferSegmentado[nro_argumentos+2+i].c_str());
-            printf("%s\n",instrucaoNova.instrucaoCodigoMaquina[i].c_str() );
         }
         for ( i = nro_argumentos+2+i; i < bufferSegmentado.size(); ++i){
             tamanhoTotal += std::stoi( bufferSegmentado[i].c_str());

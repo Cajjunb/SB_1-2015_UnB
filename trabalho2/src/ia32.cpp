@@ -2,17 +2,6 @@
 
 map<string, tipoTSIA32>simboloIA32; //global da tabela de símbolos de IA32, porque não temos tempo pra usar variáveis globais do jeito certo
 
-string inventadoParaIA32(vector<tipoInstrucao>& instrucoes,string operacao){
-	bool achado = false;
-	for(int i = 0; i < (int)instrucoes.size(); i++){
-        if(strcasecmp(instrucoes[i].nome.c_str(), token.c_str()) == 0)
-        	achado = true;
-    }
-    if(achado){
-
-    }
-}
-
 void criaTabelaSimbolosIA32(map<string, tipoTS>& simbolo){
 
     for(map<string, tipoTS>::iterator it = simbolo.begin(); it != simbolo.end(); it++ ){
