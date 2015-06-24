@@ -1,3 +1,6 @@
+;**********************************
+; 			IA32
+;**********************************
 ;Este programa pega o que o usuário digitou, A, e soma mais 10, B, imprimindo resultado na tela
 
 section .data
@@ -32,19 +35,19 @@ global _start
 		;******************** LER INTEIRO ********************
 		call lerInteiro
 		mov eax, [valor]
-		mov [A], eax		;move para a label que o usuário quer que tenha o inteiro
-		;******************** FIM DE LER INTEIRO ********************
+		mov [A], eax		;INPUT A
+		;******************** FIM DE LER INTEIRO:	INPUT A ********************
 
 		mov eax, [A]						;STORE	A
 		add eax, B							;ADD		B
 		mov [RESPOSTA], eax				;LOAD		RESPOSTA
 
-		;******************** ESCREVER INTEIRO ********************
-		mov eax, [RESPOSTA]		;label que contenha o número que o usuário quer imprimir
+		;******************** ESCREVER INTEIRO:	OUTPUT RESPOSTA ********************
+		mov eax, [RESPOSTA]	
 		call escreverInteiro
 		;******************** FIM DE ESCREVER INTEIRO ********************
 
-		;******************** ENCERRA PROGRAMA ********************
+		;******************** ENCERRA PROGRAMA: 	STOP ********************
 		mov eax, 1
 		mov ebx, 0
 		int 80h
