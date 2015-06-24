@@ -3,24 +3,14 @@
 section .data
 	B	EQU	10
 
-msg_debug1 		db  0dh, 0ah, 'Debug1: '
-	DEBUG1SIZE		EQU $-msg_debug1
-msg_debug2 		db 0dh, 0ah, 'Debug2: '
-	DEBUG2SIZE		EQU $-msg_debug2
-msg_debug3 		db 0dh, 0ah, 'No final: '
-	DEBUG3SIZE		EQU $-msg_debug3
-msg_debug4 		db 0dh, 0ah, 'Loop '
-	DEBUG4SIZE		EQU $-msg_debug4
-msg_debug5 		db 0dh, 0ah, 'Debug3 '
-	DEBUG5SIZE		EQU $-msg_debug5
-msg_debug6 		db '.'
-	DEBUG6SIZE		EQU $-msg_debug6
+newline			db 0dh, 0ah
+NEWLINESIZE		EQU $-newline
 
 section .bss
 	RESPOSTA	resb	4		;Usuário determinou que o tamanho da resposta terá no máximo 4 bytes
 	A			resb	4		;coisa do usuário
 	
-	imprime		resb	32	; NECESSÁRIO: jeitinho para imprimir no máximo 32 dígitos, hehe
+	imprime		resb	9	; NECESSÁRIO: jeitinho para imprimir no máximo 9 dígitos, hehe
 	valor			resb	4 	; NECESSÁRIO: 4 bytes para armazenar inteiro
 	casas			resb	4	; NECESSÁRIO: casas decimais
 	digitos		resb	4	; NECESSÁRIO: 4 bytes para contar quantidade de dígitos
@@ -37,13 +27,12 @@ global _start
 		mov [digitos], eax	;valor neutro
 		mov eax, 1
 		mov [casas], eax	;valor neutro
-		;******************** FIM DE ZERANDO VARIÁVEIS ********************
-
-		;******************** ESCREVER INTEIRO ********************
-		;mov eax, [A]		;label que contenha o número que o usuário quer imprimir
-		mov eax, 12345678
-		mov ebx, 7
+		;******************** FIM DE ZERANDO VARIÁVEIS ********************	
+		
+		mov eax, 1234567899
+		mov ebx, 9
 		mov [digitos], ebx
+		;******************** ESCREVER INTEIRO ********************
 		call escreverInteiro
 		
 		;******************** FIM DE ESCREVER INTEIRO ********************
@@ -95,7 +84,7 @@ global _start
 
 			pop edx
 			dec edx
-			cmp edx, -1
+			cmp edx, 0
 			push edx
 			jne loopEscreverInteiro
 			pop edx
@@ -107,14 +96,16 @@ global _start
 			mov eax, 4
 			mov edx, [digitos]
 			mul edx
-			dec edx
-			mov [digitos], edx
 
 			add ebx, eax
 			mov eax, [valor]
 			or[ebx], eax
 			mov eax, 0
 			mov [valor], eax
+			
+			mov edx, [digitos]
+			dec edx
+			mov [digitos], edx
 
 			pop eax
 
@@ -137,7 +128,13 @@ global _start
 					mov eax, 4
 					mov ebx, 1
 					mov ecx, imprime		;label que tem a resposta em ascii
-					mov edx, 32
+					mov edx, 9
+					int 80h	
+					
+					mov eax, 4
+					mov ebx, 1
+					mov ecx, newline
+					mov edx, NEWLINESIZE
 					int 80h	
 				pop edx
 				pop ecx
