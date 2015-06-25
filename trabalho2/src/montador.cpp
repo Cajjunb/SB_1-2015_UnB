@@ -47,8 +47,8 @@ void monta(vector<string> asmInventado){
     for(vector<tipoInstrucaoIA32>::iterator it = instrucoesIA32.begin(); it != instrucoesIA32.end(); it++){
         cout << (*it).nome << " " << (*it).tamanhoTotal << endl;
     }
-    /*
-    string divi = "COPY";
+
+    /*string divi = "COPY";
     std::vector<int> argumentos(4) ;
     argumentos[0] = 41241;
     argumentos[1] = 213231;
@@ -67,8 +67,9 @@ void monta(vector<string> asmInventado){
     divi = "COPY";
     cout << inventadoParaIA32(instrucoesIA32,divi,argumentos);
     divi = "STORE";
-    cout << inventadoParaIA32(instrucoesIA32,divi,argumentos);
-    */
+    cout << inventadoParaIA32(instrucoesIA32,divi,argumentos);*/
+    //cin.get();
+
     preProcessaArq2(input, simbolo);
 
     arq1.open("pre_processado.txt");
@@ -78,7 +79,7 @@ void monta(vector<string> asmInventado){
 
         cout << endl << "Tabela de simbolos IA32" << endl;
         for(map<string, tipoTSIA32>::iterator it = simboloIA32.begin(); it != simboloIA32.end(); it++){
-            cout << it->first << " Endereco: " << (it->second).endereco << endl;
+            cout << it->first << " Sessao: " << (it->second).section << " Tamanho: " << (it->second).tamanho << " Endereco: " << (it->second).endereco << endl;
         }
     arq1.close();
     arq2.close();

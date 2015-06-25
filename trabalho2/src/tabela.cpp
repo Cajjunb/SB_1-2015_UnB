@@ -105,14 +105,14 @@ void  criaInstrucaoIa32(ifstream& arq, vector<tipoInstrucaoIA32>& instrucaoIA32)
         int tamanhoTotal = 0;
         getline(arq,bufferDoArquivo,'\n');
 
-        cout << bufferDoArquivo << endl;
+        //cout << bufferDoArquivo << endl;
 
         explode(bufferSegmentado,bufferDoArquivo,";");
         instrucaoNova.nome.append(bufferSegmentado[0]);
-        cout << "Instrucao nova nome: " << instrucaoNova.nome << endl;
+        //cout << "Instrucao nova nome: " << instrucaoNova.nome << endl;
 
         instrucaoNova.tipo = (tipoComportamentoTraducao)bufferSegmentado[1][0];
-        cout << "Instrucao nova tipo: " << (char)instrucaoNova.tipo << endl;
+        //cout << "Instrucao nova tipo: " << (char)instrucaoNova.tipo << endl;
 
         if(instrucaoNova.tipo == SINGLE)
             instrucaoNova.nroInstrucoes = 1;
@@ -125,28 +125,31 @@ void  criaInstrucaoIa32(ifstream& arq, vector<tipoInstrucaoIA32>& instrucaoIA32)
 
         nro_argumentos = instrucaoNova.nroInstrucoes;
 
-        cout << "Instrucao nova numero argumentos: " << instrucaoNova.nroInstrucoes << endl;
+        //cout << "Instrucao nova numero argumentos: " << instrucaoNova.nroInstrucoes << endl;
 
-        cout << "**Instrucao Assembly**" << endl;
+        //cout << endl << "**Instrucao Assembly**" << endl;
         for (i = 0;i < nro_argumentos;i++){
-            cout << "Buffer Segmentado[" << i << "+2]: " << bufferSegmentado[i+2] << endl;
+            //cout << "Buffer Segmentado[" << i << "+2]: " << bufferSegmentado[i+2] << endl;
             instrucaoNova.instrucaoAssembly.push_back(bufferSegmentado[i+2]);
         }
-        cout << "**Instrucao Codigo Maquina**" << endl;
+        //cout << endl << "**Instrucao Codigo Maquina**" << endl;
         for ( i = 0; i < nro_argumentos; i++){
-            cout << "Buffer Segmentado[" << i << "+2]: " << bufferSegmentado[i+2] << endl;
+            //cout << "Buffer Segmentado[nro_argumentos (" << nro_argumentos << ") +2+" << i << "]: " << bufferSegmentado[nro_argumentos+2+i] << endl;
             instrucaoNova.instrucaoCodigoMaquina.push_back(bufferSegmentado[nro_argumentos+2+i]);
         }
-        cin.get();
         for ( i = nro_argumentos+2+i; i < (int)bufferSegmentado.size(); ++i){
-            vector<string> aux;
-            explode(aux, bufferSegmentado[i], "\t");
-            cout << "aux[0]: " << aux[0] << endl << "aux[1]: " << aux[1] << endl;
+            //cout << "bufferSegmentado[" << i << "]: " << bufferSegmentado[i] << endl;
+            //vector<string> aux;
+            //explode(aux, bufferSegmentado[i], "\t");
+            //cout << "aux[0]: " << aux[0] << endl << "aux[1]: " << aux[1] << endl;
             //cin.get();
-            if(isNumber(aux[0]))
-                tamanhoTotal += std::stoi( aux[0]);
+            //if(isNumber(aux[0]))
+            tamanhoTotal += std::stoi( bufferSegmentado[i]);
         }
+
         instrucaoNova.tamanhoTotal = tamanhoTotal;
+        //cout << "Instrucao nova tamanho total: " << instrucaoNova.tamanhoTotal << endl;
+        //cin.get();
         instrucaoIA32.push_back(instrucaoNova);
     }
     arq.clear();

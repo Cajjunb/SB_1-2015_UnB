@@ -1,5 +1,5 @@
-ADD;S;	add	dword	eax,	LABEL;03	05	XX	XX	00	00;	6;
-SUB;S;	sub	dword	eax,	LABEL;2b	05	XX	XX	00	00;	6;
+ADD;S;	add	dword	eax,	LABEL;03	05	XX	XX	00	00;6;
+SUB;S;	sub	dword	eax,	LABEL;2b	05	XX	XX	00	00;6;
 DIV;T;	mov	edx,	0;	mov	dword	ebx,	LABEL;	div	dword 	ebx;ba	00	00	00	00;8b	1d	XX	XX	00	00;f7	f3;5;6;2;
 MUL;T;	mov	edx,	0;	mov	dword	ebx,	LABEL;	imul	dword	ebx;ba	00	00	00	00;8b	1d	XX	XX	00	00;f7	eb;5;6;2;
 LOAD;S;	mov	dword	eax,	LABEL;A1	XX	XX	00	00;5;

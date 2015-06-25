@@ -35,7 +35,8 @@ int main(int argc, char *argv[]){ //recebe arquivo .asm do assembly inventado e 
     tamanho = asmInventado[0].size();
     nome = asmInventado[0].substr(0, tamanho - extensao); //eliminando .asm para pegar somente o nome
 
-    asmInventado.push_back(nome + ".s");
+    asmInventado.push_back(nome + ".opanaoqueromudarextensaonao");
+    //asmInventado.push_back(nome + ".s");
 
 
     monta(asmInventado);

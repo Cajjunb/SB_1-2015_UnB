@@ -24,11 +24,13 @@ void insereUso(map<string, vector<int> >& uso, string& token, int linha); //Inse
 void insereSimbolo(map<string, tipoTS>& simbolo, string& token, int linha); //Insere na tabela de símbolos
 void editaTamanhoSimbolo(map<string, tipoTS>& simbolo, string& token, unsigned int tamanhoMemoria); // Edita o valor da memoria alocada para aquele simbolo em especifico
 
+void corrigeEnderecosDataBss(map<string, tipoTSIA32>& simboloIA32); //Ajusta endereços de .section data e .section bss
+
 //	Verifica se o simbolo está na tabela de simbolos
 //	Retorna bool
 bool isSimbolo(map<string, tipoTS>& simbolo, string& token);
 
-int calculaPC(vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, map<string, vector<int> >& uso, string token, int linha, vector<string>& vTab, int endereco, vector<int>& bits, int &pcia32, vector<tipoInstrucaoIA32>& instrucoesIA32); //Baseado na intrução ou diretiva, calcula pc
+int calculaPC(vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, map<string, vector<int> >& uso, string token, int linha, vector<string>& vTab, int endereco, vector<int>& bits, int &pcia32, vector<tipoInstrucaoIA32>& instrucoesIA32, map<string, tipoTSIA32>& simboloIA32); //Baseado na intrução ou diretiva, calcula pc
 
 void criaTabelas(ifstream& arq, vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, map<string, tipoTS>& simbolo, map<string, vector<int> >& uso, map<string, int>& definicao, vector<int>& bits, vector<tipoInstrucaoIA32>& instrucoesIA32, map<string, tipoTSIA32>& simboloIA32); //Cria tabelas de símbolos, de definição e de uso
 

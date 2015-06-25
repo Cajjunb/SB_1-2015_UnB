@@ -2,7 +2,7 @@
 
 bool precisaData = false; //global que indica necessidade de section data
 
-void escreveOp(ofstream& out, vector<tipoGramatica>& gramatica, vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, map<string, tipoTS>& simbolo, string token, string arg, int tipo, int linha, map<string, tipoTSIA32>& simboloIA32){ //tipo é INSTRUÇÃO = 0 ou DIRETIVA = 1
+void escreveOp(ofstream& out, vector<tipoGramatica>& gramatica, vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, map<string, tipoTS>& simbolo, string token, string arg, int tipo, int linha){ //tipo é INSTRUÇÃO = 0 ou DIRETIVA = 1
 
     switch(tipo){
         case 0: {
@@ -109,7 +109,6 @@ void escreveOp(ofstream& out, vector<tipoGramatica>& gramatica, vector<tipoInstr
                     if(arg.find("X") != string::npos){ //Número está em hexadecimal
                         if(strcasecmp(d.nome.c_str(), "SPACE") == 0){
                             long int space = strtol(arg.c_str(), NULL, 16);
-                            editaTabelaSimbolosIA32(token, simboloIA32, space);
                             do{
                                 //cout << "00 ";
                                 out << "00 ";
@@ -119,13 +118,11 @@ void escreveOp(ofstream& out, vector<tipoGramatica>& gramatica, vector<tipoInstr
                         else{
                             //cout << strtol(arg.c_str(), NULL, 16);
                             out << strtol(arg.c_str(), NULL, 16) << " ";
-                            editaTabelaSimbolosIA32(token, simboloIA32, 1);
                         }
                     }
                     else{ //É um número em decimal
                         if(strcasecmp(d.nome.c_str(), "SPACE") == 0){
                             long int space = strtol(arg.c_str(), NULL, 10);
-                            editaTabelaSimbolosIA32(token, simboloIA32, space);
                             do{
                                 //cout << "00 ";
                                 out << "00 ";
@@ -135,7 +132,6 @@ void escreveOp(ofstream& out, vector<tipoGramatica>& gramatica, vector<tipoInstr
                         else{
                             //cout << arg;
                             out << arg << " ";
-                            editaTabelaSimbolosIA32(token, simboloIA32, 1);
                         }
                     }
                 }
@@ -154,7 +150,7 @@ void escreveOp(ofstream& out, vector<tipoGramatica>& gramatica, vector<tipoInstr
 
 }
 
-void separaOp(ofstream& out, vector<tipoInstrucao>& instrucao,vector<tipoGramatica>& gramatica, vector<tipoDiretiva>& diretiva, map<string, tipoTS>& simbolo, vector<string> vTab, int linha, map<string, tipoTSIA32>& simboloIA32){
+void separaOp(ofstream& out, vector<tipoInstrucao>& instrucao,vector<tipoGramatica>& gramatica, vector<tipoDiretiva>& diretiva, map<string, tipoTS>& simbolo, vector<string> vTab, int linha){
 
     if(isInstrucao(instrucao, vTab[0])){ //INSTRUÇÃO A
         detectarErrosInstrucao(simbolo, vTab, gramatica,  linha);
@@ -163,9 +159,9 @@ void separaOp(ofstream& out, vector<tipoInstrucao>& instrucao,vector<tipoGramati
             if(vTab.size() > 1){
                 if(vTab.size() == 3) //COPY ARG,    ARG
                     vTab[1].append(vTab[2]);
-                escreveOp(out, gramatica, instrucao, diretiva, simbolo, vTab[0], vTab[1], 0, linha, simboloIA32);
+                escreveOp(out, gramatica, instrucao, diretiva, simbolo, vTab[0], vTab[1], 0, linha);
             }else
-                escreveOp(out, gramatica, instrucao, diretiva, simbolo, vTab[0], "", 0, linha, simboloIA32); //STOP
+                escreveOp(out, gramatica, instrucao, diretiva, simbolo, vTab[0], "", 0, linha); //STOP
         }
         else{
             if(!isTokenValido(vTab[0]))
@@ -177,9 +173,9 @@ void separaOp(ofstream& out, vector<tipoInstrucao>& instrucao,vector<tipoGramati
     else if(isDiretiva(diretiva, vTab[0])){
         if(isAlfabeto(vTab[0])){
             if(vTab.size() > 1)
-                escreveOp(out, gramatica, instrucao, diretiva, simbolo, vTab[0], vTab[1], 1, linha, simboloIA32);
+                escreveOp(out, gramatica, instrucao, diretiva, simbolo, vTab[0], vTab[1], 1, linha);
             else
-                escreveOp(out, gramatica, instrucao, diretiva, simbolo, vTab[0], "00", 1, linha, simboloIA32); //SPACE SEM ARGUMENTO
+                escreveOp(out, gramatica, instrucao, diretiva, simbolo, vTab[0], "00", 1, linha); //SPACE SEM ARGUMENTO
         }
         else{
             if(!isTokenValido(vTab[0]))
@@ -197,10 +193,10 @@ void separaOp(ofstream& out, vector<tipoInstrucao>& instrucao,vector<tipoGramati
                     if(vTab.size() > 2){
                         if(vTab.size() == 4) //LABEL:   COPY ARG,    ARG
                             vTab[2].append(vTab[3]);
-                        escreveOp(out, gramatica, instrucao, diretiva, simbolo, vTab[1], vTab[2], 0, linha, simboloIA32);
+                        escreveOp(out, gramatica, instrucao, diretiva, simbolo, vTab[1], vTab[2], 0, linha);
                     }
                     else
-                        escreveOp(out, gramatica, instrucao, diretiva, simbolo, vTab[1], "", 0, linha, simboloIA32); //LABEL: STOP
+                        escreveOp(out, gramatica, instrucao, diretiva, simbolo, vTab[1], "", 0, linha); //LABEL: STOP
                 }
                 else{
                     if(!isTokenValido(vTab[1]))
@@ -212,9 +208,9 @@ void separaOp(ofstream& out, vector<tipoInstrucao>& instrucao,vector<tipoGramati
             else if(isDiretiva(diretiva, vTab[1])){
                 if(isAlfabeto(vTab[1])){
                     if(vTab.size() > 2)
-                        escreveOp(out, gramatica, instrucao, diretiva, simbolo, vTab[1], vTab[2], 1, linha, simboloIA32);
+                        escreveOp(out, gramatica, instrucao, diretiva, simbolo, vTab[1], vTab[2], 1, linha);
                     else
-                        escreveOp(out, gramatica, instrucao, diretiva, simbolo, vTab[1], "00", 1, linha, simboloIA32); //SPACE SEM ARGUMENTO
+                        escreveOp(out, gramatica, instrucao, diretiva, simbolo, vTab[1], "00", 1, linha); //SPACE SEM ARGUMENTO
                 }
                 else{
                     if(!isTokenValido(vTab[1]))
@@ -286,7 +282,7 @@ bool criaArqObj(ifstream& in, ofstream& out, vector<tipoGramatica>& gramatica, v
 
         //cout << linha << endl;
         //cin.get();
-        separaOp(out, instrucao,gramatica, diretiva, simbolo, vTab,i, simboloIA32);
+        separaOp(out, instrucao,gramatica, diretiva, simbolo, vTab,i);
     }
     in.clear();
     in.seekg(0, in.beg); //rewind

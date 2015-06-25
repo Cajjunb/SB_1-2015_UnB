@@ -18,14 +18,17 @@ typedef struct{
     unsigned int tamanhoMemoria;
 }tipoTS; //tabela de símbolos
 
-//endereco: indica o endereço relativo em decimal ocupado pela label
+//tamanho: indica o tamanho que esta label ocupa
 //section: indica em qual seção o rótulo pertence. Aceita somente 'b' para SECTION .BSS, 'd' para SECTION .DATA e 't' para SECTION .TEXT
 //valorConstante: indica valor da constante se símbolo pertencer a SECTION .DATA
+//tipoConstante: indica se é constante
+//endereco: indica endereco relativo a pc
 typedef struct{
-    int endereco;
+    int tamanho;
     char section;
     int valorConstante;
     bool tipoConstante;
+    int endereco;
 }tipoTSIA32; //tabela de símbolos de IA32
 
 // Enumeracao para comportamento em relacao a constantes na gramatica
