@@ -44,6 +44,31 @@ void monta(vector<string> asmInventado){
     criaInstrucaoIa32( arq1, instrucoesIA32);
     arq1.close();
 
+    for(vector<tipoInstrucaoIA32>::iterator it = instrucoesIA32.begin(); it != instrucoesIA32.end(); it++){
+        cout << (*it).nome << " " << (*it).tamanhoTotal << endl;
+    }
+    /*
+    string divi = "COPY";
+    std::vector<int> argumentos(4) ;
+    argumentos[0] = 41241;
+    argumentos[1] = 213231;
+    divi = "ADD";
+    cout << inventadoParaIA32(instrucoesIA32,divi,argumentos);
+    divi = "SUB";
+    cout << inventadoParaIA32(instrucoesIA32,divi,argumentos);
+    divi = "DIV";
+    cout << inventadoParaIA32(instrucoesIA32,divi,argumentos);
+    divi = "MUL";
+    cout << inventadoParaIA32(instrucoesIA32,divi,argumentos);
+    divi = "LOAD";
+    cout << inventadoParaIA32(instrucoesIA32,divi,argumentos);
+    divi = "STORE";
+    cout << inventadoParaIA32(instrucoesIA32,divi,argumentos);
+    divi = "COPY";
+    cout << inventadoParaIA32(instrucoesIA32,divi,argumentos);
+    divi = "STORE";
+    cout << inventadoParaIA32(instrucoesIA32,divi,argumentos);
+    */
     preProcessaArq2(input, simbolo);
 
     arq1.open("pre_processado.txt");
@@ -51,6 +76,7 @@ void monta(vector<string> asmInventado){
         criaTabelas(arq1, instrucao, diretiva, simbolo, uso, definicao, bits, instrucoesIA32, simboloIA32); //primeira passagem
         ligar = criaArqObj(arq1, arq2, gramatica, instrucao, diretiva, simbolo, uso, definicao, bits, simboloIA32); //segunda passagem
 
+        cout << endl << "Tabela de simbolos IA32" << endl;
         for(map<string, tipoTSIA32>::iterator it = simboloIA32.begin(); it != simboloIA32.end(); it++){
             cout << it->first << " Endereco: " << (it->second).endereco << endl;
         }
