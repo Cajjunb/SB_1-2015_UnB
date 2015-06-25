@@ -137,3 +137,4 @@ bool isAlfabeto(string token); //verifica se é letra
 bool isAlfanumericoUnderscore(string token); //verifica se é alfanumérico (incluindo underscore e inclui negativo, positivo e hexadecimal)
 void toUpper(string& str,locale loc); //converte string para tudo maiúsculo
 bool temExtensao(string aux); //retorna se string possui extensão
+std::vector<string> intParaBinarioLittleEndian(int numero);

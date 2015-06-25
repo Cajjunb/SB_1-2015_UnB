@@ -85,3 +85,20 @@ bool temExtensao(string aux){
     return false; //não foi passada extensao
 }
 
+
+
+std::vector<string> intParaBinarioLittleEndian(int numero){
+    int quociente = numero;
+    int resto = 0;
+    int i = 0;
+    std::vector<string> resultado;
+    while(quociente != 0){
+        resto = quociente % 2;
+        quociente = quociente / 2;
+        resultado[i/4].insert(std::to_string(resto));
+    }
+    for (i = 0; i < 2; i++){
+        cout << resultado[i];
+    }
+    return resultado;
+}
