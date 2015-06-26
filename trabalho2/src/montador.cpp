@@ -44,11 +44,11 @@ void monta(vector<string> asmInventado){
     criaInstrucaoIa32( arq1, instrucoesIA32);
     arq1.close();
 
-    for(vector<tipoInstrucaoIA32>::iterator it = instrucoesIA32.begin(); it != instrucoesIA32.end(); it++){
+    /*for(vector<tipoInstrucaoIA32>::iterator it = instrucoesIA32.begin(); it != instrucoesIA32.end(); it++){
         cout << (*it).nome << " " << (*it).tamanhoTotal << endl;
     }
 
-    /*string divi = "COPY";
+    string divi = "COPY";
     std::vector<int> argumentos(4) ;
     argumentos[0] = 41241;
     argumentos[1] = 213231;

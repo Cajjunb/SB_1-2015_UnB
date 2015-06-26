@@ -94,12 +94,13 @@ std::vector<string> intParaHexLilEndian(int numero){
     while(quociente != 0){
         resto = quociente % 16;
         quociente = quociente / 16;
-        itoa(resto,aux,16);
+        //itoa(resto,aux,16);
+        sprintf(aux,"%x",resto);
         resultado[i/2].insert(0,aux);
         i++;
     }
-    for (int i = 0; i < 2; ++i){
-        cout << resultado[i];
-    }
+    //for (int i = 0; i < 2; ++i){
+        //cout << resultado[i];
+    //}
     return resultado;
 }
