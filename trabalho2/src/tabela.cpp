@@ -55,25 +55,25 @@ string inventadoParaMaquina(std::vector<tipoInstrucaoIA32>& instrucoesia32 ,stri
         if(instrucaoia32.tipo == tipoComportamentoTraducao::SINGLE)
             count = 1;
         for ( i = 0; i < count; i++){
-            found[0] = instrucaoia32.instrucaoAssembly[i].find("AA   AA");   
-            found[1] = instrucaoia32.instrucaoAssembly[i].find("BB   BB");
+            found[0] = instrucaoia32.instrucaoCodigoMaquina[i].find("AA\tAA");   
+            found[1] = instrucaoia32.instrucaoCodigoMaquina[i].find("BB\tBB");
             if(found[0] != std::string::npos){        // "this is a test string."
-                instrucaoia32.instrucaoAssembly[i].erase(found[0],5);
+                instrucaoia32.instrucaoCodigoMaquina[i].erase(found[0],5);
                 aux = intParaHexLilEndian(argumentos[j++]) ;
-                instrucaoia32.instrucaoAssembly[i].insert(found[0],aux[1]);
-                instrucaoia32.instrucaoAssembly[i].insert(found[0],aux[0]);
+                instrucaoia32.instrucaoCodigoMaquina[i].insert(found[0],aux[1]);
+                instrucaoia32.instrucaoCodigoMaquina[i].insert(found[0],"\t");
+                instrucaoia32.instrucaoCodigoMaquina[i].insert(found[0],aux[0]);
             }
             else if( found[1] != std::string::npos ){
-                instrucaoia32.instrucaoAssembly[i].erase(found[1],1);
+                instrucaoia32.instrucaoCodigoMaquina[i].erase(found[1],5);
                 aux = intParaHexLilEndian(argumentos[j++]) ;
-                instrucaoia32.instrucaoAssembly[i].insert(found[1],aux[1]);
-                instrucaoia32.instrucaoAssembly[i].insert(found[1],aux[0]);
+                instrucaoia32.instrucaoCodigoMaquina[i].insert(found[1],aux[1]);
+                instrucaoia32.instrucaoCodigoMaquina[i].insert(found[1],"\t");
+                instrucaoia32.instrucaoCodigoMaquina[i].insert(found[1],aux[0]);
             }
-            result = result+"\n"+instrucaoia32.instrucaoAssembly[i];
+            result = result+"\n"+instrucaoia32.instrucaoCodigoMaquina[i];
         }
         result[result.size()+1] = '\0';
-
-        cout << "RESULT=\n"<< result;
     }
     else
         result = "null";
@@ -138,7 +138,6 @@ void  criaInstrucaoIa32(ifstream& arq, vector<tipoInstrucaoIA32>& instrucaoIA32)
         }
         for ( i = 0; i < nro_argumentos; i++){
             instrucaoNova.instrucaoCodigoMaquina.push_back(bufferSegmentado[nro_argumentos+2+i].c_str());
-            printf("%s\n",instrucaoNova.instrucaoCodigoMaquina[i].c_str() );
         }
         for ( i = nro_argumentos+2+i; i < bufferSegmentado.size(); ++i){
             tamanhoTotal += std::stoi( bufferSegmentado[i].c_str());

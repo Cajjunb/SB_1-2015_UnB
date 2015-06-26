@@ -91,15 +91,12 @@ std::vector<string> intParaHexLilEndian(int numero){
     int i = 0;
     char aux [33];
     std::vector<string> resultado(2);
-    while(quociente != 0){
+    while(quociente != 0 || i != 4){
         resto = quociente % 16;
         quociente = quociente / 16;
         itoa(resto,aux,16);
         resultado[i/2].insert(0,aux);
         i++;
-    }
-    for (int i = 0; i < 2; ++i){
-        cout << resultado[i];
     }
     return resultado;
 }

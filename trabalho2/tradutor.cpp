@@ -40,8 +40,8 @@ int main(int argc, char *argv[]){ //recebe arquivo .asm do assembly inventado e 
     criaInstrucaoIa32( arq1, instrucoesIA32);
     string divi = "COPY";
     std::vector<int> argumentos(4) ;
-    argumentos[0] = 41241;
-    argumentos[1] = 213231;
+    argumentos[0] = 412;
+    argumentos[1] = 223;
     divi = "ADD";
     cout << inventadoParaMaquina(instrucoesIA32,divi,argumentos);
     divi = "SUB";
