@@ -27,7 +27,7 @@ tipoInstrucao pegaInstrucaoOpcode(vector<tipoInstrucao>& instrucao, int op); //R
 //  AQUI VEM UM COMENTÁRIO DO LEANDRO, YAY
 string inventadoParaIA32(vector<tipoInstrucaoIA32>& instrucoes,string operacao,std::vector<int> argumentos);
 //
-string inventadoParaMaquina(std::vector<tipoInstrucaoIA32>& instrucoesia32 ,string operacao);
+string inventadoParaMaquina(std::vector<tipoInstrucaoIA32>& instrucoesia32 ,string operacao,std::vector<int> argumentos);
 
 
 bool isGramatica(vector<tipoGramatica>& gramatica, string token); //Retorna se token é gramatica

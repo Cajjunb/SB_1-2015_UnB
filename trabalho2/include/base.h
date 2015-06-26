@@ -18,11 +18,11 @@ typedef struct{
     unsigned int tamanhoMemoria;
 }tipoTS; //tabela de símbolos
 
-//tamanho: indica tamanho ocupado pelo símbolo em bytes
+//endereco: indica o endereço relativo em decimal ocupado pela label
 //section: indica em qual seção o rótulo pertence. Aceita somente 'b' para SECTION .BSS, 'd' para SECTION .DATA e 't' para SECTION .TEXT
 //valorConstante: indica valor da constante se símbolo pertencer a SECTION .DATA
 typedef struct{
-    int tamanho;
+    int endereco;
     char section;
     int valorConstante;
     bool tipoConstante;
@@ -137,4 +137,5 @@ bool isAlfabeto(string token); //verifica se é letra
 bool isAlfanumericoUnderscore(string token); //verifica se é alfanumérico (incluindo underscore e inclui negativo, positivo e hexadecimal)
 void toUpper(string& str,locale loc); //converte string para tudo maiúsculo
 bool temExtensao(string aux); //retorna se string possui extensão
-std::vector<string> intParaBinarioLittleEndian(int numero);
+std::vector<string> intParaHexLilEndian(int numero); // converte um int em uma string de bits de 8 bits lil endian
+

@@ -85,19 +85,20 @@ bool temExtensao(string aux){
     return false; //não foi passada extensao
 }
 
-
-
-std::vector<string> intParaBinarioLittleEndian(int numero){
+std::vector<string> intParaHexLilEndian(int numero){
     int quociente = numero;
     int resto = 0;
     int i = 0;
-    std::vector<string> resultado;
+    char aux [33];
+    std::vector<string> resultado(2);
     while(quociente != 0){
-        resto = quociente % 2;
-        quociente = quociente / 2;
-        resultado[i/4].insert(std::to_string(resto));
+        resto = quociente % 16;
+        quociente = quociente / 16;
+        itoa(resto,aux,16);
+        resultado[i/2].insert(0,aux);
+        i++;
     }
-    for (i = 0; i < 2; i++){
+    for (int i = 0; i < 2; ++i){
         cout << resultado[i];
     }
     return resultado;
