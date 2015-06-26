@@ -1,6 +1,6 @@
 #include "../include/ia32.h"
 
-string inventadoParaIA32(vector<tipoInstrucao>& instrucoes,string operacao){
+/*string inventadoParaIA32(vector<tipoInstrucao>& instrucoes,string operacao){
 	bool achado = false;
 	for(int i = 0; i < (int)instrucoes.size(); i++){
         if(strcasecmp(instrucoes[i].nome.c_str(), operacao.c_str()) == 0)
@@ -9,13 +9,26 @@ string inventadoParaIA32(vector<tipoInstrucao>& instrucoes,string operacao){
     if(achado){
 
     }
-}
+}*/
 
 void editaTabelaSimbolosIA32(string token, map<string, tipoTSIA32>& simboloIA32, int tamanho){
     map<string, tipoTSIA32>::iterator it;
     it = simboloIA32.find(token);
     if(it != simboloIA32.end())
-        (it->second).endereco += tamanho;
+        (it->second).tamanho = tamanho;
+
+    //enquanto antes for diferente de it:
+    //A: SPACE  -endereço 0, tamanho 1
+    //B: SPACE  -endereço 1 (porque A vem antes de B), tamanho 1
+    //C: SPACE  -endereco 2 (porque A e B vem antes de C), tamanho 1
+    for(map<string, tipoTSIA32>::iterator antes = simboloIA32.begin() ; antes != simboloIA32.end() && antes != it; ++antes){
+        if(antes->second.section == it->second.section){
+            //cout << "it: " << it->first << "-" <<  it->second.endereco << " antes: " << antes->first << endl;
+            it->second.endereco += antes->second.tamanho;
+            //cout << "it: " << it->first << "-" <<  it->second.endereco << " antes: " << antes->first << endl;
+            //cin.get();
+        }
+    }
 }
 
 void insereTabelaSimbolosIA32(string token, map<string, tipoTS>& simbolo, int *pcia32, map<string, tipoTSIA32>& simboloIA32){
@@ -32,22 +45,23 @@ void insereTabelaSimbolosIA32(string token, map<string, tipoTS>& simbolo, int *p
             s32.endereco = *pcia32;
             s32.valorConstante = 0;
             s32.tipoConstante = false;
+            s32.tamanho = 0;
         }
         else{ //é símbolo na seção data
             if(s.tipoConstante){ //se for constante
                 s32.section = 'd';
-                s32.endereco = *pcia32 + 4; //mais 4 de constante que é inteiro
-                s.valorConstante = s.valorConstante;
+                s32.endereco = *pcia32;
                 s32.tipoConstante = true;
+                s32.tamanho = 4;
             }
             else{ //É um space
                 s32.section = 'b';
                 s32.endereco = *pcia32;
                 s32.valorConstante = 0;
                 s32.tipoConstante = false;
+                s32.tamanho = 0;
             }
         }
     }
-
     simboloIA32.insert(pair<string, tipoTSIA32>(rot->first, s32));
 }

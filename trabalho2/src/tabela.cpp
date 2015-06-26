@@ -144,6 +144,8 @@ void  criaInstrucaoIa32(ifstream& arq, vector<tipoInstrucaoIA32>& instrucaoIA32)
             tamanhoTotal += std::stoi( bufferSegmentado[i].c_str());
         }
         instrucaoNova.tamanhoTotal = tamanhoTotal;
+        //cout << "Instrucao nova tamanho total: " << instrucaoNova.tamanhoTotal << endl;
+        //cin.get();
         instrucaoIA32.push_back(instrucaoNova);
     }
     arq.clear();

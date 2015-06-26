@@ -100,7 +100,7 @@ void separaSectionArgs(vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& d
     }
 }
 
-int calculaPC(vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, map<string, vector<int> >& uso, string token, int linha, vector<string>& vTab, int endereco, vector<int>& bits, int *pcia32, vector<tipoInstrucaoIA32>& instrucoesIA32){
+int calculaPC(vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, map<string, vector<int> >& uso, string token, int linha, vector<string>& vTab, int endereco, vector<int>& bits, int *pcia32, vector<tipoInstrucaoIA32>& instrucoesIA32, map<string, tipoTSIA32>& simboloIA32){
     //cout << "token: " << token << endl;
     if(isDiretiva(diretiva, token)){
         tipoDiretiva d;
@@ -120,6 +120,8 @@ int calculaPC(vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, 
                         n = strtol(vTab[2].c_str(), NULL, 16);
                 else
                     n = strtol(vTab[2].c_str(), NULL, 10);
+
+                editaTabelaSimbolosIA32(vTab[0], simboloIA32, n);
                 for(long int i = 0; i < n; i++){ //adiciona bit absoluto para cada space que existe
                     //cout << "SPACE - bit 0" << endl;
                     bits.push_back(0); //endereço absoluto
@@ -128,9 +130,10 @@ int calculaPC(vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, 
                 return n;
             }
             else{
-                if(strcasecmp(token.c_str(), "SPACE") == 0)
+                if(strcasecmp(token.c_str(), "SPACE") == 0 && vTab.size() != 2)
                     imprimeErro(ERRO_QTD_ARG, linha);
                 bits.push_back(0); //endereço absoluto
+                editaTabelaSimbolosIA32(vTab[0], simboloIA32, 1);
                 return 1; //Não tem argumentos
             }
         }
@@ -152,6 +155,7 @@ int calculaPC(vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, 
         }
         else if(strcasecmp(d.nome.c_str(), "CONST") == 0){
             //cout << "CONST - bit 0" << endl;
+            editaTabelaSimbolosIA32(vTab[0], simboloIA32, 4); //ocupa 4 bytes por ser inteiro
             bits.push_back(0); //endereço absoluto
             if(getSectionAtual() == 't') //se const estiver na seção texto
                 imprimeErro(ERRO_LOCAL_INCORRETO, linha);
@@ -253,6 +257,18 @@ int calculaPC(vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, 
     return 0;
 }
 
+void corrigeEnderecosDataBss(map<string, tipoTSIA32>& simboloIA32){
+    int tamanhoData = 0;
+    for(map<string, tipoTSIA32>::iterator it = simboloIA32.begin() ; it != simboloIA32.end(); ++it){
+        if(it->second.section == 'd')
+            tamanhoData += it->second.tamanho;
+    }
+    for(map<string, tipoTSIA32>::iterator it = simboloIA32.begin() ; it != simboloIA32.end(); ++it){
+        if(it->second.section == 'b')
+            it->second.endereco += tamanhoData;
+    }
+}
+
 void criaTabelas(ifstream& arq, vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, map<string, tipoTS>& simbolo, map<string, vector<int> >& uso, map<string, int>& definicao, vector<int>& bits, vector<tipoInstrucaoIA32>& instrucoesIA32, map<string, tipoTSIA32>& simboloIA32){
     int pc = 0,incremento = 0, pcia32 = 0;
     int i; //contador de linhas
@@ -304,14 +320,14 @@ void criaTabelas(ifstream& arq, vector<tipoInstrucao>& instrucao, vector<tipoDir
             s.section = getSectionAtual();
 
             insereSimbolo(simbolo, vTab[0], s, i);
+            insereTabelaSimbolosIA32(vTab[0], simbolo, &pcia32, simboloIA32);
             editaDefinicao(definicao, vTab[0], s.posicao); //atualize endereço em TD caso símbolo esteja em TD
 
             //inserido rótulo, calcula PC
             aux.append(vTab[1]);
-            incremento = calculaPC(instrucao, diretiva, uso, aux, i, vTab, pc, bits, &pcia32, instrucoesIA32);
+            incremento = calculaPC(instrucao, diretiva, uso, aux, i, vTab, pc, bits, &pcia32, instrucoesIA32, simboloIA32);
             pc += incremento;
             editaTamanhoSimbolo(simbolo,vTab[0],incremento);                            //ALOCA A MEMORIA NA TABELA DE SIMBOLOS
-            insereTabelaSimbolosIA32(vTab[0], simbolo, &pcia32, simboloIA32);
         }
         else{ //somente calcula o pc
             if(strcasecmp(vTab[0].c_str(), "PUBLIC") == 0){ //Se diretiva for PUBLIC, insere na tabela de definição
@@ -322,12 +338,13 @@ void criaTabelas(ifstream& arq, vector<tipoInstrucao>& instrucao, vector<tipoDir
             if(strcasecmp(vTab[0].c_str(), "BEGIN") == 0) //Begin DEVE ter um rótulo
                 imprimeErro(ERRO_USO_INCORRETO, i);
             aux.append(vTab[0]);
-            incremento = calculaPC(instrucao, diretiva, uso, aux, i, vTab, pc, bits, &pcia32, instrucoesIA32);
+            incremento = calculaPC(instrucao, diretiva, uso, aux, i, vTab, pc, bits, &pcia32, instrucoesIA32, simboloIA32);
             pc += incremento;
         }
         verificaLabels(vTab, i);
     }
 
+    corrigeEnderecosDataBss(simboloIA32);
     verificaSectionText(); //verifica se o arquivo terminou declarando uma seção text
     arq.clear();
     arq.seekg(0, arq.beg); //rewind
