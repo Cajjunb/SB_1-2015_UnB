@@ -248,8 +248,56 @@ bool criaArqObj(ifstream& in, ofstream& outia32,ofstream& outCod,  vector<tipoGr
     string linha;
     bool liga = false;
     int i = 0;
+    ifstream io;
 
-    //cout << "\n Comeca a segunda passagem";
+    for(map<string, tipoTSIA32>::iterator it = simboloIA32.begin() ; it != simboloIA32.end(); it++){
+
+        if(it->second.section == 'b'){
+            it->second.endereco += 45; //Tamanho das variáveis que existem do input e output na sessão bss
+        }
+        else if(it->second.section == 'd'){
+            it->second.endereco += 10; //Tamanho das variáveis que existem do input e output na sessão data
+        }
+    }
+
+    io.open("tabelas/INPUT_OUTPUT_S.txt");
+    outia32 << "section .data" << endl;
+    getline(io, linha);
+    while(linha.compare("=======================================================================") != 0){
+        outia32 << linha << endl;
+        getline(io, linha);
+    }
+    outia32 << endl;
+    for(map<string,tipoTSIA32>::iterator it = simboloIA32.begin(); it != simboloIA32.end(); it++){
+        if(it->second.section == 'd'){
+            outia32 << "\t" << it->first << "\tEQU\t" << it->second.valorConstante << endl;
+        }
+    }
+
+    outia32 << endl << "section .bss" << endl;
+    getline(io, linha);
+    while(linha.compare("=======================================================================") != 0){
+        outia32 << linha << endl;
+        getline(io, linha);
+    }
+    outia32 << endl;
+    for(map<string,tipoTSIA32>::iterator it = simboloIA32.begin(); it != simboloIA32.end(); it++){
+        if(it->second.section == 'b'){
+            outia32 << "\t" << it->first << "\tresb\t" << it->second.tamanho << endl;
+        }
+    }
+
+    outia32 << endl << "section .text" << endl;
+    outia32 << "global _start" << endl;
+    while(getline(io, linha)){
+        outia32 << linha << endl;
+    }
+    io.close();
+
+    //COLOCAR FUNÇÕES leInteiro E imprimeInteiro SE NECESSÁRIO
+
+    outia32 << "\t_start:" << endl;
+
     while(getline(in, linha)){
         vector<string> vTab;
         int tamanho;

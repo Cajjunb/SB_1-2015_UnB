@@ -29,9 +29,9 @@ global _start
 		mov [A], eax		;INPUT A
 		;******************** FIM DE LER INTEIRO:	INPUT A ********************
 
-		mov eax, [A]						;STORE	A
+		mov eax, [A]						;LOAD	A
 		add eax, B							;ADD		B
-		mov [RESPOSTA], eax				;LOAD		RESPOSTA
+		mov [RESPOSTA], eax				;STORE		RESPOSTA
 
 		;******************** ESCREVER INTEIRO:	OUTPUT RESPOSTA ********************
 		mov eax, [RESPOSTA]	
