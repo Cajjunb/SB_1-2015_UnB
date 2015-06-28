@@ -1,16 +1,5 @@
 #include "../include/ia32.h"
 
-/*string inventadoParaIA32(vector<tipoInstrucao>& instrucoes,string operacao){
-	bool achado = false;
-	for(int i = 0; i < (int)instrucoes.size(); i++){
-        if(strcasecmp(instrucoes[i].nome.c_str(), operacao.c_str()) == 0)
-        	achado = true;
-    }
-    if(achado){
-
-    }
-}*/
-
 void editaTabelaSimbolosIA32(string token, map<string, tipoTSIA32>& simboloIA32, int tamanho){
     map<string, tipoTSIA32>::iterator it;
     it = simboloIA32.find(token);
@@ -22,9 +11,11 @@ void editaTabelaSimbolosIA32(string token, map<string, tipoTSIA32>& simboloIA32,
     //B: SPACE  -endereço 1 (porque A vem antes de B), tamanho 1
     //C: SPACE  -endereco 2 (porque A e B vem antes de C), tamanho 1
     for(map<string, tipoTSIA32>::iterator antes = simboloIA32.begin() ; antes != simboloIA32.end() && antes != it; ++antes){
+
         if(antes->second.section == it->second.section){
             //cout << "it: " << it->first << "-" <<  it->second.endereco << " antes: " << antes->first << endl;
             it->second.endereco += antes->second.tamanho;
+
             //cout << "it: " << it->first << "-" <<  it->second.endereco << " antes: " << antes->first << endl;
             //cin.get();
         }
@@ -51,6 +42,7 @@ void insereTabelaSimbolosIA32(string token, map<string, tipoTS>& simbolo, int *p
             if(s.tipoConstante){ //se for constante
                 s32.section = 'd';
                 s32.endereco = 0;
+                s32.valorConstante = s.valorConstante;
                 s32.tipoConstante = true;
                 s32.tamanho = 4;
             }

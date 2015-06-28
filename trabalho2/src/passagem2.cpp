@@ -248,8 +248,56 @@ bool criaArqObj(ifstream& in, ofstream& out, vector<tipoGramatica>& gramatica, v
     string linha;
     bool liga = false;
     int i = 0;
+    ifstream io;
 
-    //cout << "\n Comeca a segunda passagem";
+    for(map<string, tipoTSIA32>::iterator it = simboloIA32.begin() ; it != simboloIA32.end(); it++){
+
+        if(it->second.section == 'b'){
+            it->second.endereco += 45; //Tamanho das variáveis que existem do input e output na sessão bss
+        }
+        else if(it->second.section == 'd'){
+            it->second.endereco += 10; //Tamanho das variáveis que existem do input e output na sessão data
+        }
+    }
+
+    io.open("tabelas/INPUT_OUTPUT_S.txt");
+    out << "section .data" << endl;
+    getline(io, linha);
+    while(linha.compare("=======================================================================") != 0){
+        out << linha << endl;
+        getline(io, linha);
+    }
+    out << endl;
+    for(map<string,tipoTSIA32>::iterator it = simboloIA32.begin(); it != simboloIA32.end(); it++){
+        if(it->second.section == 'd'){
+            out << "\t" << it->first << "\tEQU\t" << it->second.valorConstante << endl;
+        }
+    }
+
+    out << endl << "section .bss" << endl;
+    getline(io, linha);
+    while(linha.compare("=======================================================================") != 0){
+        out << linha << endl;
+        getline(io, linha);
+    }
+    out << endl;
+    for(map<string,tipoTSIA32>::iterator it = simboloIA32.begin(); it != simboloIA32.end(); it++){
+        if(it->second.section == 'b'){
+            out << "\t" << it->first << "\tresb\t" << it->second.tamanho << endl;
+        }
+    }
+
+    out << endl << "section .text" << endl;
+    out << "global _start" << endl;
+    while(getline(io, linha)){
+        out << linha << endl;
+    }
+    io.close();
+
+    //COLOCAR FUNÇÕES leInteiro E imprimeInteiro SE NECESSÁRIO
+
+    out << "\t_start:" << endl;
+
     while(getline(in, linha)){
         vector<string> vTab;
         int tamanho;

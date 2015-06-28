@@ -11,7 +11,7 @@ void monta(vector<string> asmInventado){
     map<string, tipoTS> simbolo; //Tabela de símbolos
     map<string, int> definicao; //Tabela de definição <nome, endereço>
     map<string, vector<int> > uso; //Tabela de uso <nome, endereços>
-    map<string, tipoTSIA32>simboloIA32; //global da tabela de símbolos de IA32, porque não temos tempo pra usar variáveis globais do jeito certo
+    map<string, tipoTSIA32> simboloIA32; //tabela de símbolos de IA32
     vector<int> bits; //mapa de bits: indica endereços absolutos e relativos
     ifstream arq1;
     ofstream arq2;

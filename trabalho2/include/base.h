@@ -29,6 +29,7 @@ typedef struct{
     int valorConstante;
     bool tipoConstante;
     int endereco;
+    string label;
 }tipoTSIA32; //tabela de símbolos de IA32
 
 // Enumeracao para comportamento em relacao a constantes na gramatica

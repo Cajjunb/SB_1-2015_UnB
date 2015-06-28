@@ -8,9 +8,6 @@
 
 using namespace std;
 
-//  AQUI VEM UM COMENTÁRIO DO LEANDRO, YAY
-string inventadoParaIA32(vector<tipoInstrucao>& instrucoes,string operacao);
-
 //Cria Tabela de Símbolos para IA32
 //Separa em .bss e .data baseado na tabela de símbolos do assembly inventado
 void insereTabelaSimbolosIA32(string token, map<string, tipoTS>& simbolo, int *pcia32, map<string, tipoTSIA32>& simboloIA32);
