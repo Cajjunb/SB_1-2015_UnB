@@ -7,6 +7,8 @@
 #include <iostream>
 #include <sstream>
 #include "base.h"
+#include <stdlib.h>
+#include <stdio.h>
 
 using namespace std;
 

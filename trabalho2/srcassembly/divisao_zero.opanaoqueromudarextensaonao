@@ -12,7 +12,7 @@ section .bss
 	digitos		resb	4	
 	numero		resb	1 	
 
-	RESULT	resb	4
+	RESULT	resb	1
 
 section .text
 global _start
@@ -182,8 +182,8 @@ global _start
 	mov	edx,	0
 	mov	dword	ebx,	0x5
 	div	dword 	ebx
-	mov	dword 0x2d,	eax
-	mov eax,	0x2d
+	mov	dword	[0x2d],	eax
+	mov eax,	[0x2d]
 	call escreverInteiro
 	mov	eax,	1
 	mov	ebx,	0

@@ -1,0 +1,18 @@
+
+
+		SECTION		TEXT
+
+
+LOAD VAL	; Loada o valor para a divisao com zero
+DIV 		VAL
+STORE		RESULT
+
+
+	OUTPUT	RESULT
+	
+STOP	
+
+SECTION	DATA
+RESULT:	SPACE
+VAL:	CONST	5
+ZERO: CONST 0 
