@@ -24,9 +24,9 @@ tipoInstrucao pegaInstrucaoOpcode(vector<tipoInstrucao>& instrucao, int op); //R
 
 
 
-//  AQUI VEM UM COMENTÁRIO DO LEANDRO, YAY
+//  A função que faz uma busca entre tabelas inventado e ia 32 e retorna o código em formato string do código ia 32 do inventado passado 
 string inventadoParaIA32(vector<tipoInstrucaoIA32>& instrucoes,string operacao,std::vector<int> argumentos);
-//
+//  A função que faz uma busca entre tabelas inventado e ia 32 e retorna o código em formato string do código maquina do inventado passado 
 string inventadoParaMaquina(std::vector<tipoInstrucaoIA32>& instrucoesia32 ,string operacao,std::vector<int> argumentos);
 
 

@@ -2,8 +2,8 @@
 
 bool precisaData = false; //global que indica necessidade de section data
 
-void escreveOp(ofstream& out, vector<tipoGramatica>& gramatica, vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, map<string, tipoTS>& simbolo, string token, string arg, int tipo, int linha){ //tipo é INSTRUÇÃO = 0 ou DIRETIVA = 1
-
+void escreveOp(ofstream& out,vector<tipoInstrucaoIA32>& instrucoesIA32,map<string, tipoTSIA32>& simboloIA32, vector<tipoGramatica>& gramatica, vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, map<string, tipoTS>& simbolo, string token, string arg, int tipo, int linha){ //tipo é INSTRUÇÃO = 0 ou DIRETIVA = 1
+    bool erro_montagem = false;
     switch(tipo){
         case 0: {
             tipoInstrucao i;
@@ -13,12 +13,13 @@ void escreveOp(ofstream& out, vector<tipoGramatica>& gramatica, vector<tipoInstr
             vector<string> maisAux; //vetor de string para conter argumentos que estão separados por +
             int mais;
             int qtdArg = 0;
+            std::vector<int> argumentos(2); // vetor de inteiros para ser usado na funcao de traducao inventado -> ia32
 
             //cout << "token:--" << token << "--" << endl;
             i = pegaInstrucao(instrucao, token);
             g = pegaGramatica(gramatica, token);
 
-            out << i.op << " ";
+            //out << i.op << " ";
             //cout << i.op << " ";
 
             if(g.qtdOperandos > 0 && !arg.empty()){ //se qtdOperandos > 0 e argumento != vazio
@@ -39,8 +40,10 @@ void escreveOp(ofstream& out, vector<tipoGramatica>& gramatica, vector<tipoInstr
                         aux.append(maisAux[0]);
                         //cout << "MaisAux[1]" << maisAux[1] << endl;
 
-                        if(!isNumber(maisAux[1]))
+                        if(!isNumber(maisAux[1])){
                             imprimeErro(ERRO_ARG_INCORRETO, linha);
+                            erro_montagem = true;
+                        }
                         else{
                             if(maisAux[1].find("X") != string::npos) //Número está em hexadecimal
                                 mais = (int)strtol(maisAux[1].c_str(), NULL, 16);
@@ -56,48 +59,60 @@ void escreveOp(ofstream& out, vector<tipoGramatica>& gramatica, vector<tipoInstr
                     if(it != simbolo.end()){
                         tipoTS s = it->second;
 
-                        if(s.posicao == -1)
+                        if(s.posicao == -1){
                             imprimeErro(ERRO_OP_INVALIDO, linha);
-
+                            erro_montagem = true;
+                        }
                         mais += s.posicao;
+                        argumentos.insert(argumentos.end(),mais);                           // <- INSERE COMO ARGUMENTO VALIDO!
                         //cout << " aux: " << aux << " s.posicao: " << s.posicao << " mais final: " << mais << endl;
                         //cin.get();
-
-                        out << mais;
+                        //out << mais;
                         //cout << mais;
                         //cout << endl;
-                        out << " ";
+                        //out << " ";
                     }
                     else{
                         if(!getData())
                             precisaData = true;
-
-                        if(isNumber(aux) && g.formato.compare("R") == 0)
+                        if(isNumber(aux) && g.formato.compare("R") == 0){
                             imprimeErro(ERRO_ARG_INCORRETO, linha);
-                        else if(isAlfanumericoUnderscore(aux))
+                            erro_montagem = true;
+                        }
+                        else if(isAlfanumericoUnderscore(aux)){
                             imprimeErro(ERRO_SIMBOLO_NAO_DEFINIDO, linha);
-                        else
+                            erro_montagem = true;
+                        }
+                        else{
                             imprimeErro(ERRO_INVALIDO, linha);
+                            erro_montagem = true;
+                        }
                         imprimeErro(ERRO_ARG_INVALIDO, linha);
                     }
-
-
                 }while(copyArg.size() > 0);
-
                 //cout << "g.nome: " << g.nome << " g.qtdOperandos: " << g.qtdOperandos << endl;
                 //cout << "qtdArgs: " << qtdArg << endl;
                 if(qtdArg != g.qtdOperandos){
                     imprimeErro(ERRO_QTD_ARG, linha);
                 }
+                if(erro_montagem != true){
+                    cout << "instrucao = "<< i.nome <<"\t"<< "argumentos = "<< argumentos[0];
+                    out << inventadoParaIA32(instrucoesIA32,i.nome,argumentos);
+                }
+
             }
             else{
                 if(i.op == 14 && !arg.empty()){ //se for STOP e tiver argumentos
                     imprimeErro(ERRO_QTD_ARG, linha); //erro
+                    erro_montagem = true;
                 }
                 else if(i.op != 14){
                     imprimeErro(ERRO_QTD_ARG, linha); //não é STOP e não tinha argumentos
+                    erro_montagem = true;
                 }
             }
+
+
             break;
         }
         case 1:{
@@ -111,13 +126,13 @@ void escreveOp(ofstream& out, vector<tipoGramatica>& gramatica, vector<tipoInstr
                             long int space = strtol(arg.c_str(), NULL, 16);
                             do{
                                 //cout << "00 ";
-                                out << "00 ";
+                                //out << "00 ";
                                 space--;
                             }while(space > 0);
                         }
                         else{
                             //cout << strtol(arg.c_str(), NULL, 16);
-                            out << strtol(arg.c_str(), NULL, 16) << " ";
+                            //out << strtol(arg.c_str(), NULL, 16) << " ";
                         }
                     }
                     else{ //É um número em decimal
@@ -125,23 +140,25 @@ void escreveOp(ofstream& out, vector<tipoGramatica>& gramatica, vector<tipoInstr
                             long int space = strtol(arg.c_str(), NULL, 10);
                             do{
                                 //cout << "00 ";
-                                out << "00 ";
+                                //out << "00 ";
                                 space--;
                             }while(space > 0);
                         }
                         else{
                             //cout << arg;
-                            out << arg << " ";
+                            //out << arg << " ";
                         }
                     }
                 }
                 else{
                     imprimeErro(ERRO_ARG_INCORRETO, linha);
+                    erro_montagem = true;
                 }
             }
             else if(d.formato == 'S'){
                 if(isNumber(arg))
                     imprimeErro(ERRO_ARG_INCORRETO, linha);
+                    erro_montagem = true;
             }
             break;
         }
@@ -150,7 +167,7 @@ void escreveOp(ofstream& out, vector<tipoGramatica>& gramatica, vector<tipoInstr
 
 }
 
-void separaOp(ofstream& out, vector<tipoInstrucao>& instrucao,vector<tipoGramatica>& gramatica, vector<tipoDiretiva>& diretiva, map<string, tipoTS>& simbolo, vector<string> vTab, int linha){
+void separaOp(ofstream& out,vector<tipoInstrucaoIA32>& instrucoesIA32,map<string, tipoTSIA32>& simboloIA32, vector<tipoInstrucao>& instrucao,vector<tipoGramatica>& gramatica, vector<tipoDiretiva>& diretiva, map<string, tipoTS>& simbolo, vector<string> vTab, int linha){
 
     if(isInstrucao(instrucao, vTab[0])){ //INSTRUÇÃO A
         detectarErrosInstrucao(simbolo, vTab, gramatica,  linha);
@@ -159,9 +176,9 @@ void separaOp(ofstream& out, vector<tipoInstrucao>& instrucao,vector<tipoGramati
             if(vTab.size() > 1){
                 if(vTab.size() == 3) //COPY ARG,    ARG
                     vTab[1].append(vTab[2]);
-                escreveOp(out, gramatica, instrucao, diretiva, simbolo, vTab[0], vTab[1], 0, linha);
+                escreveOp(out,instrucoesIA32,simboloIA32,gramatica, instrucao, diretiva, simbolo, vTab[0], vTab[1], 0, linha);
             }else
-                escreveOp(out, gramatica, instrucao, diretiva, simbolo, vTab[0], "", 0, linha); //STOP
+                escreveOp(out,instrucoesIA32,simboloIA32,gramatica, instrucao, diretiva, simbolo, vTab[0], "", 0, linha); //STOP
         }
         else{
             if(!isTokenValido(vTab[0]))
@@ -173,9 +190,9 @@ void separaOp(ofstream& out, vector<tipoInstrucao>& instrucao,vector<tipoGramati
     else if(isDiretiva(diretiva, vTab[0])){
         if(isAlfabeto(vTab[0])){
             if(vTab.size() > 1)
-                escreveOp(out, gramatica, instrucao, diretiva, simbolo, vTab[0], vTab[1], 1, linha);
+                escreveOp(out,instrucoesIA32,simboloIA32,gramatica, instrucao, diretiva, simbolo, vTab[0], vTab[1], 1, linha);
             else
-                escreveOp(out, gramatica, instrucao, diretiva, simbolo, vTab[0], "00", 1, linha); //SPACE SEM ARGUMENTO
+                escreveOp(out,instrucoesIA32,simboloIA32,gramatica, instrucao, diretiva, simbolo, vTab[0], "00", 1, linha); //SPACE SEM ARGUMENTO
         }
         else{
             if(!isTokenValido(vTab[0]))
@@ -193,10 +210,10 @@ void separaOp(ofstream& out, vector<tipoInstrucao>& instrucao,vector<tipoGramati
                     if(vTab.size() > 2){
                         if(vTab.size() == 4) //LABEL:   COPY ARG,    ARG
                             vTab[2].append(vTab[3]);
-                        escreveOp(out, gramatica, instrucao, diretiva, simbolo, vTab[1], vTab[2], 0, linha);
+                        escreveOp(out,instrucoesIA32,simboloIA32,gramatica, instrucao, diretiva, simbolo, vTab[1], vTab[2], 0, linha);
                     }
                     else
-                        escreveOp(out, gramatica, instrucao, diretiva, simbolo, vTab[1], "", 0, linha); //LABEL: STOP
+                        escreveOp(out,instrucoesIA32,simboloIA32,gramatica, instrucao, diretiva, simbolo, vTab[1], "", 0, linha); //LABEL: STOP
                 }
                 else{
                     if(!isTokenValido(vTab[1]))
@@ -208,9 +225,9 @@ void separaOp(ofstream& out, vector<tipoInstrucao>& instrucao,vector<tipoGramati
             else if(isDiretiva(diretiva, vTab[1])){
                 if(isAlfabeto(vTab[1])){
                     if(vTab.size() > 2)
-                        escreveOp(out, gramatica, instrucao, diretiva, simbolo, vTab[1], vTab[2], 1, linha);
+                        escreveOp(out,instrucoesIA32,simboloIA32,gramatica, instrucao, diretiva, simbolo, vTab[1], vTab[2], 1, linha);
                     else
-                        escreveOp(out, gramatica, instrucao, diretiva, simbolo, vTab[1], "00", 1, linha); //SPACE SEM ARGUMENTO
+                        escreveOp(out,instrucoesIA32,simboloIA32,gramatica, instrucao, diretiva, simbolo, vTab[1], "00", 1, linha); //SPACE SEM ARGUMENTO
                 }
                 else{
                     if(!isTokenValido(vTab[1]))
@@ -224,38 +241,38 @@ void separaOp(ofstream& out, vector<tipoInstrucao>& instrucao,vector<tipoGramati
     //cout << "FIM DE SEPARA" << endl;
 }
 
-bool criaArqObj(ifstream& in, ofstream& out, vector<tipoGramatica>& gramatica, vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, map<string, tipoTS>& simbolo, map<string, vector<int> >& uso, map<string, int>& definicao, vector<int>& bits, map<string, tipoTSIA32>& simboloIA32){
+bool criaArqObj(ifstream& in, ofstream& out, vector<tipoGramatica>& gramatica, vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, map<string, tipoTS>& simbolo, map<string, vector<int> >& uso, map<string, int>& definicao, vector<int>& bits, vector<tipoInstrucaoIA32>& instrucoesIA32,map<string,tipoTSIA32>& simboloIA32){
     string linha;
     bool liga = false;
     int i = 0;
     if(!definicao.empty() || !uso.empty()){
-        out << "TABLE USE" << endl;
+        //out << "TABLE USE" << endl;
         //cout << "TABLE USE" << endl;
         for (map<string, vector<int> >::iterator it = uso.begin(); it != uso.end(); ++it){
             for(vector<int>::iterator it2 = it->second.begin(); it2 != it->second.end(); ++ it2){
-                out << it->first << " " << *it2 << endl;
+                //out << it->first << " " << *it2 << endl;
                 //cout << it->first << " " << *it2 << endl;
             }
         }
-        out << endl;
+        //out << endl;
         //cout << endl;
         out << "TABLE DEFINITION" << endl;
         //cout << "TABLE DEFINITION" << endl;
         for (map<string, int>::iterator it = definicao.begin(); it != definicao.end(); ++it){
-            out << it->first << " " << it->second << endl;
+            //out << it->first << " " << it->second << endl;
             //cout << it->first << " " << it->second << endl;
         }
-        out << endl;
-        out << "R" << endl;
+        //out << endl;
+        //out << "R" << endl;
         //cout << "TABLE DEFINITION" << endl;
         //cout << "tamanho: " << bits.size();
         for (vector<int>::iterator it = bits.begin(); it != bits.end(); it++){
-            out << *it << ' ';
+            //out << *it << ' ';
             //cout << it->first << " " << it->second << endl;
         }
-        out << endl << endl;
+        //out << endl << endl;
         //cout << endl;
-        out << "CODE" << endl;
+        //out << "CODE" << endl;
         //cout << "CODE" << endl;
         liga = true;
     }
@@ -282,7 +299,7 @@ bool criaArqObj(ifstream& in, ofstream& out, vector<tipoGramatica>& gramatica, v
 
         //cout << linha << endl;
         //cin.get();
-        separaOp(out, instrucao,gramatica, diretiva, simbolo, vTab,i);
+        separaOp(out,instrucoesIA32,simboloIA32,instrucao,gramatica, diretiva, simbolo, vTab,i);
     }
     in.clear();
     in.seekg(0, in.beg); //rewind

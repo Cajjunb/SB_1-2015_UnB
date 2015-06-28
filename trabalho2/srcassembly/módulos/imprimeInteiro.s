@@ -7,32 +7,22 @@ newline			db 0dh, 0ah
 NEWLINESIZE		EQU $-newline
 
 section .bss
-	RESPOSTA	resb	4		;Usuário determinou que o tamanho da resposta terá no máximo 4 bytes
-	A			resb	4		;coisa do usuário
-	
-	imprime		resb	9	; NECESSÁRIO: jeitinho para imprimir no máximo 9 dígitos, hehe
+	imprime		resb	32	; NECESSÁRIO: jeitinho para imprimir no máximo 9 dígitos, hehe
 	valor			resb	4 	; NECESSÁRIO: 4 bytes para armazenar inteiro
 	casas			resb	4	; NECESSÁRIO: casas decimais
 	digitos		resb	4	; NECESSÁRIO: 4 bytes para contar quantidade de dígitos
 	numero		resb	1 	; NECESSÁRIO: um byte para mostrar um número em ASCII. Precisa ser a última coisa adicionada no .bss
 
+	RESPOSTA	resb	4		;Usuário determinou que o tamanho da resposta terá no máximo 4 bytes
+	A			resb	4		;coisa do usuário
+
 section .text
 global _start
 	_start:
-		;******************** ZERANDO VARIÁVEIS ********************
-		mov eax, 0
-		mov [valor], eax	;valor neutro
-		mov [imprime], eax	;valor neutro
-		mov [numero], eax	;valor neutro
-		mov [digitos], eax	;valor neutro
-		mov eax, 1
-		mov [casas], eax	;valor neutro
-		;******************** FIM DE ZERANDO VARIÁVEIS ********************	
+			
 		
-		mov eax, 1234567899
-		mov ebx, 9
-		mov [digitos], ebx
 		;******************** ESCREVER INTEIRO ********************
+		mov eax, 12355
 		call escreverInteiro
 		
 		;******************** FIM DE ESCREVER INTEIRO ********************
@@ -53,8 +43,25 @@ global _start
 ;**********************************************************
 
 	escreverInteiro:
-		mov edx, 0
-		mov [valor], edx
+		;******************** ZERANDO VARIÁVEIS ********************
+		mov ebx, 0
+		mov [valor], ebx	;valor neutro
+		mov [imprime], ebx	;valor neutro
+		mov [digitos], ebx	;valor neutro
+		;******************** FIM DE ZERANDO VARIÁVEIS ********************		
+
+		push eax
+		mov ebx, 0	;quantidade de dígitos
+		mov ecx, 10
+		escreverInteiroContaDigitos:
+			mov edx, 0
+			div ecx
+			inc ebx
+			cmp eax, 0
+			jne escreverInteiroContaDigitos
+		pop eax
+		dec ebx
+		mov [digitos], ebx
 
 		push eax		;salva número na pilha
 		mov eax, [digitos]
@@ -128,7 +135,7 @@ global _start
 					mov eax, 4
 					mov ebx, 1
 					mov ecx, imprime		;label que tem a resposta em ascii
-					mov edx, 9
+					mov edx, 32
 					int 80h	
 					
 					mov eax, 4

@@ -41,6 +41,7 @@ typedef enum{
 
 // Enumeracao para comportamento na traducao de inventado para ia32
 typedef enum{
+    NONE   = 'N',
     SINGLE = 'S',
     DOUBLE = 'D',
     TRIPLE = 'T',

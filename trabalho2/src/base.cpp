@@ -94,7 +94,8 @@ std::vector<string> intParaHexLilEndian(int numero){
     while(quociente != 0 || i != 4){
         resto = quociente % 16;
         quociente = quociente / 16;
-        itoa(resto,aux,16);
+        //itoa(resto,aux,16);
+        sprintf(aux,"%x",resto);
         resultado[i/2].insert(0,aux);
         i++;
     }
