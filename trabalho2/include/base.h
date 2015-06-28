@@ -28,6 +28,7 @@ typedef struct{
     char section;
     int valorConstante;
     bool tipoConstante;
+    bool tipoTabelaUso;
     int endereco;
     string label;
 }tipoTSIA32; //tabela de símbolos de IA32

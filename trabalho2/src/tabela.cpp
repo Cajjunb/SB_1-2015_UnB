@@ -29,19 +29,19 @@ string inventadoParaIA32(std::vector<tipoInstrucaoIA32>& instrucoesia32 ,string 
                 instrucaoia32.instrucaoAssembly[i].erase(found[0],5);
                 itoa (argumentos[j++],aux ,16);
                 auxStringObject = aux;
-                instrucaoia32.instrucaoAssembly[i].insert(found[0],"0x"+auxStringObject);
+                instrucaoia32.instrucaoAssembly[i].insert(found[0],"[0x"+auxStringObject+"]");
             }
             else if( temArgumentos && found[1] != std::string::npos ){
                 instrucaoia32.instrucaoAssembly[i].erase(found[1],1);
                 itoa (argumentos[j++],aux ,16);
                 auxStringObject = aux;
-                instrucaoia32.instrucaoAssembly[i].insert(found[1],"0x"+auxStringObject);
+                instrucaoia32.instrucaoAssembly[i].insert(found[1],"[0x"+auxStringObject+"]");
             }
             else if(temArgumentos && found[2] != std::string::npos ){
                 instrucaoia32.instrucaoAssembly[i].erase(found[2],1);
                 itoa (argumentos[j++],aux ,16);
                 auxStringObject = aux;
-                instrucaoia32.instrucaoAssembly[i].insert(found[2],"0x"+auxStringObject);
+                instrucaoia32.instrucaoAssembly[i].insert(found[2],"[0x"+auxStringObject+"]");
             }
             result = result+"\n"+instrucaoia32.instrucaoAssembly[i];
         }

@@ -55,7 +55,7 @@ void monta(vector<string> asmInventado){
     arq1.open("pre_processado.txt");
     arq2.open(asmInventado[1]);
     arq3.open(asmInventado[2]);
-    cout <<"\n\tOPA tudo bem colega?" ;
+    cout << asmInventado[2];
         criaTabelas(arq1, instrucao, diretiva, simbolo, uso, definicao, bits, instrucoesIA32, simboloIA32); //primeira passagem
         ligar = criaArqObj(arq1, arq2, arq3, gramatica, instrucao, diretiva, simbolo, uso, definicao, bits, instrucoesIA32,simboloIA32); //segunda passagem
 

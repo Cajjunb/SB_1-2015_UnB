@@ -4,10 +4,12 @@ bool precisaData = false; //global que indica necessidade de section data
 
 void escreveOp(ofstream& outia32,ofstream& outCod,vector<tipoInstrucaoIA32>& instrucoesIA32,map<string, tipoTSIA32>& simboloIA32, vector<tipoGramatica>& gramatica, vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, map<string, tipoTS>& simbolo, string token, string arg, int tipo, int linha){ //tipo é INSTRUÇÃO = 0 ou DIRETIVA = 1
     bool erro_montagem = false;
+    int pc = 0 ;
     switch(tipo){
         case 0: {
             tipoInstrucao i;
             tipoGramatica g;
+            tipoInstrucaoIA32 i32;
             string aux; //string auxiliar que contém argumentos
             vector<string> copyArg; //vetor de string para conter argumentos que estão separados por vírgula
             vector<string> maisAux; //vetor de string para conter argumentos que estão separados por +
@@ -18,6 +20,7 @@ void escreveOp(ofstream& outia32,ofstream& outCod,vector<tipoInstrucaoIA32>& ins
             //cout << "token:--" << token << "--" << endl;
             i = pegaInstrucao(instrucao, token);
             g = pegaGramatica(gramatica, token);
+            i32 = pegaInstrucaoIA32(instrucoesIA32,i.nome); 
 
             //outia32 << i.op << " ";
             //cout << i.op << " ";
@@ -114,7 +117,18 @@ void escreveOp(ofstream& outia32,ofstream& outCod,vector<tipoInstrucaoIA32>& ins
             }
             if(!erro_montagem){
                 cout << "instrucao = "<< i.nome <<"\t"<<endl;
+                pc +=  i32.tamanhoTotal;
+                if(i.nome == "JMP")
+                    argumentos[0] =   pc - argumentos[0];
+                else if(i.nome == "JMPP") 
+                    argumentos[0] =   pc - argumentos[0];
+                else if(i.nome == "JMPZ") 
+                    argumentos[0] =   pc - argumentos[0];
+                else if(i.nome == "JMPN") 
+                    argumentos[0] =   pc - argumentos[0];
+                
                 outia32 << inventadoParaIA32(instrucoesIA32,i.nome,argumentos);
+                outCod << inventadoParaMaquina(instrucoesIA32,i.nome,argumentos);
             }
             break;
         }
@@ -262,15 +276,18 @@ bool criaArqObj(ifstream& in, ofstream& outia32,ofstream& outCod,  vector<tipoGr
 
     io.open("tabelas/INPUT_OUTPUT_S.txt");
     outia32 << "section .data" << endl;
+    outCod << "section .data" << endl;
     getline(io, linha);
     while(linha.compare("=======================================================================") != 0){
         outia32 << linha << endl;
         getline(io, linha);
     }
     outia32 << endl;
+    outCod << endl;
     for(map<string,tipoTSIA32>::iterator it = simboloIA32.begin(); it != simboloIA32.end(); it++){
         if(it->second.section == 'd'){
             outia32 << "\t" << it->first << "\tEQU\t" << it->second.valorConstante << endl;
+            outCod << "\t" << it->first << "\tEQU\t" << it->second.valorConstante << endl;
         }
     }
 
@@ -278,12 +295,14 @@ bool criaArqObj(ifstream& in, ofstream& outia32,ofstream& outCod,  vector<tipoGr
     getline(io, linha);
     while(linha.compare("=======================================================================") != 0){
         outia32 << linha << endl;
+        outCod << linha << endl;
         getline(io, linha);
     }
     outia32 << endl;
     for(map<string,tipoTSIA32>::iterator it = simboloIA32.begin(); it != simboloIA32.end(); it++){
         if(it->second.section == 'b'){
             outia32 << "\t" << it->first << "\tresb\t" << it->second.tamanho << endl;
+            outCod << "\t" << it->first << "\tresb\t" << it->second.tamanho << endl;
         }
     }
 
@@ -291,6 +310,7 @@ bool criaArqObj(ifstream& in, ofstream& outia32,ofstream& outCod,  vector<tipoGr
     outia32 << "global _start" << endl;
     while(getline(io, linha)){
         outia32 << linha << endl;
+        outCod << linha << endl;
     }
     io.close();
 
@@ -320,7 +340,7 @@ bool criaArqObj(ifstream& in, ofstream& outia32,ofstream& outCod,  vector<tipoGr
 
         cout << linha << endl;
         //cin.get();
-        separaOp(outia32, outia32,instrucoesIA32,simboloIA32,instrucao,gramatica, diretiva, simbolo, vTab,i);
+        separaOp(outia32, outCod,instrucoesIA32,simboloIA32,instrucao,gramatica, diretiva, simbolo, vTab,i);
     }
     in.clear();
     in.seekg(0, in.beg); //rewind
