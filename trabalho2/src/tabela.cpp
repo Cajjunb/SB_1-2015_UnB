@@ -55,25 +55,25 @@ string inventadoParaMaquina(std::vector<tipoInstrucaoIA32>& instrucoesia32 ,stri
         if(instrucaoia32.tipo == tipoComportamentoTraducao::SINGLE)
             count = 1;
         for ( i = 0; i < count; i++){
-            found[0] = instrucaoia32.instrucaoAssembly[i].find("AA   AA");
-            found[1] = instrucaoia32.instrucaoAssembly[i].find("BB   BB");
+            found[0] = instrucaoia32.instrucaoCodigoMaquina[i].find("AA\tAA");   
+            found[1] = instrucaoia32.instrucaoCodigoMaquina[i].find("BB\tBB");
             if(found[0] != std::string::npos){        // "this is a test string."
-                instrucaoia32.instrucaoAssembly[i].erase(found[0],5);
+                instrucaoia32.instrucaoCodigoMaquina[i].erase(found[0],5);
                 aux = intParaHexLilEndian(argumentos[j++]) ;
-                instrucaoia32.instrucaoAssembly[i].insert(found[0],aux[1]);
-                instrucaoia32.instrucaoAssembly[i].insert(found[0],aux[0]);
+                instrucaoia32.instrucaoCodigoMaquina[i].insert(found[0],aux[1]);
+                instrucaoia32.instrucaoCodigoMaquina[i].insert(found[0],"\t");
+                instrucaoia32.instrucaoCodigoMaquina[i].insert(found[0],aux[0]);
             }
             else if( found[1] != std::string::npos ){
-                instrucaoia32.instrucaoAssembly[i].erase(found[1],1);
+                instrucaoia32.instrucaoCodigoMaquina[i].erase(found[1],5);
                 aux = intParaHexLilEndian(argumentos[j++]) ;
-                instrucaoia32.instrucaoAssembly[i].insert(found[1],aux[1]);
-                instrucaoia32.instrucaoAssembly[i].insert(found[1],aux[0]);
+                instrucaoia32.instrucaoCodigoMaquina[i].insert(found[1],aux[1]);
+                instrucaoia32.instrucaoCodigoMaquina[i].insert(found[1],"\t");
+                instrucaoia32.instrucaoCodigoMaquina[i].insert(found[1],aux[0]);
             }
-            result = result+"\n"+instrucaoia32.instrucaoAssembly[i];
+            result = result+"\n"+instrucaoia32.instrucaoCodigoMaquina[i];
         }
         result[result.size()+1] = '\0';
-
-        cout << "RESULT=\n"<< result;
     }
     else
         result = "null";
@@ -114,60 +114,36 @@ void  criaInstrucaoIa32(ifstream& arq, vector<tipoInstrucaoIA32>& instrucaoIA32)
     }
     while(!arq.eof()){
         tipoInstrucaoIA32 instrucaoNova;
-        string bufferDoArquivo ;
+        string bufferDoArquivo ; 
         std::vector<string> bufferSegmentado;
         std::vector<string>::iterator it;
         int i ;
         int nro_argumentos;
         int tamanhoTotal = 0;
         getline(arq,bufferDoArquivo,'\n');
-
-        //cout << bufferDoArquivo << endl;
-
         explode(bufferSegmentado,bufferDoArquivo,";");
-        instrucaoNova.nome.append(bufferSegmentado[0]);
-        //cout << "Instrucao nova nome: " << instrucaoNova.nome << endl;
-
-        instrucaoNova.tipo = (tipoComportamentoTraducao)bufferSegmentado[1][0];
-        //cout << "Instrucao nova tipo: " << (char)instrucaoNova.tipo << endl;
-
-        if(instrucaoNova.tipo == SINGLE)
+        instrucaoNova.nome = bufferSegmentado[0].c_str();
+        instrucaoNova.tipo = (tipoComportamentoTraducao) bufferSegmentado[1].c_str()[0];
+        if(instrucaoNova.tipo == tipoComportamentoTraducao::SINGLE)
             instrucaoNova.nroInstrucoes = 1;
-        else if(instrucaoNova.tipo == DOUBLE)
+        else if(instrucaoNova.tipo == tipoComportamentoTraducao::DOUBLE)
             instrucaoNova.nroInstrucoes = 2;
-        else if(instrucaoNova.tipo == TRIPLE)
+        else if(instrucaoNova.tipo == tipoComportamentoTraducao::TRIPLE)
             instrucaoNova.nroInstrucoes = 3;
-        else if(instrucaoNova.tipo == QUADRUPLE)
+        else if(instrucaoNova.tipo == tipoComportamentoTraducao::QUADRUPLE)
             instrucaoNova.nroInstrucoes = 4;
-        else if(instrucaoNova.tipo == NONE)
-            instrucaoNova.nroInstrucoes = 0;
-
         nro_argumentos = instrucaoNova.nroInstrucoes;
-
-        //cout << "Instrucao nova numero argumentos: " << instrucaoNova.nroInstrucoes << endl;
-
-        //cout << endl << "**Instrucao Assembly**" << endl;
         for (i = 0;i < nro_argumentos;i++){
-            //cout << "Buffer Segmentado[" << i << "+2]: " << bufferSegmentado[i+2] << endl;
-            instrucaoNova.instrucaoAssembly.push_back(bufferSegmentado[i+2]);
+            instrucaoNova.instrucaoAssembly.push_back(bufferSegmentado[i+2].c_str());
         }
-        //cout << endl << "**Instrucao Codigo Maquina**" << endl;
         for ( i = 0; i < nro_argumentos; i++){
-            //cout << "Buffer Segmentado[nro_argumentos (" << nro_argumentos << ") +2+" << i << "]: " << bufferSegmentado[nro_argumentos+2+i] << endl;
-            instrucaoNova.instrucaoCodigoMaquina.push_back(bufferSegmentado[nro_argumentos+2+i]);
+            instrucaoNova.instrucaoCodigoMaquina.push_back(bufferSegmentado[nro_argumentos+2+i].c_str());
         }
-        for ( i = nro_argumentos+2+i; i < (int)bufferSegmentado.size(); ++i){
-            //cout << "bufferSegmentado[" << i << "]: " << bufferSegmentado[i] << endl;
-            //vector<string> aux;
-            //explode(aux, bufferSegmentado[i], "\t");
-            //cout << "aux[0]: " << aux[0] << endl << "aux[1]: " << aux[1] << endl;
-            //cin.get();
-            if(isNumber(bufferSegmentado[i]))
-                tamanhoTotal += std::stoi( bufferSegmentado[i]);
+        for ( i = nro_argumentos+2+i; i < bufferSegmentado.size(); ++i){
+            tamanhoTotal += std::stoi( bufferSegmentado[i].c_str());
         }
-
         instrucaoNova.tamanhoTotal = tamanhoTotal;
-        //cout << "Instrucao nova tamanho total: " << instrucaoNova.tamanhoTotal << endl;
+        cout << "Instrucao nova tamanho total: " << instrucaoNova.tamanhoTotal << endl;
         //cin.get();
         instrucaoIA32.push_back(instrucaoNova);
     }

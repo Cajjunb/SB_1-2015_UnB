@@ -1,0 +1,16 @@
+null
+	mov	dword	ebx,	0
+	mov	dword	0,	ebx
+	mov	dword	eax,	0
+	sub	dword	eax,	0
+	cmp	eax,	eax
+	js	0
+	cmp	eax,	eax
+	jz	0
+	mov	dword	0,	eaxnull
+	mov	dword	0,	eax
+	mov	dword	eax,	0
+	sub	dword	eax,	0
+	cmp	eax,	eax
+	jz	0
+	jmp 0null
