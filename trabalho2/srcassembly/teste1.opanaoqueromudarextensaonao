@@ -1,1 +1,4 @@
-11 7 1 8 10 9 14 00 10 00 00 00 00 
+
+	mov	dword	0,	eax
+	add	dword	eax,	0
+	mov	dword	eax,	0
