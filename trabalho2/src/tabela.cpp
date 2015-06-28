@@ -3,6 +3,7 @@
 string inventadoParaIA32(std::vector<tipoInstrucaoIA32>& instrucoesia32 ,string operacao,std::vector<int> argumentos){
     tipoInstrucaoIA32 instrucaoia32 = pegaInstrucaoIA32( instrucoesia32,operacao);
     std::string result;
+    bool temArgumentos = true;
     int i = 0;
     if(instrucaoia32.tamanhoTotal != -1){            // ACHOU
         int count;
@@ -13,20 +14,24 @@ string inventadoParaIA32(std::vector<tipoInstrucaoIA32>& instrucoesia32 ,string 
             count = 2;
         else if(instrucaoia32.tipo == tipoComportamentoTraducao::SINGLE)
             count = 1;
+        else if(instrucaoia32.tipo == tipoComportamentoTraducao::NONE){
+            count = 3;
+            temArgumentos = false;
+        }
         int  j = 0;                                         // O indice dos argumentos
         for ( i = 0; i < count; i++){
             found[0] = instrucaoia32.instrucaoAssembly[i].find("LABEL");
             found[1] = instrucaoia32.instrucaoAssembly[i].find("A");
             found[2] = instrucaoia32.instrucaoAssembly[i].find("B");
-            if(found[0] != std::string::npos){        // "this is a test string."
+            if(temArgumentos && found[0] != std::string::npos){        // "this is a test string."
                 instrucaoia32.instrucaoAssembly[i].erase(found[0],5);
                 instrucaoia32.instrucaoAssembly[i].insert(found[0],std::to_string(argumentos[j++]));
             }
-            else if( found[1] != std::string::npos ){
+            else if( temArgumentos && found[1] != std::string::npos ){
                 instrucaoia32.instrucaoAssembly[i].erase(found[1],1);
                 instrucaoia32.instrucaoAssembly[i].insert(found[1],std::to_string(argumentos[j++]));
             }
-            else if(found[2] != std::string::npos ){
+            else if(temArgumentos && found[2] != std::string::npos ){
                 instrucaoia32.instrucaoAssembly[i].erase(found[2],1);
                 instrucaoia32.instrucaoAssembly[i].insert(found[2],std::to_string(argumentos[j++]));
             }
@@ -129,6 +134,8 @@ void  criaInstrucaoIa32(ifstream& arq, vector<tipoInstrucaoIA32>& instrucaoIA32)
         else if(instrucaoNova.tipo == tipoComportamentoTraducao::DOUBLE)
             instrucaoNova.nroInstrucoes = 2;
         else if(instrucaoNova.tipo == tipoComportamentoTraducao::TRIPLE)
+            instrucaoNova.nroInstrucoes = 3;
+        else if(instrucaoNova.tipo == tipoComportamentoTraducao::NONE)
             instrucaoNova.nroInstrucoes = 3;
         else if(instrucaoNova.tipo == tipoComportamentoTraducao::QUADRUPLE)
             instrucaoNova.nroInstrucoes = 4;

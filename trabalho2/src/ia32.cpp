@@ -50,13 +50,13 @@ void insereTabelaSimbolosIA32(string token, map<string, tipoTS>& simbolo, int *p
         else{ //é símbolo na seção data
             if(s.tipoConstante){ //se for constante
                 s32.section = 'd';
-                s32.endereco = *pcia32;
+                s32.endereco = 0;
                 s32.tipoConstante = true;
                 s32.tamanho = 4;
             }
             else{ //É um space
                 s32.section = 'b';
-                s32.endereco = *pcia32;
+                s32.endereco = 0;
                 s32.valorConstante = 0;
                 s32.tipoConstante = false;
                 s32.tamanho = 0;

@@ -344,7 +344,7 @@ void criaTabelas(ifstream& arq, vector<tipoInstrucao>& instrucao, vector<tipoDir
         verificaLabels(vTab, i);
     }
 
-    corrigeEnderecosDataBss(simboloIA32);
+    //corrigeEnderecosDataBss(simboloIA32);
     verificaSectionText(); //verifica se o arquivo terminou declarando uma seção text
     arq.clear();
     arq.seekg(0, arq.beg); //rewind

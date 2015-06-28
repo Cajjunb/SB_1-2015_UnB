@@ -1,4 +1,3 @@
-
 CFLAG= -std=c++11 -O2 
 PATHSRC ='.\src\'
 INCLUDE = arquivo.o base.o erro.o tabela.o ia32.o
@@ -33,8 +32,8 @@ passagem2.o: src/passagem2.cpp
 tabela.o: src/tabela.cpp
 	g++ -c $(CFLAG) src/tabela.cpp
 
-montador.o: $(INCLUDE) $(PASSAGEM) $(MONTADOR) src/montador.cpp
-	g++ -c $(CFLAG) $(INCLUDE) $(PASSAGEM) $(MONTADOR) src/montador.cpp
+montador.o: src/montador.cpp
+	g++ -c $(CFLAG) src/montador.cpp
 
 ligador.o: src/ligador.cpp
 	g++ -c $(CFLAG) src/ligador.cpp

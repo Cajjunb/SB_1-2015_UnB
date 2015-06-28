@@ -1,12 +1,14 @@
-ADD;S;	add	dword	eax,	LABEL;	03	05	AA	AA	00	00;6;
-SUB;S;	sub	dword	eax,	LABEL;	2b	05	AA	AA	00	00;6;
-DIV;T;	mov	edx,	0;	mov	dword	ebx,	LABEL;	div	dword 	ebx;	ba	00	00	00	00;	8b	1d	AA	AA	00	00;	f7	f3;5;6;2;
-MUL;T;	mov	edx,	0;	mov	dword	ebx,	LABEL;	imul	dword	ebx;	ba	00	00	00	00;	8b	1d	AA	AA	00	00;	f7	eb;5;6;2;
-LOAD;S;	mov	dword	eax,	LABEL;	A1	AA	AA	00	00;5;
-STORE;S;	mov	dword	LABEL,	eax;	A3	AA	AA	00	00;5;
-COPY;D;	mov	dword	ebx,	A;	mov	dword	B,	ebx;	8b	1d	AA	AA	00	00;	89	1d	BB	BB	00	00;6;6;
-JMP;S;	jmp LABEL;	eb	AA	AA;3;
-JMPP;D;	cmp	eax,	eax;	jns	LABEL;	39	c0;	78	AA	AA;2;3;
-JMPN;D;	cmp	eax,	eax;	js	LABEL;	39	c0;	79	AA	AA;2;3;
-JMPZ;D;	cmp	eax,	eax;	jz	LABEL;	39	c0;	74	AA	AA;2;3;
-STOP;T;	mov	eax,	1;	mov	ebx,	0;	int	80h;	b8	01	00	00	00;	bb	00	00	00	00;	cd	80;3;3;2;
+ADD;S;	add	dword	eax,	LABEL;	03	05	AA	AA	00	00;6
+SUB;S;	sub	dword	eax,	LABEL;	2b	05	AA	AA	00	00;6
+DIV;T;	mov	edx,	0;	mov	dword	ebx,	LABEL;	div	dword 	ebx;	ba	00	00	00	00;	8b	1d	AA	AA	00	00;	f7	f3;5;6;2
+MUL;T;	mov	edx,	0;	mov	dword	ebx,	LABEL;	imul	dword	ebx;	ba	00	00	00	00;	8b	1d	AA	AA	00	00;	f7	eb;5;6;2
+LOAD;S;	mov	dword	eax,	LABEL;	A1	AA	AA	00	00;5
+STORE;S;	mov	dword	LABEL,	eax;	A3	AA	AA	00	00;5
+COPY;D;	mov	dword	ebx,	A;	mov	dword	B,	ebx;	8b	1d	AA	AA	00	00;	89	1d	BB	BB	00	00;6;6
+JMP;S;	jmp LABEL;	eb	AA	AA;3
+JMPP;D;	cmp	eax,	eax;	jns	LABEL;	39	c0;	78	AA	AA;2;3
+JMPN;D;	cmp	eax,	eax;	js	LABEL;	39	c0;	79	AA	AA;2;3
+JMPZ;D;	cmp	eax,	eax;	jz	LABEL;	39	c0;	74	AA	AA;2;3
+STOP;N;	mov	eax,	1;	mov	ebx,	0;	int	80h;	b8	01	00	00	00;	bb	00	00	00	00;	cd	80;3;3;2
+INPUT;T;	call	lerInteiro;	mov eax,	[valor];	mov	LABEL,	eax;	e8	7e	fe	ff	ff;	a1	20	00	00;	a3	AA	AA	00;5;5;5
+OUTPUT;D;	mov eax,	LABEL;	call escreverInteiro;	a1	AA	AA	00;	e8	e1	f3	ff	ff;5;5

@@ -13,7 +13,7 @@ void escreveOp(ofstream& out,vector<tipoInstrucaoIA32>& instrucoesIA32,map<strin
             vector<string> maisAux; //vetor de string para conter argumentos que estão separados por +
             int mais;
             int qtdArg = 0;
-            std::vector<int> argumentos(2); // vetor de inteiros para ser usado na funcao de traducao inventado -> ia32
+            vector<int> argumentos; // vetor de inteiros para ser usado na funcao de traducao inventado -> ia32
 
             //cout << "token:--" << token << "--" << endl;
             i = pegaInstrucao(instrucao, token);
@@ -63,8 +63,10 @@ void escreveOp(ofstream& out,vector<tipoInstrucaoIA32>& instrucoesIA32,map<strin
                             imprimeErro(ERRO_OP_INVALIDO, linha);
                             erro_montagem = true;
                         }
-                        mais += s.posicao;
-                        argumentos.insert(argumentos.end(),mais);                           // <- INSERE COMO ARGUMENTO VALIDO!
+                        map<string, tipoTSIA32>::iterator it2 = simboloIA32.find(aux);
+                        mais += it2->second.endereco;
+                        argumentos.push_back(mais);                           // <- INSERE COMO ARGUMENTO VALIDO!
+
                         //cout << " aux: " << aux << " s.posicao: " << s.posicao << " mais final: " << mais << endl;
                         //cin.get();
                         //out << mais;
@@ -88,16 +90,14 @@ void escreveOp(ofstream& out,vector<tipoInstrucaoIA32>& instrucoesIA32,map<strin
                             erro_montagem = true;
                         }
                         imprimeErro(ERRO_ARG_INVALIDO, linha);
+                        erro_montagem = true;
                     }
                 }while(copyArg.size() > 0);
                 //cout << "g.nome: " << g.nome << " g.qtdOperandos: " << g.qtdOperandos << endl;
                 //cout << "qtdArgs: " << qtdArg << endl;
                 if(qtdArg != g.qtdOperandos){
                     imprimeErro(ERRO_QTD_ARG, linha);
-                }
-                if(erro_montagem != true){
-                    cout << "instrucao = "<< i.nome <<"\t"<< "argumentos = "<< argumentos[0];
-                    out << inventadoParaIA32(instrucoesIA32,i.nome,argumentos);
+                    erro_montagem = true;
                 }
 
             }
@@ -110,9 +110,12 @@ void escreveOp(ofstream& out,vector<tipoInstrucaoIA32>& instrucoesIA32,map<strin
                     imprimeErro(ERRO_QTD_ARG, linha); //não é STOP e não tinha argumentos
                     erro_montagem = true;
                 }
+
             }
-
-
+            if(!erro_montagem){
+                cout << "instrucao = "<< i.nome <<"\t"<<endl;
+                out << inventadoParaIA32(instrucoesIA32,i.nome,argumentos);
+            }
             break;
         }
         case 1:{
@@ -245,37 +248,7 @@ bool criaArqObj(ifstream& in, ofstream& out, vector<tipoGramatica>& gramatica, v
     string linha;
     bool liga = false;
     int i = 0;
-    if(!definicao.empty() || !uso.empty()){
-        //out << "TABLE USE" << endl;
-        //cout << "TABLE USE" << endl;
-        for (map<string, vector<int> >::iterator it = uso.begin(); it != uso.end(); ++it){
-            for(vector<int>::iterator it2 = it->second.begin(); it2 != it->second.end(); ++ it2){
-                //out << it->first << " " << *it2 << endl;
-                //cout << it->first << " " << *it2 << endl;
-            }
-        }
-        //out << endl;
-        //cout << endl;
-        out << "TABLE DEFINITION" << endl;
-        //cout << "TABLE DEFINITION" << endl;
-        for (map<string, int>::iterator it = definicao.begin(); it != definicao.end(); ++it){
-            //out << it->first << " " << it->second << endl;
-            //cout << it->first << " " << it->second << endl;
-        }
-        //out << endl;
-        //out << "R" << endl;
-        //cout << "TABLE DEFINITION" << endl;
-        //cout << "tamanho: " << bits.size();
-        for (vector<int>::iterator it = bits.begin(); it != bits.end(); it++){
-            //out << *it << ' ';
-            //cout << it->first << " " << it->second << endl;
-        }
-        //out << endl << endl;
-        //cout << endl;
-        //out << "CODE" << endl;
-        //cout << "CODE" << endl;
-        liga = true;
-    }
+
     //cout << "\n Comeca a segunda passagem";
     while(getline(in, linha)){
         vector<string> vTab;
@@ -297,7 +270,7 @@ bool criaArqObj(ifstream& in, ofstream& out, vector<tipoGramatica>& gramatica, v
             }
         }
 
-        //cout << linha << endl;
+        cout << linha << endl;
         //cin.get();
         separaOp(out,instrucoesIA32,simboloIA32,instrucao,gramatica, diretiva, simbolo, vTab,i);
     }

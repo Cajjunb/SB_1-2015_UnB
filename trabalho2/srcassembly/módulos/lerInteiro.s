@@ -1,32 +1,11 @@
 ;Este programa pega o que o usuário digitou, A, e soma mais 10, B, imprimindo resultado na tela
 
 section .data
-	B	EQU	10
-
-msg_debug1 		db  0dh, 0ah, 'Debug1: '
-	DEBUG1SIZE		EQU $-msg_debug1
-msg_debug2 		db 0dh, 0ah, 'Debug2: '
-	DEBUG2SIZE		EQU $-msg_debug2
-msg_debug3 		db 0dh, 0ah, 'No final: '
-	DEBUG3SIZE		EQU $-msg_debug3
-msg_debug4 		db 0dh, 0ah, 'Loop '
-	DEBUG4SIZE		EQU $-msg_debug4
-msg_debug5 		db 0dh, 0ah, 'Debug3 '
-	DEBUG5SIZE		EQU $-msg_debug5
-msg_debug6		db 0dh, 0ah, 'Certo! '
-	DEBUG6SIZE		EQU $-msg_debug6
-msg_debug7		db 0dh, 0ah, 'Errado!'
-	DEBUG7SIZE		EQU $-msg_debug7
 
 section .bss
-	imprime		resb	9	; NECESSÁRIO: jeitinho para imprimir no máximo 9 dígitos, hehe
 	valor			resb	4 	; NECESSÁRIO: 4 bytes para armazenar inteiro
 	casas			resb	4	; NECESSÁRIO: casas decimais
-	digitos		resb	4	; NECESSÁRIO: 4 bytes para contar quantidade de dígitos
 	numero		resb	1 	; NECESSÁRIO: um byte para mostrar um número em ASCII. Precisa ser a última coisa adicionada no .bss
-
-	RESPOSTA	resb	4		;Usuário determinou que o tamanho da resposta terá no máximo 4 bytes
-	A			resb	4		;coisa do usuário
 
 section .text
 global _start
