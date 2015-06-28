@@ -2,7 +2,7 @@
 
 bool precisaData = false; //global que indica necessidade de section data
 
-void escreveOp(ofstream& out,vector<tipoInstrucaoIA32>& instrucoesIA32,map<string, tipoTSIA32>& simboloIA32, vector<tipoGramatica>& gramatica, vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, map<string, tipoTS>& simbolo, string token, string arg, int tipo, int linha){ //tipo é INSTRUÇÃO = 0 ou DIRETIVA = 1
+void escreveOp(ofstream& outia32,ofstream& outCod,vector<tipoInstrucaoIA32>& instrucoesIA32,map<string, tipoTSIA32>& simboloIA32, vector<tipoGramatica>& gramatica, vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, map<string, tipoTS>& simbolo, string token, string arg, int tipo, int linha){ //tipo é INSTRUÇÃO = 0 ou DIRETIVA = 1
     bool erro_montagem = false;
     switch(tipo){
         case 0: {
@@ -19,7 +19,7 @@ void escreveOp(ofstream& out,vector<tipoInstrucaoIA32>& instrucoesIA32,map<strin
             i = pegaInstrucao(instrucao, token);
             g = pegaGramatica(gramatica, token);
 
-            //out << i.op << " ";
+            //outia32 << i.op << " ";
             //cout << i.op << " ";
 
             if(g.qtdOperandos > 0 && !arg.empty()){ //se qtdOperandos > 0 e argumento != vazio
@@ -69,10 +69,10 @@ void escreveOp(ofstream& out,vector<tipoInstrucaoIA32>& instrucoesIA32,map<strin
 
                         //cout << " aux: " << aux << " s.posicao: " << s.posicao << " mais final: " << mais << endl;
                         //cin.get();
-                        //out << mais;
+                        //outia32 << mais;
                         //cout << mais;
                         //cout << endl;
-                        //out << " ";
+                        //outia32 << " ";
                     }
                     else{
                         if(!getData())
@@ -114,7 +114,7 @@ void escreveOp(ofstream& out,vector<tipoInstrucaoIA32>& instrucoesIA32,map<strin
             }
             if(!erro_montagem){
                 cout << "instrucao = "<< i.nome <<"\t"<<endl;
-                out << inventadoParaIA32(instrucoesIA32,i.nome,argumentos);
+                outia32 << inventadoParaIA32(instrucoesIA32,i.nome,argumentos);
             }
             break;
         }
@@ -129,13 +129,13 @@ void escreveOp(ofstream& out,vector<tipoInstrucaoIA32>& instrucoesIA32,map<strin
                             long int space = strtol(arg.c_str(), NULL, 16);
                             do{
                                 //cout << "00 ";
-                                //out << "00 ";
+                                //outia32 << "00 ";
                                 space--;
                             }while(space > 0);
                         }
                         else{
                             //cout << strtol(arg.c_str(), NULL, 16);
-                            //out << strtol(arg.c_str(), NULL, 16) << " ";
+                            //outia32 << strtol(arg.c_str(), NULL, 16) << " ";
                         }
                     }
                     else{ //É um número em decimal
@@ -143,13 +143,13 @@ void escreveOp(ofstream& out,vector<tipoInstrucaoIA32>& instrucoesIA32,map<strin
                             long int space = strtol(arg.c_str(), NULL, 10);
                             do{
                                 //cout << "00 ";
-                                //out << "00 ";
+                                //outia32 << "00 ";
                                 space--;
                             }while(space > 0);
                         }
                         else{
                             //cout << arg;
-                            //out << arg << " ";
+                            //outia32 << arg << " ";
                         }
                     }
                 }
@@ -170,7 +170,7 @@ void escreveOp(ofstream& out,vector<tipoInstrucaoIA32>& instrucoesIA32,map<strin
 
 }
 
-void separaOp(ofstream& out,vector<tipoInstrucaoIA32>& instrucoesIA32,map<string, tipoTSIA32>& simboloIA32, vector<tipoInstrucao>& instrucao,vector<tipoGramatica>& gramatica, vector<tipoDiretiva>& diretiva, map<string, tipoTS>& simbolo, vector<string> vTab, int linha){
+void separaOp(ofstream& outia32,ofstream& outCod,vector<tipoInstrucaoIA32>& instrucoesIA32,map<string, tipoTSIA32>& simboloIA32, vector<tipoInstrucao>& instrucao,vector<tipoGramatica>& gramatica, vector<tipoDiretiva>& diretiva, map<string, tipoTS>& simbolo, vector<string> vTab, int linha){
 
     if(isInstrucao(instrucao, vTab[0])){ //INSTRUÇÃO A
         detectarErrosInstrucao(simbolo, vTab, gramatica,  linha);
@@ -179,9 +179,9 @@ void separaOp(ofstream& out,vector<tipoInstrucaoIA32>& instrucoesIA32,map<string
             if(vTab.size() > 1){
                 if(vTab.size() == 3) //COPY ARG,    ARG
                     vTab[1].append(vTab[2]);
-                escreveOp(out,instrucoesIA32,simboloIA32,gramatica, instrucao, diretiva, simbolo, vTab[0], vTab[1], 0, linha);
+                escreveOp(outia32, outCod,instrucoesIA32,simboloIA32,gramatica, instrucao, diretiva, simbolo, vTab[0], vTab[1], 0, linha);
             }else
-                escreveOp(out,instrucoesIA32,simboloIA32,gramatica, instrucao, diretiva, simbolo, vTab[0], "", 0, linha); //STOP
+                escreveOp(outia32, outCod,instrucoesIA32,simboloIA32,gramatica, instrucao, diretiva, simbolo, vTab[0], "", 0, linha); //STOP
         }
         else{
             if(!isTokenValido(vTab[0]))
@@ -193,9 +193,9 @@ void separaOp(ofstream& out,vector<tipoInstrucaoIA32>& instrucoesIA32,map<string
     else if(isDiretiva(diretiva, vTab[0])){
         if(isAlfabeto(vTab[0])){
             if(vTab.size() > 1)
-                escreveOp(out,instrucoesIA32,simboloIA32,gramatica, instrucao, diretiva, simbolo, vTab[0], vTab[1], 1, linha);
+                escreveOp(outia32, outCod,instrucoesIA32,simboloIA32,gramatica, instrucao, diretiva, simbolo, vTab[0], vTab[1], 1, linha);
             else
-                escreveOp(out,instrucoesIA32,simboloIA32,gramatica, instrucao, diretiva, simbolo, vTab[0], "00", 1, linha); //SPACE SEM ARGUMENTO
+                escreveOp(outia32, outCod,instrucoesIA32,simboloIA32,gramatica, instrucao, diretiva, simbolo, vTab[0], "00", 1, linha); //SPACE SEM ARGUMENTO
         }
         else{
             if(!isTokenValido(vTab[0]))
@@ -213,10 +213,10 @@ void separaOp(ofstream& out,vector<tipoInstrucaoIA32>& instrucoesIA32,map<string
                     if(vTab.size() > 2){
                         if(vTab.size() == 4) //LABEL:   COPY ARG,    ARG
                             vTab[2].append(vTab[3]);
-                        escreveOp(out,instrucoesIA32,simboloIA32,gramatica, instrucao, diretiva, simbolo, vTab[1], vTab[2], 0, linha);
+                        escreveOp(outia32, outCod,instrucoesIA32,simboloIA32,gramatica, instrucao, diretiva, simbolo, vTab[1], vTab[2], 0, linha);
                     }
                     else
-                        escreveOp(out,instrucoesIA32,simboloIA32,gramatica, instrucao, diretiva, simbolo, vTab[1], "", 0, linha); //LABEL: STOP
+                        escreveOp(outia32, outCod,instrucoesIA32,simboloIA32,gramatica, instrucao, diretiva, simbolo, vTab[1], "", 0, linha); //LABEL: STOP
                 }
                 else{
                     if(!isTokenValido(vTab[1]))
@@ -228,9 +228,9 @@ void separaOp(ofstream& out,vector<tipoInstrucaoIA32>& instrucoesIA32,map<string
             else if(isDiretiva(diretiva, vTab[1])){
                 if(isAlfabeto(vTab[1])){
                     if(vTab.size() > 2)
-                        escreveOp(out,instrucoesIA32,simboloIA32,gramatica, instrucao, diretiva, simbolo, vTab[1], vTab[2], 1, linha);
+                        escreveOp(outia32, outCod,instrucoesIA32,simboloIA32,gramatica, instrucao, diretiva, simbolo, vTab[1], vTab[2], 1, linha);
                     else
-                        escreveOp(out,instrucoesIA32,simboloIA32,gramatica, instrucao, diretiva, simbolo, vTab[1], "00", 1, linha); //SPACE SEM ARGUMENTO
+                        escreveOp(outia32, outCod,instrucoesIA32,simboloIA32,gramatica, instrucao, diretiva, simbolo, vTab[1], "00", 1, linha); //SPACE SEM ARGUMENTO
                 }
                 else{
                     if(!isTokenValido(vTab[1]))
@@ -244,7 +244,7 @@ void separaOp(ofstream& out,vector<tipoInstrucaoIA32>& instrucoesIA32,map<string
     //cout << "FIM DE SEPARA" << endl;
 }
 
-bool criaArqObj(ifstream& in, ofstream& out, vector<tipoGramatica>& gramatica, vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, map<string, tipoTS>& simbolo, map<string, vector<int> >& uso, map<string, int>& definicao, vector<int>& bits, vector<tipoInstrucaoIA32>& instrucoesIA32,map<string,tipoTSIA32>& simboloIA32){
+bool criaArqObj(ifstream& in, ofstream& outia32,ofstream& outCod,  vector<tipoGramatica>& gramatica, vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, map<string, tipoTS>& simbolo, map<string, vector<int> >& uso, map<string, int>& definicao, vector<int>& bits, vector<tipoInstrucaoIA32>& instrucoesIA32,map<string,tipoTSIA32>& simboloIA32){
     string linha;
     bool liga = false;
     int i = 0;
@@ -272,7 +272,7 @@ bool criaArqObj(ifstream& in, ofstream& out, vector<tipoGramatica>& gramatica, v
 
         cout << linha << endl;
         //cin.get();
-        separaOp(out,instrucoesIA32,simboloIA32,instrucao,gramatica, diretiva, simbolo, vTab,i);
+        separaOp(outia32, outia32,instrucoesIA32,simboloIA32,instrucao,gramatica, diretiva, simbolo, vTab,i);
     }
     in.clear();
     in.seekg(0, in.beg); //rewind

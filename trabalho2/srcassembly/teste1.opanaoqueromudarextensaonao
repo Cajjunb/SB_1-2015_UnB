@@ -1,11 +1,12 @@
 
 	call	lerInteiro
 	mov eax,	[valor]
-	mov	0,	eax
-	mov	dword	eax,	0
-	add	dword	eax,	0
-	mov	dword	4,	eax
-	mov eax,	4
+	mov	0x0,	eax
+	mov	dword	eax,	0x0
+	add	dword	eax,	0x0
+	jmp 0xf
+	mov	dword	0x4,	eax
+	mov eax,	0x4
 	call escreverInteiro
 	mov	eax,	1
 	mov	ebx,	0

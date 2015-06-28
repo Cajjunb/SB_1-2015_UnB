@@ -3,6 +3,8 @@
 string inventadoParaIA32(std::vector<tipoInstrucaoIA32>& instrucoesia32 ,string operacao,std::vector<int> argumentos){
     tipoInstrucaoIA32 instrucaoia32 = pegaInstrucaoIA32( instrucoesia32,operacao);
     std::string result;
+    std::string auxStringObject;
+    char  aux[30];
     bool temArgumentos = true;
     int i = 0;
     if(instrucaoia32.tamanhoTotal != -1){            // ACHOU
@@ -25,15 +27,21 @@ string inventadoParaIA32(std::vector<tipoInstrucaoIA32>& instrucoesia32 ,string 
             found[2] = instrucaoia32.instrucaoAssembly[i].find("B");
             if(temArgumentos && found[0] != std::string::npos){        // "this is a test string."
                 instrucaoia32.instrucaoAssembly[i].erase(found[0],5);
-                instrucaoia32.instrucaoAssembly[i].insert(found[0],std::to_string(argumentos[j++]));
+                itoa (argumentos[j++],aux ,16);
+                auxStringObject = aux;
+                instrucaoia32.instrucaoAssembly[i].insert(found[0],"0x"+auxStringObject);
             }
             else if( temArgumentos && found[1] != std::string::npos ){
                 instrucaoia32.instrucaoAssembly[i].erase(found[1],1);
-                instrucaoia32.instrucaoAssembly[i].insert(found[1],std::to_string(argumentos[j++]));
+                itoa (argumentos[j++],aux ,16);
+                auxStringObject = aux;
+                instrucaoia32.instrucaoAssembly[i].insert(found[1],"0x"+auxStringObject);
             }
             else if(temArgumentos && found[2] != std::string::npos ){
                 instrucaoia32.instrucaoAssembly[i].erase(found[2],1);
-                instrucaoia32.instrucaoAssembly[i].insert(found[2],std::to_string(argumentos[j++]));
+                itoa (argumentos[j++],aux ,16);
+                auxStringObject = aux;
+                instrucaoia32.instrucaoAssembly[i].insert(found[2],"0x"+auxStringObject);
             }
             result = result+"\n"+instrucaoia32.instrucaoAssembly[i];
         }
