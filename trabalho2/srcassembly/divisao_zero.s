@@ -2,6 +2,7 @@ section .data
 	newline			db 0dh, 0ah
 	NEWLINESIZE		EQU $-newline
 
+	UM	EQU	1
 	VAL	EQU	5
 	ZERO	EQU	0
 
@@ -12,7 +13,7 @@ section .bss
 	digitos		resb	4	
 	numero		resb	1 	
 
-	RESULT	resb	1
+	RESULT	resb	8
 
 section .text
 global _start
@@ -178,12 +179,19 @@ global _start
 				ret
 	_start:
 
-	mov	dword	eax,	0x5
+	mov	dword	eax,	VAL
 	mov	edx,	0
-	mov	dword	ebx,	0x5
+	mov	dword	ebx,	VAL
 	div	dword 	ebx
-	mov	dword	[0x2d],	eax
-	mov eax,	[0x2d]
+	mov	dword	[RESULT],	eax
+	mov	dword	eax,	VAL
+	mov	edx,	0
+	mov	dword	ebx,	UM
+	div	dword 	ebx
+	mov	dword	[RESULT+4],	eax
+	mov eax,	[RESULT]
+	call escreverInteiro
+	mov eax,	[RESULT+4]
 	call escreverInteiro
 	mov	eax,	1
 	mov	ebx,	0

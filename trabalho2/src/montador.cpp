@@ -55,14 +55,9 @@ void monta(vector<string> asmInventado){
     arq1.open("pre_processado.txt");
     arq2.open(asmInventado[1]);
     arq3.open(asmInventado[2]);
-    cout <<"\n\tOPA tudo bem colega?" ;
         criaTabelas(arq1, instrucao, diretiva, simbolo, uso, definicao, bits, instrucoesIA32, simboloIA32); //primeira passagem
         ligar = criaArqObj(arq1, arq2, arq3, gramatica, instrucao, diretiva, simbolo, uso, definicao, bits, instrucoesIA32,simboloIA32); //segunda passagem
 
-        cout << endl << "Tabela de simbolos IA32" << endl;
-        for(map<string, tipoTSIA32>::iterator it = simboloIA32.begin(); it != simboloIA32.end(); it++){
-            cout << it->first << " Sessao: " << (it->second).section << " Tamanho: " << (it->second).tamanho << " Endereco: " << (it->second).endereco << endl;
-        }
     arq1.close();
     arq2.close();
 

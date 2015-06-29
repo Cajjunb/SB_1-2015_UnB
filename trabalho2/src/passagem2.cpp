@@ -9,11 +9,13 @@ void escreveOp(ofstream& outia32,ofstream& outCod,vector<tipoInstrucaoIA32>& ins
             tipoInstrucao i;
             tipoGramatica g;
             string aux; //string auxiliar que contém argumentos
+            string argFinal; //string auxiliar que guarda as labels e label+número
             vector<string> copyArg; //vetor de string para conter argumentos que estão separados por vírgula
             vector<string> maisAux; //vetor de string para conter argumentos que estão separados por +
             int mais;
             int qtdArg = 0;
-            vector<int> argumentos; // vetor de inteiros para ser usado na funcao de traducao inventado -> ia32
+            vector<int> argumentos; // vetor de inteiros para ser usado na funcao de traducao inventado -> cod ia32
+            vector<string> argumentosStrings; //vetor de strings para ser usado na função inventado->ia32
 
             //cout << "token:--" << token << "--" << endl;
             i = pegaInstrucao(instrucao, token);
@@ -29,6 +31,8 @@ void escreveOp(ofstream& outia32,ofstream& outCod,vector<tipoInstrucaoIA32>& ins
                 do{
                     mais = 0;
                     qtdArg++;
+                    argFinal.append(aux);
+
                     if(!copyArg.empty()){ //enquanto copyArg tiver argumentos
                         aux.clear();
                         aux.append(copyArg.front());
@@ -64,11 +68,17 @@ void escreveOp(ofstream& outia32,ofstream& outCod,vector<tipoInstrucaoIA32>& ins
                             erro_montagem = true;
                         }
                         map<string, tipoTSIA32>::iterator it2 = simboloIA32.find(aux);
-                        if(it2->second.section == 'd')
-                            mais = it2->second.valor;
-                        else
+                        if(it2->second.section == 'd'){
+                            mais = it2->second.valorConstante;
+                            argumentosStrings.push_back(argFinal);
+                        }
+                        else{
+                            argumentosStrings.push_back("[" + argFinal + "]");
                             mais += it2->second.endereco;
+                        }
+
                         argumentos.push_back(mais);                           // <- INSERE COMO ARGUMENTO VALIDO!
+                                                  // <- INSERE COMO ARGUMENTO VALIDO!
 
                         //cout << " aux: " << aux << " s.posicao: " << s.posicao << " mais final: " << mais << endl;
                         //cin.get();
@@ -116,8 +126,8 @@ void escreveOp(ofstream& outia32,ofstream& outCod,vector<tipoInstrucaoIA32>& ins
 
             }
             if(!erro_montagem){
-                cout << "instrucao = "<< i.nome <<"\t"<<endl;
-                outia32 << inventadoParaIA32(instrucoesIA32,i.nome,argumentos);
+                //cout << "instrucao = "<< i.nome <<"\t"<<endl;
+                outia32 << inventadoParaIA32(instrucoesIA32,i.nome,argumentosStrings);
             }
             break;
         }
@@ -211,6 +221,9 @@ void separaOp(ofstream& outia32,ofstream& outCod,vector<tipoInstrucaoIA32>& inst
                 imprimeErro(ERRO_INVALIDO, linha);
 
             if(isInstrucao(instrucao, vTab[1])){
+
+                outia32 << endl << vTab[0] << ": "; //COLOCANDO RÓTULO NO LUGAR CERTO DO ARQUIVO .S
+
                 detectarErrosInstrucao(simbolo, vTab, gramatica,  linha);
                 if(isAlfabeto(vTab[1])){
                     if(vTab.size() > 2){
@@ -321,7 +334,7 @@ bool criaArqObj(ifstream& in, ofstream& outia32,ofstream& outCod,  vector<tipoGr
             }
         }
 
-        cout << linha << endl;
+        //cout << linha << endl;
         //cin.get();
         separaOp(outia32, outia32,instrucoesIA32,simboloIA32,instrucao,gramatica, diretiva, simbolo, vTab,i);
     }

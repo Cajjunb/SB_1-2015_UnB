@@ -6,13 +6,17 @@
 LOAD VAL	; Loada o valor para a divisao com zero
 DIV 		VAL
 STORE		RESULT
-
+LOAD VAL	; Loada o valor para a divisao com zero
+DIV 		UM
+STORE		RESULT+4
 
 	OUTPUT	RESULT
+	OUTPUT	RESULT+4
 	
 STOP	
 
 SECTION	DATA
-RESULT:	SPACE
+RESULT:	SPACE 8
 VAL:	CONST	5
+UM:	CONST	1
 ZERO: CONST 0 

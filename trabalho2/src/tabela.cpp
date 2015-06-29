@@ -1,6 +1,6 @@
 #include "../include/tabela.h"
 
-string inventadoParaIA32(std::vector<tipoInstrucaoIA32>& instrucoesia32 ,string operacao,std::vector<int> argumentos){
+string inventadoParaIA32(std::vector<tipoInstrucaoIA32>& instrucoesia32 ,string operacao,std::vector<string> argumentos){
     tipoInstrucaoIA32 instrucaoia32 = pegaInstrucaoIA32( instrucoesia32,operacao);
     std::string result;
     std::string auxStringObject;
@@ -29,24 +29,23 @@ string inventadoParaIA32(std::vector<tipoInstrucaoIA32>& instrucoesia32 ,string 
             if(temArgumentos && found[0] != std::string::npos){        // "this is a test string."
                 instrucaoia32.instrucaoAssembly[i].erase(found[0],5);
                 //itoa (argumentos[j++],aux ,16);
-                sprintf(aux, "%x", argumentos[j++]);
-                auxStringObject = aux;
+                //sprintf(aux, "%x", argumentos[j++]);
 
-                instrucaoia32.instrucaoAssembly[i].insert(found[0],"0x"+auxStringObject);
+                instrucaoia32.instrucaoAssembly[i].insert(found[0],argumentos[j++]);
             }
             else if( temArgumentos && found[1] != std::string::npos ){
                 instrucaoia32.instrucaoAssembly[i].erase(found[1],1);
                 //itoa (argumentos[j++],aux ,16);
-                sprintf(aux, "%x", argumentos[j++]);
-                auxStringObject = aux;
-                instrucaoia32.instrucaoAssembly[i].insert(found[1],"0x"+auxStringObject);
+                //sprintf(aux, "%x", argumentos[j++]);
+                //auxStringObject = aux;
+                instrucaoia32.instrucaoAssembly[i].insert(found[1],argumentos[j++]);
             }
             else if(temArgumentos && found[2] != std::string::npos ){
                 instrucaoia32.instrucaoAssembly[i].erase(found[2],1);
                 //itoa (argumentos[j++],aux ,16);
-                sprintf(aux, "%x", argumentos[j++]);
-                auxStringObject = aux;
-                instrucaoia32.instrucaoAssembly[i].insert(found[2],"0x"+auxStringObject);
+                //sprintf(aux, "%x", argumentos[j++]);
+                //auxStringObject = aux;
+                instrucaoia32.instrucaoAssembly[i].insert(found[2],argumentos[j++]);
             }
             result = result+"\n"+instrucaoia32.instrucaoAssembly[i];
         }
@@ -163,7 +162,7 @@ void  criaInstrucaoIa32(ifstream& arq, vector<tipoInstrucaoIA32>& instrucaoIA32)
             tamanhoTotal += std::stoi( bufferSegmentado[i].c_str());
         }
         instrucaoNova.tamanhoTotal = tamanhoTotal;
-        cout << "Instrucao nova tamanho total: " << instrucaoNova.tamanhoTotal << endl;
+        //cout << "Instrucao nova tamanho total: " << instrucaoNova.tamanhoTotal << endl;
         //cin.get();
         instrucaoIA32.push_back(instrucaoNova);
     }
