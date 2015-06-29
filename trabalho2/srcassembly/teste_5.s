@@ -11,8 +11,8 @@ section .bss
 	digitos		resb	4	
 	numero		resb	4 	
 
-	A	resb	4
-	RESPOSTA	resb	4
+	A	resw	1
+	RESPOSTA	resw	1
 
 section .text
 global _start
@@ -178,13 +178,20 @@ global _start
 				ret
 	_start:
 
+	push	eax
 	call	lerInteiro
 	mov eax,	[valor]
 	mov	[A],	eax
-	mov	dword	eax,	[A]null
+	pop	eax
+	mov	dword	eax,	[A]
+	mov	edx,	0
+	mov	dword	ebx,	B
+	imul	dword	ebx
 	mov	dword	[RESPOSTA],	eax
+	push	eax
 	mov eax,	[RESPOSTA]
 	call escreverInteiro
+	pop	eax
 	mov	eax,	1
 	mov	ebx,	0
 	int	80h

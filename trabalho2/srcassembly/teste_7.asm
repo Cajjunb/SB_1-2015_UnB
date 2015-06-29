@@ -1,11 +1,11 @@
 ;**********************************
 ; 			ASSEMBLY INVENTADO
-;	Lê um número do teclado
-;	Soma 10
-;	Subtrai 9
-;	Multiplica por 25
-;	Divide por 5
-;	Mostra resultado
+;	Lê um número do teclado			0
+;	Soma 10								10
+;	Subtrai 9								1
+;	Multiplica por 25						25
+;	Divide por 5							5
+;	Mostra resultado						5
 ;**********************************
 
 SECTION TEXT
@@ -20,9 +20,9 @@ OUTPUT RESPOSTA
 STOP
 
 SECTION DATA
-A:				SPACE		4
+A:				SPACE		
 DEZ:				CONST		0xa
 NOVE:				CONST		9
 VINTECINCO:		CONST		25
-CINCO:			CONT		5
-RESPOSTA:	SPACE		4
+CINCO:			CONST		5
+RESPOSTA:	SPACE		

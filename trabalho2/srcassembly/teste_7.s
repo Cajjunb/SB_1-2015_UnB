@@ -2,18 +2,20 @@ section .data
 	newline			db 0dh, 0ah
 	NEWLINESIZE		EQU $-newline
 
-	UM	EQU	1
-	VAL	EQU	5
-	ZERO	EQU	0
+	CINCO	EQU	5
+	DEZ	EQU	10
+	NOVE	EQU	9
+	VINTECINCO	EQU	25
 
 section .bss
 	imprime		resb	32	
 	valor			resb	4 	
 	casas			resb	4	
 	digitos		resb	4	
-	numero		resb	1 	
+	numero		resb	4 	
 
-	RESULT	resb	8
+	A	resb	4
+	RESPOSTA	resb	4
 
 section .text
 global _start
@@ -179,20 +181,51 @@ global _start
 				ret
 	_start:
 
-	mov	dword	eax,	VAL
+;***** INPUT *****
+
+	push	eax
+	call	lerInteiro
+	mov eax,	[valor]
+	mov	[A],	eax
+	pop	eax
+
+;***** LOAD *****
+
+	mov	dword	eax,	[A]
+
+;***** ADD *****
+
+	add	dword	eax,	DEZ
+
+;***** SUB *****
+
+	sub	dword	eax,	NOVE
+
+;***** MULT *****
+
 	mov	edx,	0
-	mov	dword	ebx,	VAL
-	div	dword 	ebx
-	mov	dword	[RESULT],	eax
-	mov	dword	eax,	VAL
+	mov	dword	ebx,	VINTECINCO
+	imul	dword	ebx
+
+;***** DIV *****
+
 	mov	edx,	0
-	mov	dword	ebx,	UM
+	mov	dword	ebx,	CINCO
 	div	dword 	ebx
-	mov	dword	[RESULT+4],	eax
-	mov eax,	[RESULT]
+
+;***** STORE *****
+
+	mov	dword	[RESPOSTA],	eax
+
+;***** OUTPUT *****
+
+	push	eax
+	mov eax,	[RESPOSTA]
 	call escreverInteiro
-	mov eax,	[RESULT+4]
-	call escreverInteiro
+	pop	eax
+
+;***** STOP *****
+
 	mov	eax,	1
 	mov	ebx,	0
 	int	80h

@@ -46,7 +46,8 @@ typedef enum{
     SINGLE = 'S',
     DOUBLE = 'D',
     TRIPLE = 'T',
-    QUADRUPLE = 'Q'
+    QUADRUPLE = 'Q',
+    CINCO = 'C'         //FOI MAL, NÃO SABIA QUE LETRA COLOCAR
 }tipoComportamentoTraducao;
 
 

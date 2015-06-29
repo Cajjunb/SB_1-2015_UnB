@@ -8,6 +8,8 @@ string inventadoParaIA32(std::vector<tipoInstrucaoIA32>& instrucoesia32 ,string 
     char  aux[30];
     bool temArgumentos = true;
     int i = 0;
+
+    result = "\n;***** " + instrucaoia32.nome + " *****\n";
     if(instrucaoia32.tamanhoTotal != -1){            // ACHOU
         int count;
         size_t found[3] ;
@@ -21,6 +23,12 @@ string inventadoParaIA32(std::vector<tipoInstrucaoIA32>& instrucoesia32 ,string 
             count = 3;
             temArgumentos = false;
         }
+        else if(instrucaoia32.tipo == tipoComportamentoTraducao::CINCO)
+            count = 5;
+        else if(instrucaoia32.tipo == tipoComportamentoTraducao::QUADRUPLE)
+            count = 4;
+
+
         int  j = 0;                                         // O indice dos argumentos
         for ( i = 0; i < count; i++){
             found[0] = instrucaoia32.instrucaoAssembly[i].find("LABEL");
@@ -32,12 +40,14 @@ string inventadoParaIA32(std::vector<tipoInstrucaoIA32>& instrucoesia32 ,string 
                 //sprintf(aux, "%x", argumentos[j++]);
 
                 instrucaoia32.instrucaoAssembly[i].insert(found[0],argumentos[j++]);
+
             }
             else if( temArgumentos && found[1] != std::string::npos ){
                 instrucaoia32.instrucaoAssembly[i].erase(found[1],1);
                 //itoa (argumentos[j++],aux ,16);
                 //sprintf(aux, "%x", argumentos[j++]);
                 //auxStringObject = aux;
+                cout << "if 2" << endl;
                 instrucaoia32.instrucaoAssembly[i].insert(found[1],argumentos[j++]);
             }
             else if(temArgumentos && found[2] != std::string::npos ){
@@ -45,14 +55,20 @@ string inventadoParaIA32(std::vector<tipoInstrucaoIA32>& instrucoesia32 ,string 
                 //itoa (argumentos[j++],aux ,16);
                 //sprintf(aux, "%x", argumentos[j++]);
                 //auxStringObject = aux;
+                cout << "if 3" << endl;
                 instrucaoia32.instrucaoAssembly[i].insert(found[2],argumentos[j++]);
             }
             result = result+"\n"+instrucaoia32.instrucaoAssembly[i];
         }
-        result[result.size()+1] = '\0';
     }
-    else
+    else{
+        result.clear();
         result = "null";
+    }
+
+
+    result = result + "\n";
+    cout << result << endl;
     return result;
 }
 
@@ -151,6 +167,8 @@ void  criaInstrucaoIa32(ifstream& arq, vector<tipoInstrucaoIA32>& instrucaoIA32)
             instrucaoNova.nroInstrucoes = 3;
         else if(instrucaoNova.tipo == tipoComportamentoTraducao::QUADRUPLE)
             instrucaoNova.nroInstrucoes = 4;
+        else if(instrucaoNova.tipo == tipoComportamentoTraducao::CINCO)
+            instrucaoNova.nroInstrucoes = 5;
         nro_argumentos = instrucaoNova.nroInstrucoes;
         for (i = 0;i < nro_argumentos;i++){
             instrucaoNova.instrucaoAssembly.push_back(bufferSegmentado[i+2].c_str());

@@ -31,13 +31,17 @@ void escreveOp(ofstream& outia32,ofstream& outCod,vector<tipoInstrucaoIA32>& ins
                 do{
                     mais = 0;
                     qtdArg++;
-                    argFinal.append(aux);
+
 
                     if(!copyArg.empty()){ //enquanto copyArg tiver argumentos
                         aux.clear();
                         aux.append(copyArg.front());
                         copyArg.erase(copyArg.begin());
                     }
+                    argFinal.clear();
+                    argFinal.append(aux);
+                    //cout << "aux: " << aux;
+                    //cin.get();
                     if(aux.find("+") != string::npos){ //se tiver +
                         explode(maisAux, aux, "+");
                         aux.clear();
@@ -126,7 +130,7 @@ void escreveOp(ofstream& outia32,ofstream& outCod,vector<tipoInstrucaoIA32>& ins
 
             }
             if(!erro_montagem){
-                //cout << "instrucao = "<< i.nome <<"\t"<<endl;
+                cout << "instrucao = "<< i.nome <<"\t"<<endl;
                 outia32 << inventadoParaIA32(instrucoesIA32,i.nome,argumentosStrings);
             }
             break;
@@ -299,7 +303,7 @@ bool criaArqObj(ifstream& in, ofstream& outia32,ofstream& outCod,  vector<tipoGr
     outia32 << endl;
     for(map<string,tipoTSIA32>::iterator it = simboloIA32.begin(); it != simboloIA32.end(); it++){
         if(it->second.section == 'b'){
-            outia32 << "\t" << it->first << "\tresb\t" << it->second.tamanho << endl;
+            outia32 << "\t" << it->first << "\tresb\t" << (it->second.tamanho * 4) << endl;
         }
     }
 
@@ -309,8 +313,6 @@ bool criaArqObj(ifstream& in, ofstream& outia32,ofstream& outCod,  vector<tipoGr
         outia32 << linha << endl;
     }
     io.close();
-
-    //COLOCAR FUNÇÕES leInteiro E imprimeInteiro SE NECESSÁRIO
 
     outia32 << "\t_start:" << endl;
 
@@ -334,7 +336,7 @@ bool criaArqObj(ifstream& in, ofstream& outia32,ofstream& outCod,  vector<tipoGr
             }
         }
 
-        //cout << linha << endl;
+        cout << linha << endl;
         //cin.get();
         separaOp(outia32, outia32,instrucoesIA32,simboloIA32,instrucao,gramatica, diretiva, simbolo, vTab,i);
     }
