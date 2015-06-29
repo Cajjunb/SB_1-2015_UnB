@@ -269,7 +269,7 @@ bool criaArqObj(ifstream& in, ofstream& outia32,ofstream& outCod,  vector<tipoGr
     for(map<string, tipoTSIA32>::iterator it = simboloIA32.begin() ; it != simboloIA32.end(); it++){
 
         if(it->second.section == 'b'){
-            it->second.endereco += 45; //Tamanho das variáveis que existem do input e output na sessão bss
+            it->second.endereco += 48; //Tamanho das variáveis que existem do input e output na sessão bss
         }
         else if(it->second.section == 'd'){
             it->second.endereco += 10; //Tamanho das variáveis que existem do input e output na sessão data

@@ -1,12 +1,12 @@
 ;**********************************
 ; 			ASSEMBLY INVENTADO
+;	Lê um número do teclado, subtrai 10 e imprime resultado
 ;**********************************
 
 SECTION TEXT
 INPUT	A
-loop:	LOAD	A
-ADD	B
-JMP loop
+LOAD	A
+SUB	B
 STORE	RESPOSTA
 OUTPUT RESPOSTA
 STOP

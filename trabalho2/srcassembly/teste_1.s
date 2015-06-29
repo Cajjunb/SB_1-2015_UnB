@@ -1,53 +1,26 @@
-;**********************************
-; 			IA32
-;**********************************
-;Este programa pega o que o usuário digitou, A, e soma mais 10, B, imprimindo resultado na tela
-
 section .data
-	B	EQU	10			;usuário
-	
 	newline			db 0dh, 0ah
 	NEWLINESIZE		EQU $-newline
 
-section .bss
-	imprime		resb	32	; NECESSÁRIO: jeitinho para imprimir no máximo 9 dígitos, hehe
-	valor			resb	4 	; NECESSÁRIO: 4 bytes para armazenar inteiro
-	casas			resb	4	; NECESSÁRIO: casas decimais
-	digitos		resb	4	; NECESSÁRIO: 4 bytes para contar quantidade de dígitos
-	numero		resb	1 	; NECESSÁRIO: um byte para mostrar um número em ASCII. Precisa ser a última coisa adicionada no .bss
+	B	EQU	10
 
-	RESPOSTA	resb	4		;Usuário determinou que o tamanho da resposta terá no máximo 4 bytes
-	A			resb	4		;coisa do usuário
+section .bss
+	imprime		resb	32	
+	valor			resb	4 	
+	casas			resb	4	
+	digitos		resb	4	
+	numero		resb	1 	
+
+	A	resb	4
+	RESPOSTA	resb	4
 
 section .text
 global _start
-	_start:
-
-		;******************** LER INTEIRO ********************
-		call lerInteiro
-		mov eax, [valor]
-		mov [A], eax		;INPUT A
-		;******************** FIM DE LER INTEIRO:	INPUT A ********************
-
-		mov eax, [A]						;LOAD	A
-		add eax, B							;ADD		B
-		mov [RESPOSTA], eax				;STORE		RESPOSTA
-
-		;******************** ESCREVER INTEIRO:	OUTPUT RESPOSTA ********************
-		mov eax, [RESPOSTA]	
-		call escreverInteiro
-		;******************** FIM DE ESCREVER INTEIRO ********************
-
-		;******************** ENCERRA PROGRAMA: 	STOP ********************
-		mov eax, 1
-		mov ebx, 0
-		int 80h
-		;******************** FIM DE ENCERRA PROGRAMA ********************
 
 ;*****************************************************
 ;			Ler inteiro
 ;	
-;*	 retorna no endereço "valor" o número que o usuário digitou (em inteiro)
+;	 retorna no endereço "valor" o número que o usuário digitou (em inteiro)
 ;**********************************************************
 
 	lerInteiro:
@@ -88,7 +61,6 @@ global _start
 		fimLerInteiro:
 
 			ret
-
 ;*****************************************************
 ;			Escreve Inteiro
 ;	Arg: 
@@ -187,10 +159,9 @@ global _start
 				push ebx
 				push ecx
 				push edx
-
 					mov eax, 4
 					mov ebx, 1
-					mov ecx, imprime	
+					mov ecx, imprime		;label que tem a resposta em ascii
 					mov edx, 32
 					int 80h	
 					
@@ -205,3 +176,16 @@ global _start
 				pop eax
 
 				ret
+	_start:
+
+	call	lerInteiro
+	mov eax,	[valor]
+	mov	[A],	eax
+	mov	dword	eax,	[A]
+	add	dword	eax,	B
+	mov	dword	[RESPOSTA],	eax
+	mov eax,	[RESPOSTA]
+	call escreverInteiro
+	mov	eax,	1
+	mov	ebx,	0
+	int	80h
