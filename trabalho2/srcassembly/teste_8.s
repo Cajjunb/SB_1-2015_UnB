@@ -2,6 +2,8 @@ section .data
 	newline			db 0dh, 0ah
 	NEWLINESIZE		EQU $-newline
 
+	DEZ	EQU	10
+	DOIS	EQU	2
 
 section .bss
 	imprime		resb	32	
@@ -10,11 +12,8 @@ section .bss
 	digitos		resb	4	
 	numero		resb	4 	
 
-	NUM1	resb	4
-	NUM2	resb	4
-	NUM3	resb	4
-	NUM4	resb	4
-	VETOR	resb	16
+	A	resb	4
+	RESPOSTA	resb	4
 
 section .text
 global _start
@@ -185,76 +184,67 @@ global _start
 	push	eax
 	call	lerInteiro
 	mov eax,	[valor]
-	mov	[NUM1],	eax
-	pop	eax
-
-;***** INPUT *****
-
-	push	eax
-	call	lerInteiro
-	mov eax,	[valor]
-	mov	[NUM2],	eax
-	pop	eax
-
-;***** INPUT *****
-
-	push	eax
-	call	lerInteiro
-	mov eax,	[valor]
-	mov	[NUM3],	eax
-	pop	eax
-
-;***** INPUT *****
-
-	push	eax
-	call	lerInteiro
-	mov eax,	[valor]
-	mov	[NUM4],	eax
+	mov	[A],	eax
 	pop	eax
 
 ;***** LOAD *****
 
-	mov	dword	eax,	[NUM1]
+	mov	dword	eax,	[A]
+
+;***** ADD *****
+
+	add	dword	eax,	DEZ
 
 ;***** STORE *****
 
-	mov	dword	[VETOR],	eax
+	mov	dword	[RESPOSTA],	eax
 
 ;***** LOAD *****
 
-	mov	dword	eax,	[NUM2]
+	mov	dword	eax,	DEZ
+
+;***** MULT *****
+
+	mov	edx,	0
+	mov	dword	ebx,	DOIS
+	imul	dword	ebx
+
+;***** ADD *****
+
+	add	dword	eax,	[RESPOSTA]
 
 ;***** STORE *****
 
-	mov	dword	[VETOR+4],	eax
+	mov	dword	[RESPOSTA],	eax
 
 ;***** LOAD *****
 
-	mov	dword	eax,	[NUM3]
+	mov	dword	eax,	DEZ
+
+;***** ADD *****
+
+	add	dword	eax,	DEZ
+
+;***** ADD *****
+
+	add	dword	eax,	DEZ
+
+;***** ADD *****
+
+	add	dword	eax,	[RESPOSTA]
 
 ;***** STORE *****
 
-	mov	dword	[VETOR+8],	eax
-
-;***** LOAD *****
-
-	mov	dword	eax,	[NUM4]
+	mov	dword	[RESPOSTA],	eax
 
 ;***** STORE *****
 
-	mov	dword	[VETOR+12],	eax
+	mov	dword	[RESPOSTA],	eax
 
 ;***** OUTPUT *****
 
 	push	eax
-	mov eax,	[VETOR+4]
-	call escreverInteiro
-	pop	eax
-
-;***** OUTPUT *****
-
-	push	eax
-	mov eax,	[VETOR+12]
+	mov eax,	[RESPOSTA]
 	call escreverInteiro
 	pop	eax
 

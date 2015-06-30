@@ -47,7 +47,6 @@ string inventadoParaIA32(std::vector<tipoInstrucaoIA32>& instrucoesia32 ,string 
                 //itoa (argumentos[j++],aux ,16);
                 //sprintf(aux, "%x", argumentos[j++]);
                 //auxStringObject = aux;
-                cout << "if 2" << endl;
                 instrucaoia32.instrucaoAssembly[i].insert(found[1],argumentos[j++]);
             }
             else if(temArgumentos && found[2] != std::string::npos ){
@@ -55,7 +54,6 @@ string inventadoParaIA32(std::vector<tipoInstrucaoIA32>& instrucoesia32 ,string 
                 //itoa (argumentos[j++],aux ,16);
                 //sprintf(aux, "%x", argumentos[j++]);
                 //auxStringObject = aux;
-                cout << "if 3" << endl;
                 instrucaoia32.instrucaoAssembly[i].insert(found[2],argumentos[j++]);
             }
             result = result+"\n"+instrucaoia32.instrucaoAssembly[i];

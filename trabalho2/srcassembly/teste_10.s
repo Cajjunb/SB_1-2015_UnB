@@ -10,10 +10,7 @@ section .bss
 	digitos		resb	4	
 	numero		resb	4 	
 
-	NUM1	resb	4
-	NUM2	resb	4
-	NUM3	resb	4
-	NUM4	resb	4
+	NUM	resb	4
 	VETOR	resb	16
 
 section .text
@@ -185,60 +182,60 @@ global _start
 	push	eax
 	call	lerInteiro
 	mov eax,	[valor]
-	mov	[NUM1],	eax
-	pop	eax
-
-;***** INPUT *****
-
-	push	eax
-	call	lerInteiro
-	mov eax,	[valor]
-	mov	[NUM2],	eax
-	pop	eax
-
-;***** INPUT *****
-
-	push	eax
-	call	lerInteiro
-	mov eax,	[valor]
-	mov	[NUM3],	eax
-	pop	eax
-
-;***** INPUT *****
-
-	push	eax
-	call	lerInteiro
-	mov eax,	[valor]
-	mov	[NUM4],	eax
+	mov	[NUM],	eax
 	pop	eax
 
 ;***** LOAD *****
 
-	mov	dword	eax,	[NUM1]
+	mov	dword	eax,	[NUM]
 
 ;***** STORE *****
 
 	mov	dword	[VETOR],	eax
 
+;***** INPUT *****
+
+	push	eax
+	call	lerInteiro
+	mov eax,	[valor]
+	mov	[NUM],	eax
+	pop	eax
+
 ;***** LOAD *****
 
-	mov	dword	eax,	[NUM2]
+	mov	dword	eax,	[NUM]
 
 ;***** STORE *****
 
 	mov	dword	[VETOR+4],	eax
 
+;***** INPUT *****
+
+	push	eax
+	call	lerInteiro
+	mov eax,	[valor]
+	mov	[NUM],	eax
+	pop	eax
+
 ;***** LOAD *****
 
-	mov	dword	eax,	[NUM3]
+	mov	dword	eax,	[NUM]
 
 ;***** STORE *****
 
 	mov	dword	[VETOR+8],	eax
 
+;***** INPUT *****
+
+	push	eax
+	call	lerInteiro
+	mov eax,	[valor]
+	mov	[NUM],	eax
+	pop	eax
+
 ;***** LOAD *****
 
-	mov	dword	eax,	[NUM4]
+	mov	dword	eax,	[NUM]
 
 ;***** STORE *****
 

@@ -59,7 +59,11 @@ void escreveOp(ofstream& outia32,ofstream& outCod,vector<tipoInstrucaoIA32>& ins
                                 mais = (int)strtol(maisAux[1].c_str(), NULL, 10);
 
                             }
+                            mais *= 4; //mexendo com bytes
                         }
+
+                        argFinal.clear();
+                        argFinal.append(maisAux[0] + "+" + to_string(mais));
                     }
                     //cout << "Aux: " << aux << endl;
 
