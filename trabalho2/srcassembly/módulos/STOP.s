@@ -1,21 +1,22 @@
 section .data
+	newline			db 0dh, 0ah
+	NEWLINESIZE		EQU $-newline
 
-newline			db 0dh, 0ah
-NEWLINESIZE		EQU $-newline
+	VAL	EQU	5
+	ZERO	EQU	0
 
-B	EQU	10			;usuário
 section .bss
-	imprime		resb	32	; NECESSÁRIO: jeitinho para imprimir no máximo 9 dígitos, hehe
-	valor			resb	4 	; NECESSÁRIO: 4 bytes para armazenar inteiro
-	casas			resb	4	; NECESSÁRIO: casas decimais
-	digitos		resb	4	; NECESSÁRIO: 4 bytes para contar quantidade de dígitos
-	numero		resb	1 	; NECESSÁRIO: um byte para mostrar um número em ASCII. Precisa ser a última coisa adicionada no .bss
+	imprime		resb	32	
+	valor			resb	4 	
+	casas			resb	4	
+	digitos		resb	4	
+	numero		resb	1 	
 
-RESPOSTA	resb	4		;Usuário determinou que o tamanho da resposta terá no máximo 4 bytes
-	A			resb	4		;coisa do usuário
-	
+	RESULT	resb	4
+
 section .text
 global _start
+
 ;*****************************************************
 ;			Ler inteiro
 ;	
@@ -176,7 +177,14 @@ global _start
 
 				ret
 	_start:
-		mov eax, [A]						;LOAD	A
-		add eax, B							;ADD		B
-		mov [RESPOSTA], eax				;STORE		RESPOSTA
-		
+
+	mov	dword	eax,	0x5
+	mov	edx,	0
+	mov	dword	ebx,	0x5
+	div	dword 	ebx
+	mov	dword 0x2d,	eax
+	mov eax,	0x2d
+	call escreverInteiro
+	mov	eax,	1
+	mov	ebx,	0
+	int	80h

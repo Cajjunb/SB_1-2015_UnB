@@ -67,7 +67,10 @@ void escreveOp(ofstream& outia32,ofstream& outCod,vector<tipoInstrucaoIA32>& ins
                             erro_montagem = true;
                         }
                         map<string, tipoTSIA32>::iterator it2 = simboloIA32.find(aux);
-                        mais += it2->second.endereco;
+                        if(it2->second.section == 'd')
+                            mais = it2->second.valor;
+                        else
+                            mais += it2->second.endereco;
                         argumentos.push_back(mais);                           // <- INSERE COMO ARGUMENTO VALIDO!
 
                         //cout << " aux: " << aux << " s.posicao: " << s.posicao << " mais final: " << mais << endl;
