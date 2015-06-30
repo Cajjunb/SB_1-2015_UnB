@@ -60,6 +60,7 @@ void monta(vector<string> asmInventado){
 
     arq1.close();
     arq2.close();
+    arq3.close();
 
     if(!ligar){ //se não precisa ligar
         string aux;
@@ -77,8 +78,9 @@ void monta(vector<string> asmInventado){
     }
 
     if(teveErro()){ //se teve erro
-        cout << "Erro na geração de " << outputia32 << endl;
+        cout << "Erro na geração de " << outputia32 << " e " << asmInventado[2] << endl;
         remove(outputia32.c_str()); //apague arquivo de saída
+        remove(asmInventado[2].c_str()); //apague arquivo de saída
     }
     remove("pre_processado.txt"); //remoção do arquivo pré-processado temporário
 }

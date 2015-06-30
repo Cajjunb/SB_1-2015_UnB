@@ -1,9 +1,9 @@
-Trabalho 1 de Software Básico - 
+Trabalho 2 de Software Básico - 
 1/2015 Turma B
 
 *******************************************
 *
-*Integrantes:
+*	Integrantes:
 *
 *******************************************
 	Leandro Ramalho Motta Ferreira 		-10/0033571
@@ -11,15 +11,17 @@ Trabalho 1 de Software Básico -
 
 *******************************************
 *
-*Resumo:
+*	Resumo:
+*
 *******************************************
-	Este trabalho foi dividido em duas partes: o montador e o ligador para a linguagem Assembly inventado definida pelo professor. O montador gera um arquivo objeto em formato texto com códigos na base decimal. A linguagem escolhida para este trabalho foi C++ utilizando o padrão C11.
 
-	O trabalho utiliza como estrutura de dados arquivos temporários. As instruções, diretivas e gramáticas foram descritas nos arquivos da pasta "tabelas". 
+	Este trabalho foi dividido em apenas uma parte: tradutor.cpp para a linguagem Assembly inventado definida pelo professor. O tradutor recebe um arquivo de entrada com o assembly inventado e gera dois arquivos, um com o código assembly da Intel IA32 e outro com o código máquina das respectivas instruções geradas pelo primeiro arquivo. A linguagem escolhida para este trabalho foi C++ utilizando o padrão C11.
 
-É necessário que o arquivo montador.cpp e ligador.cpp estejam um nível acima das pastas "src", "include" e "tabelas.
+	O trabalho utiliza como estrutura de dados arquivos temporários. As instruções, diretivas, gramáticas e regras de tradução foram descritas nos arquivos da pasta "tabelas". 
 
-	O processo de montagem escolhido foi o de duas passagens, com vericação dos seguintes erros listados:
+É necessário que o arquivo tradutor.cpp estejam um nível acima das pastas "src", "include" e "tabelas.
+
+	O processo de montagem escolhido foi o de duas passagens, com verificação dos seguintes erros listados:
 	1- 	Declaração ausente
 	2- 	Declaração de símbolos (na sessão de dados) repetida
 	3- 	Instrução com operandos invalidados
@@ -40,29 +42,27 @@ Trabalho 1 de Software Básico -
 	14- 	Modificação de valor de constante
 		Nota: Foram considerados o caso das instruções STORE e COPY para modificação de valor de um endereço
 	15- 	Instrução ou diretiva com tipo de argumento incorreto
+	16- Um ou mais diretivas EQU só podem ser definidas no início do código
 
-	Caso ocorra algum desses erros, é exibido a mensagem de erro e a linha correspondente do arquivo original. Caso haja mais de um erro na mesma linha, é mostrado somente um único erro por linha.
+	Caso ocorra algum desses erros, é exibido a mensagem de erro e a linha correspondente do arquivo original, não criando os arquivos de saída. Caso haja mais de um erro do mesmo tipo na mesma linha, é mostrado somente o primeiro erro deste tipo.
 	
-	O ligador irá ligar dois arquivos somente quando necessário, indicando uma mensagem de erro quando um dos arquivos não precisar.
+	Cada variável declarada na seção de dados do tipo SPACE possui o tamanho de 4 bytes.
+
+	O arquivo em IA32 gerado no final sempre colocará as funções de ler inteiro do teclado e escrever inteiro na tela, mesmo que estas não sejam utilizadas.
 
 *******************************************
 *
-*Para executar este trabalho:
+*	Para executar este trabalho:
 *
 *******************************************
-	O trabalho foi feito no Lubuntu 14.04, no Windows 8.1 e testado no Windows 7 Starter. Porém, recomendamos que este trabalho seja executado em alguma distribuição Linux.
-	Para compilar o montador, execute o comando:
-		make montador
-	Para compilar o ligador, execute o comando:
-		make ligador
+	O trabalho foi feito no Lubuntu 14.04 e no Windows 8.1. Porém, recomendamos que este trabalho seja executado em alguma distribuição Linux.
+	Para compilar o tradutor, execute o comando:
+		make tradutor
 	Será gerado arquivos executáveis sem extensão para Linux.
 
 	Para executar o montador, execute o comando:
-		./montador arq1 arq2
-		Nota: caso não sejam passados extensões, o montador irá supor que para "arq1" a extensão seja ".asm" e para "arq2" seja a extensão ".o". Caso o arquivo não precise ser ligado, "arq2" terá a extensão ".e".
+		./tradutor arq1
+		Nota: caso não sejam passados extensões, o tradutor irá supor que para "arq1" a extensão seja ".asm"
 	
-	Para executar o ligador, execute o comando:
-		./ligador arq 1 arq2 arq3
-		Nota: caso não sejam passados extensões, o ligador irá supor que para "arq1" e "arq2", a extensão seja ".o" e para "arq3" a extensão seja ".e".
 
-PS: Este trabalho foi feito com amor pensando no bem estar dos nossos monitores (*^▽^*)
+PS: Este trabalho foi feito com suor, sangue e ódio. Esperamos não cometer os mesmos erros do primeiro trabalho (╯°□°）╯︵ ┻━┻

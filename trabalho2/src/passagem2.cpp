@@ -134,7 +134,7 @@ void escreveOp(ofstream& outia32,ofstream& outCod,vector<tipoInstrucaoIA32>& ins
 
             }
             if(!erro_montagem){
-                cout << "instrucao = "<< i.nome <<"\t"<<endl;
+                //cout << "instrucao = "<< i.nome <<"\t"<<endl;
                 outia32 << inventadoParaIA32(instrucoesIA32,i.nome,argumentosStrings);
             }
             break;
@@ -340,7 +340,7 @@ bool criaArqObj(ifstream& in, ofstream& outia32,ofstream& outCod,  vector<tipoGr
             }
         }
 
-        cout << linha << endl;
+        //cout << linha << endl;
         //cin.get();
         separaOp(outia32, outia32,instrucoesIA32,simboloIA32,instrucao,gramatica, diretiva, simbolo, vTab,i);
     }

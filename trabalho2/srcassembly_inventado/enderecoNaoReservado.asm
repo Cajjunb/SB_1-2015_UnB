@@ -1,24 +1,34 @@
-SECTION	TEXT
-INPUT	Y
-INPUT Y+1
+;**********************************
+; 			ASSEMBLY INVENTADO
+;	Lê quatro números do teclado, armazena num vetor e imprime os números das posições ímpares (começando em 0)
+;**********************************
 
-INPUT Y+2
-INPUT Y+3 ; <---- VAI DAR ERRO AQUI
+SECTION TEXT
+INPUT	NUM
+LOAD NUM
+STORE VETOR
 
-LOAD	Y+2
-ADD		Y+1
-STORE	Y
+INPUT NUM
+LOAD NUM
+STORE VETOR+1
 
-ADD		X+1 ;	<--- ERRO AQUI!
+INPUT NUM
+LOAD NUM
+STORE VETOR+2
 
-OUTPUT	Y+1
-OUTPUT Y+2
-OUTPUT Y+3	; VAi dar erro aqui tbm
-OUTPUT Y+7	; Aqui tbm!
-OUTPUT X+1 	; TEM QUE DAR ERRO AQUI TBM!
-STOP		; FIM!
+INPUT NUM
+LOAD NUM
+STORE VETOR+3
 
+INPUT NUM
+LOAD NUM
+STORE VETOR+4
 
-SECTION	DATA
-Y:	SPACE	3
-X:	CONST	10
+OUTPUT VETOR+1
+OUTPUT VETOR+3
+
+STOP
+
+SECTION DATA
+NUM:				SPACE		
+VETOR:	SPACE		4

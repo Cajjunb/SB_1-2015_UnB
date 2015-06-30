@@ -66,7 +66,7 @@ string inventadoParaIA32(std::vector<tipoInstrucaoIA32>& instrucoesia32 ,string 
 
 
     result = result + "\n";
-    cout << result << endl;
+    //cout << result << endl;
     return result;
 }
 
