@@ -2,3 +2,9 @@ Compilando no linux 64 bits nativo
 	nasm -f elf -o teste.o ARQUIVO.asm
 Ligando
 	ld -m elf_i386 -o teste teste.o
+
+Compilando no linux 64 bits nativo usando io.mas
+(ter ele no mesmo diretório)
+	nasm -f elf -o teste.o ARQUIVO.asm
+Ligando
+	ld -m elf_i386 -o teste teste.o io.o
