@@ -42,7 +42,7 @@ Trabalho 2 de Software Básico -
 	14- 	Modificação de valor de constante
 		Nota: Foram considerados o caso das instruções STORE e COPY para modificação de valor de um endereço
 	15- 	Instrução ou diretiva com tipo de argumento incorreto
-	16- Um ou mais diretivas EQU só podem ser definidas no início do código
+	16-	Um ou mais diretivas EQU só podem ser definidas no início do código
 
 	Caso ocorra algum desses erros, é exibido a mensagem de erro e a linha correspondente do arquivo original, não criando os arquivos de saída. Caso haja mais de um erro do mesmo tipo na mesma linha, é mostrado somente o primeiro erro deste tipo.
 	
