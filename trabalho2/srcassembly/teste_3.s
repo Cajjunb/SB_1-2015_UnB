@@ -1,12 +1,20 @@
+section .data
 	newline			db 0dh, 0ah
 	NEWLINESIZE		EQU $-newline
-=======================================================================
+
+
+section .bss
 	imprime		resb	32	
 	valor			resb	4 	
 	casas			resb	4	
 	digitos		resb	4	
 	numero		resb	4 	
-=======================================================================
+
+	A	resb	4
+	B	resb	4
+
+section .text
+global _start
 
 ;*****************************************************
 ;			Ler inteiro
@@ -167,3 +175,53 @@
 				pop eax
 
 				ret
+	_start:
+
+;***** INPUT *****
+
+	push	eax
+	call	lerInteiro
+	mov eax,	[valor]
+	mov	[A],	eax
+	pop	eax
+
+;***** INPUT *****
+
+	push	eax
+	call	lerInteiro
+	mov eax,	[valor]
+	mov	[B],	eax
+	pop	eax
+
+;***** LOAD *****
+
+	mov	dword	eax,	[B]
+
+;***** COPY *****
+
+	mov	dword	ebx,	[A]
+	mov	dword	[B],	ebx
+
+;***** STORE *****
+
+	mov	dword	[A],	eax
+
+;***** OUTPUT *****
+
+	push	eax
+	mov eax,	[A]
+	call escreverInteiro
+	pop	eax
+
+;***** OUTPUT *****
+
+	push	eax
+	mov eax,	[B]
+	call escreverInteiro
+	pop	eax
+
+;***** STOP *****
+
+	mov	eax,	1
+	mov	ebx,	0
+	int	80h

@@ -3,6 +3,7 @@
 #include <string>
 #include <iostream>
 #include <vector>
+#define TAMANHO_INPUT_OUTPUT 0x17d
 
 using namespace std;
 
@@ -47,7 +48,8 @@ typedef enum{
     SINGLE = 'S',
     DOUBLE = 'D',
     TRIPLE = 'T',
-    QUADRUPLE = 'Q'
+    QUADRUPLE = 'Q',
+    CINCO = 'C'         //FOI MAL, NÃO SABIA QUE LETRA COLOCAR
 }tipoComportamentoTraducao;
 
 

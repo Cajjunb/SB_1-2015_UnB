@@ -2,17 +2,18 @@ section .data
 	newline			db 0dh, 0ah
 	NEWLINESIZE		EQU $-newline
 
-	VAL	EQU	5
-	ZERO	EQU	0
+	DEZ	EQU	10
+	DOIS	EQU	2
 
 section .bss
 	imprime		resb	32	
 	valor			resb	4 	
 	casas			resb	4	
 	digitos		resb	4	
-	numero		resb	1 	
+	numero		resb	4 	
 
-	RESULT	resb	4
+	A	resb	4
+	RESPOSTA	resb	4
 
 section .text
 global _start
@@ -178,13 +179,77 @@ global _start
 				ret
 	_start:
 
-	mov	dword	eax,	0x5
+;***** INPUT *****
+
+	push	eax
+	call	lerInteiro
+	mov eax,	[valor]
+	mov	[A],	eax
+	pop	eax
+
+;***** LOAD *****
+
+	mov	dword	eax,	[A]
+
+;***** ADD *****
+
+	add	dword	eax,	DEZ
+
+;***** STORE *****
+
+	mov	dword	[RESPOSTA],	eax
+
+;***** LOAD *****
+
+	mov	dword	eax,	DEZ
+
+;***** MULT *****
+
 	mov	edx,	0
-	mov	dword	ebx,	0x5
-	div	dword 	ebx
-	mov	dword 0x2d,	eax
-	mov eax,	0x2d
+	mov	dword	ebx,	DOIS
+	imul	dword	ebx
+
+;***** ADD *****
+
+	add	dword	eax,	[RESPOSTA]
+
+;***** STORE *****
+
+	mov	dword	[RESPOSTA],	eax
+
+;***** LOAD *****
+
+	mov	dword	eax,	DEZ
+
+;***** ADD *****
+
+	add	dword	eax,	DEZ
+
+;***** ADD *****
+
+	add	dword	eax,	DEZ
+
+;***** ADD *****
+
+	add	dword	eax,	[RESPOSTA]
+
+;***** STORE *****
+
+	mov	dword	[RESPOSTA],	eax
+
+;***** STORE *****
+
+	mov	dword	[RESPOSTA],	eax
+
+;***** OUTPUT *****
+
+	push	eax
+	mov eax,	[RESPOSTA]
 	call escreverInteiro
+	pop	eax
+
+;***** STOP *****
+
 	mov	eax,	1
 	mov	ebx,	0
 	int	80h

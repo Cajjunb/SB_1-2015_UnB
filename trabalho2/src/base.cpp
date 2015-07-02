@@ -87,17 +87,29 @@ bool temExtensao(string aux){
 
 std::vector<string> intParaHexLilEndian(int numero){
     int quociente = numero;
-    int resto = 0;
+    short int resto = 0;
     int i = 0;
     char aux [33];
-    std::vector<string> resultado(2);
-    while(quociente != 0 || i != 4){
+    std::vector<string> resultado(4);
+    cout << "\n\tHEX =\n\t" ;
+    if (quociente < 0){
         resto = quociente % 16;
         quociente = quociente / 16;
-        //itoa(resto,aux,16);
-        sprintf(aux,"%x",resto);
-        resultado[i/2].insert(0,aux);
-        i++;
+        sprintf(aux,"%1x",resto);
+        resultado[0].insert(0,aux,4,2);
+        resultado[0].insert(0,aux,6,2);
+        resultado[1].insert(0,aux,0,2);
+        resultado[1].insert(0,aux,2,2);
+    }else{
+        while(quociente != 0 || i != 4){
+            resto = quociente % 16;
+            quociente = quociente / 16;
+            //itoa(resto,aux,16);
+            sprintf(aux,"%1x",resto);
+            resultado[i/2].insert(0,aux);
+            i++;
+            cout << resto <<"," ;
+        }
     }
     return resultado;
 }

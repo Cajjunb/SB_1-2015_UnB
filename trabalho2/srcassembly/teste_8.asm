@@ -1,0 +1,36 @@
+;**********************************
+; 			ASSEMBLY INVENTADO
+;	Lê um número do teclado, soma 10, soma 20, soma 30, não soma 10 e imprime resultado
+;**********************************
+
+SOMA: EQU 0
+
+SECTION TEXT
+INPUT	A
+LOAD	A
+ADD	DEZ
+STORE	RESPOSTA		;10
+
+LOAD	DEZ
+MULT	DOIS			;20
+ADD	RESPOSTA
+STORE	RESPOSTA		;10 + 20
+
+LOAD DEZ
+ADD DEZ
+ADD DEZ
+ADD RESPOSTA	;10 + 20 + 30
+STORE RESPOSTA
+
+IF SOMA
+	ADD DEZ
+STORE RESPOSTA
+
+OUTPUT RESPOSTA
+STOP
+
+SECTION DATA
+A:				SPACE		
+DEZ:				CONST		10
+DOIS:			CONST 2
+RESPOSTA:	SPACE		

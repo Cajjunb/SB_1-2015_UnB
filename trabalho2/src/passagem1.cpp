@@ -270,7 +270,7 @@ void corrigeEnderecosDataBss(map<string, tipoTSIA32>& simboloIA32){
 }
 
 void criaTabelas(ifstream& arq, vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, map<string, tipoTS>& simbolo, map<string, vector<int> >& uso, map<string, int>& definicao, vector<int>& bits, vector<tipoInstrucaoIA32>& instrucoesIA32, map<string, tipoTSIA32>& simboloIA32){
-    int pc = 0,incremento = 0, pcia32 = 0;
+    int pc = 0x17d,incremento = 0, pcia32 = 0;
     int i; //contador de linhas
     string linha;
 
@@ -295,11 +295,11 @@ void criaTabelas(ifstream& arq, vector<tipoInstrucao>& instrucao, vector<tipoDir
                 if(!getBegin() || getEnd()) //se begin não tiver sido definido
                     imprimeErro(ERRO_LOCAL_INCORRETO, i);
                 insereUso(uso, vTab[0], i);
-                s.posicao = 0;
+                s.posicao = 0 ;
                 s.externo = true;
             }
             else{
-                s.posicao = pc;
+                s.posicao = pc ;
                 s.externo = false;
             }
 

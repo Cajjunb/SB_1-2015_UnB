@@ -5,65 +5,13 @@ section .data
 section .bss
 	valor			resb	4 	; NECESSÁRIO: 4 bytes para armazenar inteiro
 	casas			resb	4	; NECESSÁRIO: casas decimais
-	numero		resb	1 	; NECESSÁRIO: um byte para mostrar um número em ASCII. Precisa ser a última coisa adicionada no .bss
+	numero		resb	4 	; NECESSÁRIO: um byte para mostrar um número em ASCII. Precisa ser a última coisa adicionada no .bss
+
+	A				resb	4
 
 section .text
 global _start
-	_start:
-
-		;******************** LER INTEIRO ********************
-		call lerInteiro
-		mov eax, [valor]
-		mov [A], eax		;move para a label que o usuário quer que tenha o inteiro
-		;******************** FIM DE LER INTEIRO ********************
-
-		mov eax, [A]
-		cmp eax, 123456
-		je certo
-		
-		errado:
-			push eax
-			push ebx
-			push ecx
-			push edx
-				
-				mov eax, 4
-				mov ebx, 1
-				mov ecx, msg_debug7
-				mov edx, DEBUG7SIZE
-				int 80h	
-			pop edx
-			pop ecx
-			pop ebx
-			pop eax
-		; Encerra programa
-		mov eax, 1
-		mov ebx, 0
-		int 80h
-
-		certo:
-			push eax
-			push ebx
-			push ecx
-			push edx
-				
-				mov eax, 4
-				mov ebx, 1
-				mov ecx, msg_debug6
-				mov edx, DEBUG6SIZE
-				int 80h	
-			pop edx
-			pop ecx
-			pop ebx
-			pop eax
-		; Encerra programa
-		mov eax, 1
-		mov ebx, 0
-		int 80h
-
-
-
-;*****************************************************
+	;*****************************************************
 ;			Ler inteiro
 ;	
 ;*	 retorna no endereço "valor" o número que o usuário digitou (em inteiro)
@@ -107,3 +55,16 @@ global _start
 		fimLerInteiro:
 
 			ret
+	_start:		
+
+		;******************** LER INTEIRO ********************
+		push eax
+		call lerInteiro
+		mov eax, [valor]
+		mov [A], eax		;move para a label que o usuário quer que tenha o inteiro
+		pop eax
+		;******************** FIM DE LER INTEIRO ********************
+
+		mov	eax,	1	
+		mov	ebx,	0	
+		int	80h

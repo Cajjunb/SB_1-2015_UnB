@@ -1,12 +1,20 @@
+section .data
 	newline			db 0dh, 0ah
 	NEWLINESIZE		EQU $-newline
-=======================================================================
+
+
+section .bss
 	imprime		resb	32	
 	valor			resb	4 	
 	casas			resb	4	
 	digitos		resb	4	
 	numero		resb	4 	
-=======================================================================
+
+	NUM	resb	4
+	VETOR	resb	16
+
+section .text
+global _start
 
 ;*****************************************************
 ;			Ler inteiro
@@ -167,3 +175,108 @@
 				pop eax
 
 				ret
+	_start:
+
+VOLTA: 
+;***** INPUT *****
+
+	push	eax
+	call	lerInteiro
+	mov eax,	[valor]
+	mov	[NUM],	eax
+	pop	eax
+
+;***** LOAD *****
+
+	mov	dword	eax,	[NUM]
+
+;***** STORE *****
+
+	mov	dword	[VETOR],	eax
+
+;***** INPUT *****
+
+	push	eax
+	call	lerInteiro
+	mov eax,	[valor]
+	mov	[NUM],	eax
+	pop	eax
+
+;***** LOAD *****
+
+	mov	dword	eax,	[NUM]
+
+;***** STORE *****
+
+	mov	dword	[VETOR+4],	eax
+
+;***** INPUT *****
+
+	push	eax
+	call	lerInteiro
+	mov eax,	[valor]
+	mov	[NUM],	eax
+	pop	eax
+
+;***** LOAD *****
+
+	mov	dword	eax,	[NUM]
+
+;***** STORE *****
+
+	mov	dword	[VETOR+8],	eax
+
+;***** INPUT *****
+
+	push	eax
+	call	lerInteiro
+	mov eax,	[valor]
+	mov	[NUM],	eax
+	pop	eax
+
+;***** LOAD *****
+
+	mov	dword	eax,	[NUM]
+
+;***** STORE *****
+
+	mov	dword	[VETOR+12],	eax
+
+;***** OUTPUT *****
+
+	push	eax
+	mov eax,	[VETOR+4]
+	call escreverInteiro
+	pop	eax
+
+;***** OUTPUT *****
+
+	push	eax
+	mov eax,	[VETOR+12]
+	call escreverInteiro
+	pop	eax
+
+;***** JMP *****
+
+	jmp VOLTA
+
+;***** JMPP *****
+
+	cmp	eax,	eax
+	jns	VOLTA
+
+;***** JMPN *****
+
+	cmp	eax,	eax
+	js	VOLTA
+
+;***** JMPZ *****
+
+	cmp	eax,	eax
+	jz	VOLTA
+
+;***** STOP *****
+
+	mov	eax,	1
+	mov	ebx,	0
+	int	80h
