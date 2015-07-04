@@ -5,9 +5,10 @@ string inventadoParaIA32(std::vector<tipoInstrucaoIA32>& instrucoesia32 ,string 
     std::string result;
     std::string auxStringObject;
 
-    char  aux[30];
     bool temArgumentos = true;
     int i = 0;
+
+    //cout << "entrou em inventado para ia32" << endl;
 
     result = "\n;***** " + instrucaoia32.nome + " *****\n";
     if(instrucaoia32.tamanhoTotal != -1){            // ACHOU
@@ -59,8 +60,6 @@ string inventadoParaIA32(std::vector<tipoInstrucaoIA32>& instrucoesia32 ,string 
         result.clear();
         result = "null";
     }
-
-
     result = result + "\n";
     //cout << result << endl;
     return result;
@@ -70,7 +69,6 @@ string inventadoParaMaquina(std::vector<tipoInstrucaoIA32>& instrucoesia32 ,stri
     tipoInstrucaoIA32 instrucaoia32 = pegaInstrucaoIA32( instrucoesia32,operacao);
     std::string result;
     std::vector<string> aux(2);
-    result = "\n;***** " + instrucaoia32.nome + " *****\n";
     if(instrucaoia32.tamanhoTotal != -1){            // ACHOU
         int count;
         int i ;
@@ -89,25 +87,24 @@ string inventadoParaMaquina(std::vector<tipoInstrucaoIA32>& instrucoesia32 ,stri
         else if(instrucaoia32.tipo == tipoComportamentoTraducao::QUADRUPLE)
             count = 4;
         for ( i = 0; i < count; i++){
-            found[0] = instrucaoia32.instrucaoCodigoMaquina[i].find("AA\tAA");
-            found[1] = instrucaoia32.instrucaoCodigoMaquina[i].find("BB\tBB");
+            found[0] = instrucaoia32.instrucaoCodigoMaquina[i].find("AA AA");
+            found[1] = instrucaoia32.instrucaoCodigoMaquina[i].find("BB BB");
             if(found[0] != std::string::npos){        // "this is a test string."
                 instrucaoia32.instrucaoCodigoMaquina[i].erase(found[0],5);
                 aux = intParaHexLilEndian(argumentos[j++]) ;
                 instrucaoia32.instrucaoCodigoMaquina[i].insert(found[0],aux[1]);
-                instrucaoia32.instrucaoCodigoMaquina[i].insert(found[0],"\t");
+                instrucaoia32.instrucaoCodigoMaquina[i].insert(found[0]," ");
                 instrucaoia32.instrucaoCodigoMaquina[i].insert(found[0],aux[0]);
             }
             else if( found[1] != std::string::npos ){
                 instrucaoia32.instrucaoCodigoMaquina[i].erase(found[1],5);
                 aux = intParaHexLilEndian(argumentos[j++]) ;
                 instrucaoia32.instrucaoCodigoMaquina[i].insert(found[1],aux[1]);
-                instrucaoia32.instrucaoCodigoMaquina[i].insert(found[1],"\t");
+                instrucaoia32.instrucaoCodigoMaquina[i].insert(found[1]," ");
                 instrucaoia32.instrucaoCodigoMaquina[i].insert(found[1],aux[0]);
             }
-            result = result+"\n"+instrucaoia32.instrucaoCodigoMaquina[i];
+            result = result+instrucaoia32.instrucaoCodigoMaquina[i];
         }
-        result[result.size()+1] = '\0';
     }
     else
         result = "null";

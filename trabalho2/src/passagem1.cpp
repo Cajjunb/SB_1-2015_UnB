@@ -270,7 +270,7 @@ void corrigeEnderecosDataBss(map<string, tipoTSIA32>& simboloIA32){
 }
 
 void criaTabelas(ifstream& arq, vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, map<string, tipoTS>& simbolo, map<string, vector<int> >& uso, map<string, int>& definicao, vector<int>& bits, vector<tipoInstrucaoIA32>& instrucoesIA32, map<string, tipoTSIA32>& simboloIA32){
-    int pc = 0x17d,incremento = 0, pcia32 = 0;
+    int pc = 0,incremento = 0, pcia32 = TAMANHO_INPUT_OUTPUT;
     int i; //contador de linhas
     string linha;
 

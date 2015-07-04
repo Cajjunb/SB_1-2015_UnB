@@ -137,27 +137,19 @@ void escreveOp(ofstream& outia32,ofstream& outCod,vector<tipoInstrucaoIA32>& ins
 
             }
             if(!erro_montagem){
-                cout << "\n\tinstrucao = "<< i.nome <<"\t tam =" << i32.tamanhoTotal<<endl;
-                *pc +=  i32.tamanhoTotal;
+                *pc +=  i32.tamanhoTotal;                           // PC VAI PARA A PROXIMA INSTRUCAO
                 if(i.nome == "JMP"){
-                    cout << "\n\t argumento = " << argumentos[0] ;
-                    argumentos[0] = (short) argumentos[0] - *pc ;
+                    argumentos[0] = (short)argumentos[0]  - *pc ;
                 }else if(i.nome == "JMPP"){
-                    cout << "\n\t argumento = " << argumentos[0] ;
-
-                    argumentos[0] = (short) argumentos[0] - *pc ;
+                    argumentos[0] = (short) argumentos[0]  - *pc ;
                 }else if(i.nome == "JMPZ"){
-                    cout << "\n\t argumento = " << argumentos[0] ;
-
                     argumentos[0] = (short) argumentos[0] - *pc ;
                 }else if(i.nome == "JMPN"){
-                    cout << "\n\t argumento = " << argumentos[0] ;
                     argumentos[0] = (short) argumentos[0] - *pc ;
                 }
                 //cout << "instrucao = "<< i.nome <<"\t"<<endl;
                 outCod << inventadoParaMaquina(instrucoesIA32,i.nome,argumentos);
                 outia32 << inventadoParaIA32(instrucoesIA32,i.nome,argumentosStrings);
-                cout << "Aqui?";
             }
             break;
         }
@@ -295,6 +287,7 @@ bool criaArqObj(ifstream& in, ofstream& outia32,ofstream& outCod,  vector<tipoGr
     bool liga = false;
     int i = 0;
     ifstream io;
+    ifstream ioCod;
     int pc = TAMANHO_INPUT_OUTPUT;
     for(map<string, tipoTSIA32>::iterator it = simboloIA32.begin() ; it != simboloIA32.end(); it++){
         if(it->second.section == 'b'){
@@ -304,15 +297,19 @@ bool criaArqObj(ifstream& in, ofstream& outia32,ofstream& outCod,  vector<tipoGr
             it->second.endereco += 10; //Tamanho das variáveis que existem do input e output na sessão data
         }
     }
+    ioCod.open("tabelas/INPUT_OUTPUT_COD.txt");
+    while( getline(ioCod,linha) ){    // COLOCANDO CODIGO MAQUINA DAS FUNCOES INPUT E OUTPUT 
+        outCod << linha;
+    }
     io.open("tabelas/INPUT_OUTPUT_S.txt");
     outia32 << "section .data" << endl;
+    
     getline(io, linha);
     while(linha.compare("=======================================================================") != 0){
         outia32 << linha << endl;
         getline(io, linha);
     }
     outia32 << endl;
-    outCod << endl;
     for(map<string,tipoTSIA32>::iterator it = simboloIA32.begin(); it != simboloIA32.end(); it++){
         if(it->second.section == 'd'){
             outia32 << "\t" << it->first << "\tEQU\t" << it->second.valorConstante << endl;
@@ -338,6 +335,7 @@ bool criaArqObj(ifstream& in, ofstream& outia32,ofstream& outCod,  vector<tipoGr
         outia32 << linha << endl;
     }
     io.close();
+    ioCod.close();
     outia32 << "\t_start:" << endl;
     while(getline(in, linha)){
         vector<string> vTab;
@@ -356,7 +354,6 @@ bool criaArqObj(ifstream& in, ofstream& outia32,ofstream& outCod,  vector<tipoGr
         }
         //cout << linha << endl;
         //cin.get();
-        cout << "pc ="<<std::hex  <<  pc;
         separaOp(outia32, outCod,instrucoesIA32,simboloIA32,instrucao,gramatica, diretiva, simbolo, vTab,i,&pc);
     }
     in.clear();

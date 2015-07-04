@@ -91,15 +91,12 @@ std::vector<string> intParaHexLilEndian(int numero){
     int i = 0;
     char aux [33];
     std::vector<string> resultado(4);
-    cout << "\n\tHEX =\n\t" ;
     if (quociente < 0){
-        resto = quociente % 16;
-        quociente = quociente / 16;
-        sprintf(aux,"%1x",resto);
-        resultado[0].insert(0,aux,4,2);
+        sprintf(aux,"%1x",numero);
         resultado[0].insert(0,aux,6,2);
-        resultado[1].insert(0,aux,0,2);
-        resultado[1].insert(0,aux,2,2);
+//        resultado[0].insert(0,aux,5,1);
+        resultado[1].insert(0,aux,4,2);
+//        resultado[1].insert(0,aux,2,1);
     }else{
         while(quociente != 0 || i != 4){
             resto = quociente % 16;
@@ -108,7 +105,6 @@ std::vector<string> intParaHexLilEndian(int numero){
             sprintf(aux,"%1x",resto);
             resultado[i/2].insert(0,aux);
             i++;
-            cout << resto <<"," ;
         }
     }
     return resultado;
