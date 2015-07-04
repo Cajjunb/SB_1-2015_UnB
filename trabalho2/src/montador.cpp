@@ -19,11 +19,6 @@ void monta(vector<string> asmInventado){
 
     //Verifica arquivos de entrada e saída
     input.append(asmInventado[0]);
-    if(!temExtensao(input))
-        input.append(".asm");
-
-    if(!temExtensao(outputia32))
-        outputia32.append(".o");
 
     //Cria vetores com informações das instruções, da gramática e das diretivas
     arq1.open("tabelas/instrucoes.txt");
@@ -68,8 +63,8 @@ void monta(vector<string> asmInventado){
 
 
     if(teveErro()){ //se teve erro
-        cout << "Erro na geração de " << outputia32 << " e " << asmInventado[2] << endl;
-        remove(outputia32.c_str()); //apague arquivo de saída
+        cout << "Erro na geração de " << asmInventado[1] << " e " << asmInventado[2] << endl;
+        remove(asmInventado[1].c_str()); //apague arquivo de saída
         remove(asmInventado[2].c_str()); //apague arquivo de saída
     }
     remove("pre_processado.txt"); //remoção do arquivo pré-processado temporário

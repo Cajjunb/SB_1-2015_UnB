@@ -211,7 +211,7 @@ MULTIPLICA:
 
 ;***** JMPZ *****
 
-	cmp	eax,	0
+	cmp	eax,	eax
 	jz	IMPRIME
 
 ;***** ADD *****

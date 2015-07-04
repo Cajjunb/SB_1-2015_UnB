@@ -2,10 +2,10 @@ section .data
 	newline			db 0dh, 0ah
 	NEWLINESIZE		EQU $-newline
 
-	ONE	EQU	1
-	THREE	EQU	3
-	TWO	EQU	2
-	ZERO	EQU	0
+	CINCO	EQU	5
+	DEZ	EQU	10
+	NOVE	EQU	9
+	VINTECINCO	EQU	25
 
 section .bss
 	imprime		resb	32	
@@ -15,8 +15,7 @@ section .bss
 	numero		resb	4 	
 
 	A	resb	4
-	B	resb	4
-	C	resb	4
+	RESPOSTA	resb	4
 
 section .text
 global _start
@@ -190,185 +189,38 @@ global _start
 	mov	[A],	eax
 	pop	eax
 
-;***** INPUT *****
-
-	push	eax
-	call	lerInteiro
-	mov eax,	[valor]
-	mov	[B],	eax
-	pop	eax
-
-;***** INPUT *****
-
-	push	eax
-	call	lerInteiro
-	mov eax,	[valor]
-	mov	[C],	eax
-	pop	eax
-
 ;***** LOAD *****
 
 	mov	dword	eax,	[A]
 
-;***** SUB *****
+;***** ADD *****
 
-	sub	dword	eax,	[B]
-
-;***** JMPZ *****
-
-	cmp	eax,	0
-	jz	CHECK_B
-
-;***** LOAD *****
-
-	mov	dword	eax,	[A]
+	add	dword	eax,	DEZ
 
 ;***** SUB *****
 
-	sub	dword	eax,	[C]
+	sub	dword	eax,	NOVE
 
-;***** JMPZ *****
+;***** MULT *****
 
-	cmp	eax,	0
-	jz	CHECK_B
+	mov	edx,	0
+	mov	dword	ebx,	VINTECINCO
+	imul	dword	ebx
 
-;***** JMP *****
+;***** DIV *****
 
-	jmp A_WINS
+	mov	edx,	0
+	mov	dword	ebx,	CINCO
+	div	dword 	ebx
 
-CHECK_B: 
-;***** LOAD *****
+;***** STORE *****
 
-	mov	dword	eax,	ZERO
-
-;***** LOAD *****
-
-	mov	dword	eax,	[B]
-
-;***** SUB *****
-
-	sub	dword	eax,	[A]
-
-;***** JMPZ *****
-
-	cmp	eax,	0
-	jz	CHECK_C
-
-;***** LOAD *****
-
-	mov	dword	eax,	[B]
-
-;***** SUB *****
-
-	sub	dword	eax,	[C]
-
-;***** JMPZ *****
-
-	cmp	eax,	0
-	jz	CHECK_C
-
-;***** JMP *****
-
-	jmp B_WINS
-
-CHECK_C: 
-;***** LOAD *****
-
-	mov	dword	eax,	ZERO
-
-;***** LOAD *****
-
-	mov	dword	eax,	[C]
-
-;***** SUB *****
-
-	sub	dword	eax,	[A]
-
-;***** JMPZ *****
-
-	cmp	eax,	0
-	jz	TIE
-
-;***** LOAD *****
-
-	mov	dword	eax,	[C]
-
-;***** SUB *****
-
-	sub	dword	eax,	[B]
-
-;***** JMPZ *****
-
-	cmp	eax,	0
-	jz	TIE
-
-;***** JMP *****
-
-	jmp C_WINS
-
-TIE: 
-;***** LOAD *****
-
-	mov	dword	eax,	ZERO
+	mov	dword	[RESPOSTA],	eax
 
 ;***** OUTPUT *****
 
 	push	eax
-	mov eax,	ZERO
-	call escreverInteiro
-	pop	eax
-
-;***** STOP *****
-
-	mov	eax,	1
-	mov	ebx,	0
-	int	80h
-
-A_WINS: 
-;***** LOAD *****
-
-	mov	dword	eax,	ZERO
-
-;***** OUTPUT *****
-
-	push	eax
-	mov eax,	ONE
-	call escreverInteiro
-	pop	eax
-
-;***** STOP *****
-
-	mov	eax,	1
-	mov	ebx,	0
-	int	80h
-
-B_WINS: 
-;***** LOAD *****
-
-	mov	dword	eax,	ZERO
-
-;***** OUTPUT *****
-
-	push	eax
-	mov eax,	TWO
-	call escreverInteiro
-	pop	eax
-
-;***** STOP *****
-
-	mov	eax,	1
-	mov	ebx,	0
-	int	80h
-
-C_WINS: 
-;***** LOAD *****
-
-	mov	dword	eax,	ZERO
-
-;***** OUTPUT *****
-
-	push	eax
-	mov eax,	THREE
+	mov eax,	[RESPOSTA]
 	call escreverInteiro
 	pop	eax
 
