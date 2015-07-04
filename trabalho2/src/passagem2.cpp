@@ -20,10 +20,11 @@ void escreveOp(ofstream& outia32,ofstream& outCod,vector<tipoInstrucaoIA32>& ins
             //cout << "token:--" << token << "--" << endl;
             i = pegaInstrucao(instrucao, token);
             g = pegaGramatica(gramatica, token);
-            i32 = pegaInstrucaoIA32(instrucoesIA32,i.nome); 
+            i32 = pegaInstrucaoIA32(instrucoesIA32,i.nome);
 
             //outia32 << i.op << " ";
             //cout << i.op << " ";
+
 
             if(g.qtdOperandos > 0 && !arg.empty()){ //se qtdOperandos > 0 e argumento != vazio
                 aux.append(arg); //Supõe formato INSTR   ARG
@@ -75,12 +76,24 @@ void escreveOp(ofstream& outia32,ofstream& outCod,vector<tipoInstrucaoIA32>& ins
                             imprimeErro(ERRO_OP_INVALIDO, linha);
                             erro_montagem = true;
                         }
+
+                        if( (strcasecmp(i.nome.c_str(), "JMP") != 0)    &&
+                        (strcasecmp(i.nome.c_str(), "JMPP") != 0)   &&
+                        (strcasecmp(i.nome.c_str(), "JMPZ") != 0)   &&
+                        (strcasecmp(i.nome.c_str(), "JMPN") != 0)
+                        ){
+                            if(s.section == 't'){
+                                imprimeErro(ERRO_ARG_INCORRETO, linha);
+                                erro_montagem = true;
+                            }
+                        }
+
                         map<string, tipoTSIA32>::iterator it2 = simboloIA32.find(aux);
                         if(it2->second.section == 'd' ){
                             mais = it2->second.valorConstante;
                             argumentosStrings.push_back(argFinal);
                         }
-                        else if (it->second.section =='t'){
+                        else if (it2->second.section =='t'){
                             mais += it2->second.endereco;
                             argumentosStrings.push_back(argFinal);
                         }
@@ -90,6 +103,8 @@ void escreveOp(ofstream& outia32,ofstream& outCod,vector<tipoInstrucaoIA32>& ins
                         }
                         argumentos.push_back(mais);                           // <- INSERE COMO ARGUMENTO VALIDO!
                                                   // <- INSERE COMO ARGUMENTO VALIDO!
+
+
 
                         //cout << " aux: " << aux << " s.posicao: " << s.posicao << " mais final: " << mais << endl;
                         //cin.get();
@@ -147,6 +162,8 @@ void escreveOp(ofstream& outia32,ofstream& outCod,vector<tipoInstrucaoIA32>& ins
                 }else if(i.nome == "JMPN"){
                     argumentos[0] = (short) argumentos[0] - *pc ;
                 }
+                //cout << "calculou jump" << endl;
+                //cin.get();
                 //cout << "instrucao = "<< i.nome <<"\t"<<endl;
                 outCod << inventadoParaMaquina(instrucoesIA32,i.nome,argumentos);
                 outia32 << inventadoParaIA32(instrucoesIA32,i.nome,argumentosStrings);
@@ -282,7 +299,7 @@ void separaOp(ofstream& outia32,ofstream& outCod,vector<tipoInstrucaoIA32>& inst
     //cout << "FIM DE SEPARA" << endl;
 }
 
-bool criaArqObj(ifstream& in, ofstream& outia32,ofstream& outCod,  vector<tipoGramatica>& gramatica, vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, map<string, tipoTS>& simbolo, map<string, vector<int> >& uso, map<string, int>& definicao, vector<int>& bits, vector<tipoInstrucaoIA32>& instrucoesIA32,map<string,tipoTSIA32>& simboloIA32){
+bool criaArqObj(ifstream& in, ofstream& outia32,ofstream& outCod,  vector<tipoGramatica>& gramatica, vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, map<string, tipoTS>& simbolo, vector<tipoInstrucaoIA32>& instrucoesIA32,map<string,tipoTSIA32>& simboloIA32){
     string linha;
     bool liga = false;
     int i = 0;
@@ -338,6 +355,9 @@ bool criaArqObj(ifstream& in, ofstream& outia32,ofstream& outCod,  vector<tipoGr
     ioCod.close();
     outia32 << "\t_start:" << endl;
     while(getline(in, linha)){
+
+        //cout << linha << endl;
+
         vector<string> vTab;
         int tamanho;
         explode(vTab, linha, "\t");

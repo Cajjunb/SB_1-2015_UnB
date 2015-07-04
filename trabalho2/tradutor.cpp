@@ -19,7 +19,7 @@ int main(int argc, char *argv[]){ //recebe arquivo .asm do assembly inventado e 
     asmInventado.push_back(argv[1]); //com certeza o arquivo recebido é .asm
 
     if(!temExtensao(asmInventado[0])){
-        cout << "Arquivo" + asmInventado[0] + " deve ter extensao. Encerrando";
+        cout << "Arquivo" + asmInventado[0] + " deve ter extensao. Encerrando" << endl;
         exit(EXIT_FAILURE);
     }
 

@@ -4,7 +4,7 @@
 ;**********************************
 
 SECTION TEXT
-volta: INPUT	NUM
+INPUT	NUM
 LOAD NUM
 STORE VETOR
 
@@ -23,10 +23,6 @@ STORE VETOR+3
 OUTPUT VETOR+1
 OUTPUT VETOR+3
 
-JMP	volta
-JMPP volta
-JMPN volta
-JMPZ volta
 STOP
 
 SECTION DATA

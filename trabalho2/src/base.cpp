@@ -50,15 +50,22 @@ bool isAlfabeto(string token){
 }
 
 bool isNumber(string token){
-        //positivo                                  negativo
     char *t;
     std::string tokenAux = token;
     if(token[0] == '-'){
         tokenAux.erase(0,1);
     }
     if((tokenAux[0] == '0' && tokenAux[1] == 'X') || (tokenAux[1] == '0' && tokenAux[2] == 'X')){ //É um número hexadecimal
-        if( (token.size() == 3 && token.back() == '0') || 0L != strtol(token.c_str(), &t, 16)) //se pode ser convertido em um número
-            return true;
+        if( (token.size() == 3 && token.back() == '0') || 0L != strtol(token.c_str(), &t, 16)){ //se pode ser convertido em um número
+            //cout << "tokenAux: " << tokenAux << endl;
+            tokenAux.erase(0,2);
+
+            //cout << "tokenAux: " << tokenAux << endl;
+            if(tokenAux.find_first_not_of("0123456789ABCDEF") == std::string::npos) //se string só possui números e ABCDEF
+                return true;
+            else
+                return false;
+        }
         else
             return false;
     }
@@ -99,6 +106,7 @@ std::vector<string> intParaHexLilEndian(int numero){
 //        resultado[1].insert(0,aux,2,1);
     }else{
         while(quociente != 0 || i != 4){
+            //cout << "while" << endl;
             resto = quociente % 16;
             quociente = quociente / 16;
             //itoa(resto,aux,16);

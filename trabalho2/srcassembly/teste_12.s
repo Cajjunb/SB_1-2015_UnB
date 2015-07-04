@@ -2,7 +2,8 @@ section .data
 	newline			db 0dh, 0ah
 	NEWLINESIZE		EQU $-newline
 
-	B	EQU	10
+	MENOSUM	EQU	-1
+	ZERO	EQU	0
 
 section .bss
 	imprime		resb	32	
@@ -12,6 +13,7 @@ section .bss
 	numero		resb	4 	
 
 	A	resb	4
+	B	resb	4
 	RESPOSTA	resb	4
 
 section .text
@@ -186,17 +188,60 @@ global _start
 	mov	[A],	eax
 	pop	eax
 
+;***** INPUT *****
+
+	push	eax
+	call	lerInteiro
+	mov eax,	[valor]
+	mov	[B],	eax
+	pop	eax
+
 ;***** LOAD *****
 
-	mov	dword	eax,	[A]
-
-;***** SUB *****
-
-	sub	dword	eax,	B
+	mov	dword	eax,	ZERO
 
 ;***** STORE *****
 
 	mov	dword	[RESPOSTA],	eax
+
+MULTIPLICA: 
+;***** LOAD *****
+
+	mov	dword	eax,	[B]
+
+;***** JMPZ *****
+
+	cmp	eax,	0
+	jz	IMPRIME
+
+;***** ADD *****
+
+	add	dword	eax,	MENOSUM
+
+;***** STORE *****
+
+	mov	dword	[B],	eax
+
+;***** LOAD *****
+
+	mov	dword	eax,	[RESPOSTA]
+
+;***** ADD *****
+
+	add	dword	eax,	[A]
+
+;***** STORE *****
+
+	mov	dword	[RESPOSTA],	eax
+
+;***** JMP *****
+
+	jmp MULTIPLICA
+
+IMPRIME: 
+;***** LOAD *****
+
+	mov	dword	eax,	[RESPOSTA]
 
 ;***** OUTPUT *****
 

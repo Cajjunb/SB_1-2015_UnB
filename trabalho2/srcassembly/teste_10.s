@@ -177,7 +177,6 @@ global _start
 				ret
 	_start:
 
-VOLTA: 
 ;***** INPUT *****
 
 	push	eax
@@ -255,25 +254,6 @@ VOLTA:
 	mov eax,	[VETOR+12]
 	call escreverInteiro
 	pop	eax
-
-;***** JMP *****
-
-	jmp VOLTA
-
-;***** JMPP *****
-
-	cmp	eax,	eax
-	jns	VOLTA
-
-;***** JMPN *****
-
-	cmp	eax,	eax
-	js	VOLTA
-
-;***** JMPZ *****
-
-	cmp	eax,	eax
-	jz	VOLTA
 
 ;***** STOP *****
 

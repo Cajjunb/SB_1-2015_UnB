@@ -1,10 +1,10 @@
 ;**********************************
 ; 			ASSEMBLY INVENTADO
-;	Lê um número do teclado			0
-;	Soma 10								10
-;	Subtrai 9								1
-;	Multiplica por 25						25
-;	Divide por 5							5
+;	Lê um número do teclado			0		12
+;	Soma 10								10		22
+;	Subtrai 9								1		13
+;	Multiplica por 25						25		325
+;	Divide por 5							5		65
 ;	Mostra resultado						5
 ;**********************************
 

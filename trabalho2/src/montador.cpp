@@ -16,8 +16,6 @@ void monta(vector<string> asmInventado){
     ifstream arq1;
     ofstream arq2;
     ofstream arq3;
-    bool ligar;
-
 
     //Verifica arquivos de entrada e saída
     input.append(asmInventado[0]);
@@ -44,6 +42,9 @@ void monta(vector<string> asmInventado){
     criaInstrucaoIa32( arq1, instrucoesIA32);
     arq1.close();
 
+    //cout << "criou tabelas" << endl;
+    //cin.get();
+
     /*for(vector<tipoInstrucaoIA32>::iterator it = instrucoesIA32.begin(); it != instrucoesIA32.end(); it++){
         cout << (*it).nome << " " << (*it).tamanhoTotal << endl;
     }
@@ -52,24 +53,19 @@ void monta(vector<string> asmInventado){
     arq1.open("pre_processado.txt");
     arq2.open(asmInventado[1]);
     arq3.open(asmInventado[2]);
+
+    //cout << "criou pre-processado" << endl;
+    //cin.get();
     criaTabelas(arq1, instrucao, diretiva, simbolo, uso, definicao, bits, instrucoesIA32, simboloIA32); //primeira passagem
-    ligar = criaArqObj(arq1, arq2, arq3, gramatica, instrucao, diretiva, simbolo, uso, definicao, bits, instrucoesIA32,simboloIA32); //segunda passagem
+    //cout << "primeira passagem" << endl;
+    //cin.get();
+    criaArqObj(arq1, arq2, arq3, gramatica, instrucao, diretiva, simbolo, instrucoesIA32,simboloIA32); //segunda passagem
+    //cout << "segunda passagem" << endl;
+    //cin.get();
     arq1.close();
     arq2.close();
     arq3.close();
-    if(!ligar){ //se não precisa ligar
-        string aux;
-        outputia32.clear();
-        outputia32.append(asmInventado[1]);
-        if(!temExtensao(outputia32)){ //se não tiver extensão
-            outputia32.append(".e"); //coloca extensão .e,
 
-            aux.append(asmInventado[1]);
-            aux.append(".o"); //coloca extensão .o
-
-            rename(aux.c_str(), outputia32.c_str());
-        }
-    }
 
     if(teveErro()){ //se teve erro
         cout << "Erro na geração de " << outputia32 << " e " << asmInventado[2] << endl;

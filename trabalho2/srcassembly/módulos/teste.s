@@ -2,6 +2,10 @@ section .data
 	newline			db 0dh, 0ah
 	NEWLINESIZE		EQU $-newline
 
+	ONE	EQU	1
+	THREE	EQU	3
+	TWO	EQU	2
+	ZERO	EQU	0
 
 section .bss
 	imprime		resb	32	
@@ -10,11 +14,9 @@ section .bss
 	digitos		resb	4	
 	numero		resb	4 	
 
-	NUM1	resb	4
-	NUM2	resb	4
-	NUM3	resb	4
-	NUM4	resb	4
-	VETOR	resb	16
+	A	resb	4
+	B	resb	4
+	C	resb	4
 
 section .text
 global _start
@@ -185,7 +187,7 @@ global _start
 	push	eax
 	call	lerInteiro
 	mov eax,	[valor]
-	mov	[NUM1],	eax
+	mov	[A],	eax
 	pop	eax
 
 ;***** INPUT *****
@@ -193,7 +195,7 @@ global _start
 	push	eax
 	call	lerInteiro
 	mov eax,	[valor]
-	mov	[NUM2],	eax
+	mov	[B],	eax
 	pop	eax
 
 ;***** INPUT *****
@@ -201,60 +203,172 @@ global _start
 	push	eax
 	call	lerInteiro
 	mov eax,	[valor]
-	mov	[NUM3],	eax
-	pop	eax
-
-;***** INPUT *****
-
-	push	eax
-	call	lerInteiro
-	mov eax,	[valor]
-	mov	[NUM4],	eax
+	mov	[C],	eax
 	pop	eax
 
 ;***** LOAD *****
 
-	mov	dword	eax,	[NUM1]
+	mov	dword	eax,	[A]
 
-;***** STORE *****
+;***** SUB *****
 
-	mov	dword	[VETOR],	eax
+	sub	dword	eax,	[B]
 
-;***** LOAD *****
+;***** JMPZ *****
 
-	mov	dword	eax,	[NUM2]
-
-;***** STORE *****
-
-	mov	dword	[VETOR+4],	eax
+	cmp	eax,	0
+	jz	CHECK_B
 
 ;***** LOAD *****
 
-	mov	dword	eax,	[NUM3]
+	mov	dword	eax,	[A]
 
-;***** STORE *****
+;***** SUB *****
 
-	mov	dword	[VETOR+8],	eax
+	sub	dword	eax,	[C]
+
+;***** JMPZ *****
+
+	cmp	eax,	0
+	jz	CHECK_B
+
+;***** JMP *****
+
+	jmp A_WINS
+
+CHECK_B: 
+;***** LOAD *****
+
+	mov	dword	eax,	ZERO
 
 ;***** LOAD *****
 
-	mov	dword	eax,	[NUM4]
+	mov	dword	eax,	[B]
 
-;***** STORE *****
+;***** SUB *****
 
-	mov	dword	[VETOR+12],	eax
+	sub	dword	eax,	[A]
+
+;***** JMPZ *****
+
+	cmp	eax,	0
+	jz	CHECK_C
+
+;***** LOAD *****
+
+	mov	dword	eax,	[B]
+
+;***** SUB *****
+
+	sub	dword	eax,	[C]
+
+;***** JMPZ *****
+
+	cmp	eax,	0
+	jz	CHECK_C
+
+;***** JMP *****
+
+	jmp B_WINS
+
+CHECK_C: 
+;***** LOAD *****
+
+	mov	dword	eax,	ZERO
+
+;***** LOAD *****
+
+	mov	dword	eax,	[C]
+
+;***** SUB *****
+
+	sub	dword	eax,	[A]
+
+;***** JMPZ *****
+
+	cmp	eax,	0
+	jz	TIE
+
+;***** LOAD *****
+
+	mov	dword	eax,	[C]
+
+;***** SUB *****
+
+	sub	dword	eax,	[B]
+
+;***** JMPZ *****
+
+	cmp	eax,	0
+	jz	TIE
+
+;***** JMP *****
+
+	jmp C_WINS
+
+TIE: 
+;***** LOAD *****
+
+	mov	dword	eax,	ZERO
 
 ;***** OUTPUT *****
 
 	push	eax
-	mov eax,	[VETOR+4]
+	mov eax,	ZERO
 	call escreverInteiro
 	pop	eax
 
+;***** STOP *****
+
+	mov	eax,	1
+	mov	ebx,	0
+	int	80h
+
+A_WINS: 
+;***** LOAD *****
+
+	mov	dword	eax,	ZERO
+
 ;***** OUTPUT *****
 
 	push	eax
-	mov eax,	[VETOR+12]
+	mov eax,	ONE
+	call escreverInteiro
+	pop	eax
+
+;***** STOP *****
+
+	mov	eax,	1
+	mov	ebx,	0
+	int	80h
+
+B_WINS: 
+;***** LOAD *****
+
+	mov	dword	eax,	ZERO
+
+;***** OUTPUT *****
+
+	push	eax
+	mov eax,	TWO
+	call escreverInteiro
+	pop	eax
+
+;***** STOP *****
+
+	mov	eax,	1
+	mov	ebx,	0
+	int	80h
+
+C_WINS: 
+;***** LOAD *****
+
+	mov	dword	eax,	ZERO
+
+;***** OUTPUT *****
+
+	push	eax
+	mov eax,	THREE
 	call escreverInteiro
 	pop	eax
 

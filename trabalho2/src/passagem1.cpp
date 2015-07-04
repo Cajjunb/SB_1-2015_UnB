@@ -116,10 +116,14 @@ int calculaPC(vector<tipoInstrucao>& instrucao, vector<tipoDiretiva>& diretiva, 
 
             if(vTab.size() == 3){
                 long int n;
+
                 if(vTab[2].find("X") != string::npos) //Número está em hexadecimal
                         n = strtol(vTab[2].c_str(), NULL, 16);
                 else
                     n = strtol(vTab[2].c_str(), NULL, 10);
+
+                if(n < 0)
+                    imprimeErro(ERRO_SPACE_NEGATIVO, linha);
 
                 editaTabelaSimbolosIA32(vTab[0], simboloIA32, n);
                 for(long int i = 0; i < n; i++){ //adiciona bit absoluto para cada space que existe
