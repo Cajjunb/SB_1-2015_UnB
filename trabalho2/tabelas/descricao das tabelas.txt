@@ -20,3 +20,18 @@ TABELAS:
 			nro_operandos:		Auto explicativo
 			Tamanho_em_word: 	que será alocado no arquivo objeto
 			formato_diretivas:	se diretiva aceita label ou número
+			
+	inv_ia32_intrucoes.txt: tabela com a relação das instruções do assembly inventado e assembly intel ia32
+		Formato: <nome_instrucao>;<quantidade_instrucao>;[<instrucoes_ia32>];[<codigo_maquina>];[<tamanhos>]
+		nome_instrucao:		Nome da instrução do assembly inventado
+		quantidade_instrucao:	Quantidade de instruções em IA32
+			S = uma instrução
+			D = duas instruções
+			T = três instruções
+			Q = quatro instruções
+			C = cinco instruções
+			N = caso especial de T, porém sem argumentos
+		instrucoes_ia32:		Conjunto de instruções em IA32 correspondente a instrução <nome_instrucao>
+			LABEL, A, B = argumentos das instruções
+		codigo_maquina:		Conjunto de instruções em código máquina correspondente a <instrucoes_ia32>
+		tamanhos:		Conjunto de tamanhos de cada instrução de <instrucoes_ia32>
