@@ -62,7 +62,6 @@ Trabalho 2 de Software Básico -
 
 	Para executar o montador, execute o comando:
 		./tradutor arq1
-		Nota: caso não sejam passados extensões, o tradutor irá supor que para "arq1" a extensão seja ".asm"
-	
+
 
 PS: Este trabalho foi feito com suor, sangue e ódio. Esperamos não cometer os mesmos erros do primeiro trabalho (╯°□°）╯︵ ┻━┻
