@@ -177,16 +177,38 @@ global _start
 				ret
 	_start:
 
+;***** INPUT *****
+
+	push	eax
 	call	lerInteiro
 	mov eax,	[valor]
 	mov	[A],	eax
+	pop	eax
+
+;***** INPUT *****
+
+	push	eax
 	call	lerInteiro
 	mov eax,	[valor]
 	mov	[B],	eax
+	pop	eax
+
+;***** OUTPUT *****
+
+	push	eax
 	mov eax,	[A]
 	call escreverInteiro
+	pop	eax
+
+;***** OUTPUT *****
+
+	push	eax
 	mov eax,	[B]
 	call escreverInteiro
+	pop	eax
+
+;***** STOP *****
+
 	mov	eax,	1
 	mov	ebx,	0
 	int	80h

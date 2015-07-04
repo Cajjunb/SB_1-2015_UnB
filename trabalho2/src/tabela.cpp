@@ -5,9 +5,10 @@ string inventadoParaIA32(std::vector<tipoInstrucaoIA32>& instrucoesia32 ,string 
     std::string result;
     std::string auxStringObject;
 
-    char  aux[30];
     bool temArgumentos = true;
     int i = 0;
+
+    //cout << "entrou em inventado para ia32" << endl;
 
     result = "\n;***** " + instrucaoia32.nome + " *****\n";
     if(instrucaoia32.tamanhoTotal != -1){            // ACHOU

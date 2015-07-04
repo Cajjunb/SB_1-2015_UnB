@@ -64,21 +64,6 @@
 	a1	3d	00	00
 	58
 	e8	e1	f3	ff	ff
-;***** JMP *****
-
-	eb	fcff	ffff
-;***** JMPP *****
-
-	39	c0
-	79	f7ff	ffff
-;***** JMPN *****
-
-	39	c0
-	78	f2ff	ffff
-;***** JMPZ *****
-
-	39	c0
-	74	fdff	ffff
 ;***** STOP *****
 
 	b8	01	00	00	00

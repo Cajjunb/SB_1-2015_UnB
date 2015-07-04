@@ -131,7 +131,8 @@ typedef enum{
     ERRO_ENCERRA_PROGRAMA,
     ERRO_ROTULO_REPETIDO,
     ERRO_ARG_INCORRETO,
-    ERRO_EQU_DEPOIS
+    ERRO_EQU_DEPOIS,
+    ERRO_SPACE_NEGATIVO
 }tipoErro;
 
 typedef struct{

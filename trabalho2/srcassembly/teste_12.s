@@ -2,6 +2,8 @@ section .data
 	newline			db 0dh, 0ah
 	NEWLINESIZE		EQU $-newline
 
+	MENOSUM	EQU	-1
+	ZERO	EQU	0
 
 section .bss
 	imprime		resb	32	
@@ -10,8 +12,9 @@ section .bss
 	digitos		resb	4	
 	numero		resb	4 	
 
-	NUM	resb	4
-	VETOR	resb	16
+	A	resb	4
+	B	resb	4
+	RESPOSTA	resb	4
 
 section .text
 global _start
@@ -182,76 +185,68 @@ global _start
 	push	eax
 	call	lerInteiro
 	mov eax,	[valor]
-	mov	[NUM],	eax
+	mov	[A],	eax
 	pop	eax
-
-;***** LOAD *****
-
-	mov	dword	eax,	[NUM]
-
-;***** STORE *****
-
-	mov	dword	[VETOR],	eax
 
 ;***** INPUT *****
 
 	push	eax
 	call	lerInteiro
 	mov eax,	[valor]
-	mov	[NUM],	eax
+	mov	[B],	eax
 	pop	eax
 
 ;***** LOAD *****
 
-	mov	dword	eax,	[NUM]
+	mov	dword	eax,	ZERO
 
 ;***** STORE *****
 
-	mov	dword	[VETOR+4],	eax
+	mov	dword	[RESPOSTA],	eax
 
-;***** INPUT *****
+MULTIPLICA: 
+;***** LOAD *****
 
-	push	eax
-	call	lerInteiro
-	mov eax,	[valor]
-	mov	[NUM],	eax
-	pop	eax
+	mov	dword	eax,	[B]
+
+;***** JMPZ *****
+
+	cmp	eax,	0
+	jz	IMPRIME
+
+;***** ADD *****
+
+	add	dword	eax,	MENOSUM
+
+;***** STORE *****
+
+	mov	dword	[B],	eax
 
 ;***** LOAD *****
 
-	mov	dword	eax,	[NUM]
+	mov	dword	eax,	[RESPOSTA]
+
+;***** ADD *****
+
+	add	dword	eax,	[A]
 
 ;***** STORE *****
 
-	mov	dword	[VETOR+8],	eax
+	mov	dword	[RESPOSTA],	eax
 
-;***** INPUT *****
+;***** JMP *****
 
-	push	eax
-	call	lerInteiro
-	mov eax,	[valor]
-	mov	[NUM],	eax
-	pop	eax
+	jmp MULTIPLICA
 
+IMPRIME: 
 ;***** LOAD *****
 
-	mov	dword	eax,	[NUM]
-
-;***** STORE *****
-
-	mov	dword	[VETOR+12],	eax
+	mov	dword	eax,	[RESPOSTA]
 
 ;***** OUTPUT *****
 
 	push	eax
-	mov eax,	[VETOR+4]
-	call escreverInteiro
-	pop	eax
-
-;***** OUTPUT *****
-
-	push	eax
-	mov eax,	[VETOR+12]
+	mov eax,	[RESPOSTA]
 	call escreverInteiro
 	pop	eax
 

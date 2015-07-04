@@ -9,7 +9,7 @@ section .bss
 	valor			resb	4 	
 	casas			resb	4	
 	digitos		resb	4	
-	numero		resb	1 	
+	numero		resb	4 	
 
 	A	resb	4
 	RESPOSTA	resb	4
@@ -178,14 +178,35 @@ global _start
 				ret
 	_start:
 
+;***** INPUT *****
+
+	push	eax
 	call	lerInteiro
 	mov eax,	[valor]
 	mov	[A],	eax
+	pop	eax
+
+;***** LOAD *****
+
 	mov	dword	eax,	[A]
+
+;***** ADD *****
+
 	add	dword	eax,	B
+
+;***** STORE *****
+
 	mov	dword	[RESPOSTA],	eax
+
+;***** OUTPUT *****
+
+	push	eax
 	mov eax,	[RESPOSTA]
 	call escreverInteiro
+	pop	eax
+
+;***** STOP *****
+
 	mov	eax,	1
 	mov	ebx,	0
 	int	80h

@@ -2,6 +2,10 @@ section .data
 	newline			db 0dh, 0ah
 	NEWLINESIZE		EQU $-newline
 
+	DEZ	EQU	10
+	DOIS	EQU	2
+	UM	EQU	1
+	ZERO	EQU	0
 
 section .bss
 	imprime		resb	32	
@@ -10,8 +14,7 @@ section .bss
 	digitos		resb	4	
 	numero		resb	4 	
 
-	NUM	resb	4
-	VETOR	resb	16
+	A	resb	4
 
 section .text
 global _start
@@ -177,81 +180,65 @@ global _start
 				ret
 	_start:
 
+INICIO: 
 ;***** INPUT *****
 
 	push	eax
 	call	lerInteiro
 	mov eax,	[valor]
-	mov	[NUM],	eax
+	mov	[A],	eax
 	pop	eax
 
 ;***** LOAD *****
 
-	mov	dword	eax,	[NUM]
+	mov	dword	eax,	[A]
+
+;***** SUB *****
+
+	sub	dword	eax,	DEZ
 
 ;***** STORE *****
 
-	mov	dword	[VETOR],	eax
-
-;***** INPUT *****
-
-	push	eax
-	call	lerInteiro
-	mov eax,	[valor]
-	mov	[NUM],	eax
-	pop	eax
+	mov	dword	[A],	eax
 
 ;***** LOAD *****
 
-	mov	dword	eax,	[NUM]
+	mov	dword	eax,	[A]
 
-;***** STORE *****
+;***** JMPN *****
 
-	mov	dword	[VETOR+4],	eax
+	cmp	eax,	0
+	jl	MENOR
 
-;***** INPUT *****
+;***** JMPP *****
 
-	push	eax
-	call	lerInteiro
-	mov eax,	[valor]
-	mov	[NUM],	eax
-	pop	eax
+	cmp	eax,	0
+	jg	MAIOR
 
-;***** LOAD *****
+;***** JMPZ *****
 
-	mov	dword	eax,	[NUM]
+	cmp	eax,	0
+	jz	INICIO
 
-;***** STORE *****
-
-	mov	dword	[VETOR+8],	eax
-
-;***** INPUT *****
-
-	push	eax
-	call	lerInteiro
-	mov eax,	[valor]
-	mov	[NUM],	eax
-	pop	eax
-
-;***** LOAD *****
-
-	mov	dword	eax,	[NUM]
-
-;***** STORE *****
-
-	mov	dword	[VETOR+12],	eax
-
+MENOR: 
 ;***** OUTPUT *****
 
 	push	eax
-	mov eax,	[VETOR+4]
+	mov eax,	DOIS
 	call escreverInteiro
 	pop	eax
 
+;***** STOP *****
+
+	mov	eax,	1
+	mov	ebx,	0
+	int	80h
+
+MAIOR: 
 ;***** OUTPUT *****
 
 	push	eax
-	mov eax,	[VETOR+12]
+	mov eax,	UM
 	call escreverInteiro
 	pop	eax
 

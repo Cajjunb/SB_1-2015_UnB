@@ -28,32 +28,34 @@ void insereTabelaSimbolosIA32(string token, map<string, tipoTS>& simbolo, int *p
     tipoTS s;
 
     rot = simbolo.find(token);
-    s = rot->second;
+    if(rot != simbolo.end()){
+        s = rot->second;
 
-    if(s.section != '0'){ //se símbolo for diferente de EQU
-        if(s.section == 't'){ //se for rótulo na seção text
-            s32.section = 't';
-            s32.endereco = *pcia32;
-            s32.valorConstante = 0;
-            s32.tipoConstante = false;
-            s32.tamanho = 0;
-        }
-        else{ //é símbolo na seção data
-            if(s.tipoConstante){ //se for constante
-                s32.section = 'd';
-                s32.endereco = 0;
-                s32.valorConstante = s.valorConstante;
-                s32.tipoConstante = true;
-                s32.tamanho = 4;
-            }
-            else{ //É um space
-                s32.section = 'b';
-                s32.endereco = 0;
+        if(s.section != '0'){ //se símbolo for diferente de EQU
+            if(s.section == 't'){ //se for rótulo na seção text
+                s32.section = 't';
+                s32.endereco = *pcia32;
                 s32.valorConstante = 0;
                 s32.tipoConstante = false;
                 s32.tamanho = 0;
             }
+            else{ //é símbolo na seção data
+                if(s.tipoConstante){ //se for constante
+                    s32.section = 'd';
+                    s32.endereco = 0;
+                    s32.valorConstante = s.valorConstante;
+                    s32.tipoConstante = true;
+                    s32.tamanho = 4;
+                }
+                else{ //É um space
+                    s32.section = 'b';
+                    s32.endereco = 0;
+                    s32.valorConstante = 0;
+                    s32.tipoConstante = false;
+                    s32.tamanho = 0;
+                }
+            }
         }
+        simboloIA32.insert(pair<string, tipoTSIA32>(rot->first, s32));
     }
-    simboloIA32.insert(pair<string, tipoTSIA32>(rot->first, s32));
 }

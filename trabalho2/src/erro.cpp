@@ -115,8 +115,8 @@ void imprimeErro(tipoErro e, int linha){
             l.e = ERRO_SEMANTICO;
         break;
         case ERRO_ARG_INCORRETO:
-            msg << "Sintatico: Instrucao ou diretiva com tipo de argumento incorreto";
-            l.e = ERRO_SINTATICO;
+            msg << "Semantico: Instrucao ou diretiva com tipo de argumento incorreto";
+            l.e = ERRO_SEMANTICO;
         break;
         case ERRO_EQU_DEPOIS:
             msg << "Semantico: Variaveis do tipo EQU devem ser definidas antes do comeco do codigo";
@@ -125,6 +125,10 @@ void imprimeErro(tipoErro e, int linha){
         case ERRO_JMP_INVALIDO:
             msg << "Semantico: Pulo para um rotulo invalido";
             l.e = ERRO_SEMANTICO;
+        break;
+        case ERRO_SPACE_NEGATIVO:
+            msg << "Sintatico: Diretiva SPACE aceita somente argumentos positivos";
+            l.e = ERRO_SINTATICO;
         break;
         default:
             msg << "Erro Indefinido";
@@ -273,7 +277,7 @@ bool isJMPEnderecoInvalido(vector<string> tokens,map<string, tipoTS>& simbolo){
 
     if( (strcasecmp(instrucao.c_str(), "JMP") == 0)    ||
         (strcasecmp(instrucao.c_str(), "JMPP") == 0)   ||
-        (strcasecmp(instrucao.c_str(), "JMZ") == 0)   ||
+        (strcasecmp(instrucao.c_str(), "JMPZ") == 0)   ||
         (strcasecmp(instrucao.c_str(), "JMPN") == 0)
         ){
         map<string, tipoTS>::iterator it = simbolo.find(tokens.back());
